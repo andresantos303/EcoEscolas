@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const executionSchema = new mongoose.Schema({
   planActivitiesId: {
@@ -16,4 +16,4 @@ const executionSchema = new mongoose.Schema({
   comments: [{ type: String }],
 });
 
-export default mongoose.model("Execution", executionSchema);
+module.exports = mongoose.model('Execution', executionSchema);

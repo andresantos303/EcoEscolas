@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const activitySchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -16,4 +16,4 @@ const activitySchema = new mongoose.Schema({
   participants: [{ type: String }], // ou ref: 'User' se quiseres refs
 });
 
-export default mongoose.model("Activity", activitySchema);
+module.exports = mongoose.model('Activity', activitySchema);

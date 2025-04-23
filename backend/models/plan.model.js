@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const planSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -17,4 +17,4 @@ const planSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("Plan", planSchema);
+module.exports = mongoose.model('Plan', planSchema);
