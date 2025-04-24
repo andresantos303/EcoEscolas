@@ -1,5 +1,5 @@
 // Import the execution data model
-const execution = require('../models/execution.model.js');
+const Execution = require('../models/execution.model.js');
 
 
 

@@ -1,4 +1,4 @@
-// Import the user data model
+// Import data models
 const User = require("../models/user.model.js");
 const Plan = require('../models/plan.model.js');
 const jwt = require("jsonwebtoken");
