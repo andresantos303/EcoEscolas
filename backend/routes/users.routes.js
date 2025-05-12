@@ -9,6 +9,7 @@ const authMiddleware = require('../auth.js');
 // include controller functions
 const usersController = require('../controllers/users.controller.js');
 
+//authmiddleware para verificar se existe um token valido
 // GET /users — retorna todos os utilizadores (Admin apenas)
 router.get('/', authMiddleware, usersController.getAllUsers);
 // POST /users — regista um novo utilizador (Admin apenas)
@@ -22,7 +23,7 @@ router.patch('/:id', authMiddleware, usersController.updateUser);
 // DELETE /users/:id — remove um utilizador (Admin apenas)
 router.delete('/:id', authMiddleware, usersController.deleteUser);
 
-/* router.post('/create-admin', usersController.createAdmin);  */
+/* router.post('/create-admin', usersController.createAdmin); rota para criar o admin  */
 
 
 

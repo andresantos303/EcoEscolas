@@ -4,7 +4,7 @@
   "description": "description: \"Projeto Eco-Escolas\"",
   "main": "server.js",
   "scripts": {
-    "test": "\t",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js" 
   },
   "author": "",
