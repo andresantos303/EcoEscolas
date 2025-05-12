@@ -1,5 +1,6 @@
 // Import the execution data model
 const Execution = require('../models/execution.model.js');
+<<<<<<< HEAD
 const Activity = require("../models/activity.model.js");
 
 const deleteExecutionById = async (req, res) => {
@@ -247,4 +248,11 @@ module.exports = {
     getExecutionById,
     getAllExecutions,
     createExecution
+=======
+
+
+
+module.exports = {
+    
+>>>>>>> d79ac0919279036421d53d7b7af8120f8ccf6718
 }

@@ -1,4 +1,5 @@
 // Import the notification data model
+<<<<<<< HEAD
 const Notification = require('../models/notification.model.js');
 
 const deleteNotification = async (req, res) => {
@@ -158,4 +159,12 @@ module.exports = {
     getNotificationById,
     getAllNotifications,
     createNotification
+=======
+const notification = require('../models/notification.model.js');
+
+
+
+module.exports = {
+    
+>>>>>>> d79ac0919279036421d53d7b7af8120f8ccf6718
 }

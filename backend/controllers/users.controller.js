@@ -334,6 +334,7 @@ const deleteUser = async (req, res) => {
       return res.status(500).json({ message: 'Erro interno ao remover utilizador.' });
     }
   };
+<<<<<<< HEAD
 
  /*   const createAdmin = async (req, res) => {
    try {
@@ -355,12 +356,19 @@ const deleteUser = async (req, res) => {
     }
   }; 
    */
+=======
+  
+>>>>>>> d79ac0919279036421d53d7b7af8120f8ccf6718
   module.exports = {
     getAllUsers,
     createUser,
     loginUser,
     getUserById,
     updateUser,
+<<<<<<< HEAD
     deleteUser,
     /* createAdmin  */
+=======
+    deleteUser
+>>>>>>> d79ac0919279036421d53d7b7af8120f8ccf6718
   };

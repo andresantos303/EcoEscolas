@@ -7,6 +7,7 @@ const router = express.Router();
 const notificationsController= require('../controllers/notifications.controller.js');
 
 
+<<<<<<< HEAD
 // DELETE /notifications/:id — remove uma notificação
 router.delete("/:id", notificationsController.deleteNotification);
 // GET /notifications/:id — obtem uma notificação especifica
@@ -17,5 +18,7 @@ router.get("/", notificationsController.getAllNotifications);
 router.post("/", notificationsController.createNotification);
 
 
+=======
+>>>>>>> d79ac0919279036421d53d7b7af8120f8ccf6718
 
 module.exports = router;
