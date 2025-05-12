@@ -25,4 +25,5 @@ router.delete('/:id', authMiddleware, usersController.deleteUser);
 
 
 
+
 module.exports = router;
