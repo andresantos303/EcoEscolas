@@ -334,12 +334,33 @@ const deleteUser = async (req, res) => {
       return res.status(500).json({ message: 'Erro interno ao remover utilizador.' });
     }
   };
+
+ /*   const createAdmin = async (req, res) => {
+   try {
+      const existingAdmin = await User.findOne({ email: "admin@teste.com" });
+      if (existingAdmin) return res.status(400).json({ message: "Admin já existe." });
   
+      const hashedPassword = await bcrypt.hash("admin123", 10);
+      const admin = new User({
+        name: "Admin",
+        email: "admin@teste.com",
+        password: hashedPassword,
+        type: "Admin"
+      });
+  
+      await admin.save();
+      res.status(201).json({ message: "Admin criado com sucesso." });
+    } catch (err) {
+      res.status(500).json({ message: "Erro ao criar admin.", error: err.message });
+    }
+  }; 
+   */
   module.exports = {
     getAllUsers,
     createUser,
     loginUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    /* createAdmin  */
   };
