@@ -5,6 +5,7 @@ const router = express.Router();
 const User = require('../models/user.model');
 const authMiddleware = require('../auth.js');
 
+
 // include controller functions
 const usersController = require('../controllers/users.controller.js');
 
@@ -22,7 +23,6 @@ router.patch('/:id', authMiddleware, usersController.updateUser);
 router.delete('/:id', authMiddleware, usersController.deleteUser);
 
 /* router.post('/create-admin', usersController.createAdmin);  */
-
 
 
 

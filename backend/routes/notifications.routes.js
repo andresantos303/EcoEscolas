@@ -16,6 +16,4 @@ router.get("/", notificationsController.getAllNotifications);
 // POST /notifications — cria uma nova notificação
 router.post("/", notificationsController.createNotification);
 
-
-
 module.exports = router;

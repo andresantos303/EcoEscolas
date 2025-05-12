@@ -335,6 +335,7 @@ const deleteUser = async (req, res) => {
     }
   };
 
+
  /*   const createAdmin = async (req, res) => {
    try {
       const existingAdmin = await User.findOne({ email: "admin@teste.com" });
