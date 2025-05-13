@@ -6,25 +6,7 @@ const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 const getAllUsers = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: só admins podem gerir utilizadores
-  if (req.user.type !== "Admin") {
-    return res.status(403).json({
-      errorCode: "USER_MANAGEMENT_UNAUTHORIZED",
-      message:
-        "Acesso negado. Apenas administradores podem gerir utilizadores.",
-    });
-  }
-
   try {
-    // Monta filtro opcional a partir de query params
     const filter = {};
     if (req.query.name) filter.name = req.query.name;
     if (req.query.type) filter.type = req.query.type;
@@ -32,27 +14,11 @@ const getAllUsers = async (req, res) => {
     const users = await User.find(filter);
     return res.status(200).json(users);
   } catch (err) {
-    // Erro de servidor inesperado
     return res.status(500).json({ message: "Erro ao buscar utilizadores." });
   }
 };
 
 const createUser = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: só admins podem criar utilizadores
-  if (req.user.type !== "Admin") {
-    return res.status(403).json({
-      errorCode: "AUTH_FORBIDDEN",
-      message: "Não tem permissões para realizar esta ação.",
-    });
-  }
 
   const { name, email, password, type } = req.body;
 
@@ -162,30 +128,11 @@ const loginUser = async (req, res) => {
 };
 
 const getUserById = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
   const requestedId = req.params.id;
-  const callerId = req.user.id;
-  const callerType = req.user.type;
-
-  // 403 Forbidden: apenas Admin ou o próprio utilizador
-  if (callerType !== "Admin" && callerId !== requestedId) {
-    return res.status(403).json({
-      errorCode: "AUTH_FORBIDDEN",
-      message: "Não tem permissões para realizar esta ação.",
-    });
-  }
 
   try {
     const user = await User.findById(requestedId);
     if (!user) {
-      // 404 Not Found: utilizador não existe
       return res.status(404).json({
         errorCode: "AUTH_UNAUTHORIZED",
         message: "Utilizador não encontrado",
@@ -200,23 +147,8 @@ const getUserById = async (req, res) => {
   }
 };
 
+
 const updateUser = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: só admins podem atualizar utilizadores
-  if (req.user.type !== "Admin") {
-    return res.status(403).json({
-      errorCode: "AUTH_FORBIDDEN",
-      message: "Não tem permissões para realizar esta ação.",
-    });
-  }
-
   const { id } = req.params;
   const { name, email, password } = req.body;
 
@@ -290,22 +222,7 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-    // 401 Unauthorized: token não fornecido ou inválido
-    if (!req.user) {
-      return res.status(401).json({
-        errorCode: 'AUTH_UNAUTHORIZED',
-        message: 'Token inválido ou não fornecido.'
-      });
-    }
-  
-    // 403 Forbidden: só admins podem remover utilizadores
-    if (req.user.type !== 'Admin') {
-      return res.status(403).json({
-        errorCode: 'USER_DELETE_BLOCKED',
-        message: 'Não tem permissões para realizar esta ação.'
-      });
-    }
-  
+
     const { id } = req.params;
   
     try {
