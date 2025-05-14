@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel de Administração - Eco Escolas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/Css/admin.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Painel Admin</h2>
+        <ul>
+            <li onclick="showSection('atividades')">Atividades</li>
+            <li onclick="showSection('utilizadores')">Utilizadores</li>
+            <li onclick="showSection('relatorios')">Relatorios</li>
+            <li><a href="index.html" class="logout-btn">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h1>Painel de Administração</h1>
+
+        <div id="atividades" class="section active">
+            <h2>Atividades</h2>
+        </div>
+
+        <div id="utilizadores" class="section">
+            <h2>Utilizadores</h2>
+        </div>
+
+        <div id="relatorios" class="section">
+            <h2>relatorios</h2>
+        </div>
+
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+            }
+        }
+    </script>
+</body>
+
+</html>
