@@ -6,24 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Eco Escolas</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin.css">
-    <style>
-        .section-tools {
-            margin-bottom: 20px;
-        }
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/Css/admin.css">
 
-        .section-tools input[type="text"] {
-            padding: 8px;
-            width: 200px;
-            margin-right: 10px;
-        }
-
-        .section-tools button {
-            padding: 8px 12px;
-            margin-right: 5px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 
 <body>
@@ -34,45 +19,142 @@
             <li onclick="showSection('planoatividades')">Plano de Atividades</li>
             <li onclick="showSection('utilizadores')">Utilizadores</li>
             <li onclick="showSection('relatorios')">Relatórios</li>
+            <li onclick="showSection('notificacoes')">Notificações</li>
             <li><a href="index.html" class="logout-btn">Logout</a></li>
         </ul>
     </div>
 
     <div class="main-content">
+        <div id="utilizadores" class="section">
+            <h1>Utilizadores</h1>
+            <div class="section-tools">
+                <button onclick="openAddUserModal()">Adicionar</button>
+
+                <div id="addUserModal" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeAddUserModal()">&times;</span>
+                        <h2>Adicionar Utilizador</h2>
+                        <input type="text" id="newUsername" placeholder="Nome de utilizador" />
+                        <input type="email" id="newEmail" placeholder="Email" />
+                        <input type="password" id="newPassword" placeholder="Password" />
+                        <button onclick="addUser()">Guardar</button>
+                    </div>
+                </div>
+                <input type="text" placeholder="Pesquisar...">
+            </div>
+
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Password</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="userTbody">
+                    <tr id="row-admin">
+                        <td>admin</td>
+                        <td class="email-cell">admin123@gmail.com</td>
+                        <td class="pass-cell">12345</td>
+                        <td>
+                            <button class="edit-btn" onclick="openEditModal('admin')">Editar</button>
+                            <button class="delete-btn" onclick="eliminarUtilizador('admin')">Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="editModal">
+            <div class="modal-content">
+                <h3>Edição de utilizador: <span id="editUsername"></span></h3>
+                <label for="editEmail">E-mail</label>
+                <input type="email" id="editEmail" required>
+                <label for="editPassword">Password</label>
+                <input type="text" id="editPassword" required>
+                <div class="actions">
+                    <button class="save-btn" onclick="saveUserChanges()">Gravar</button>
+                    <button class="cancel-btn" onclick="closeEditModal()">Cancelar</button>
+                </div>
+            </div>
+        </div>
 
         <div id="atividades" class="section active">
             <h1>Atividades</h1>
             <div class="section-tools">
                 <div class="buttons">
                     <button>Adicionar</button>
-                    <button>Editar</button>
-                    <button>Eliminar</button>
                 </div>
                 <input type="text" placeholder="Pesquisar...">
             </div>
+            <canvas id="graficoAtividades" width="300" height="100"></canvas>
         </div>
 
         <div id="planoatividades" class="section">
             <h1>Plano de Atividades</h1>
             <div class="section-tools">
                 <div class="buttons">
-                    <button>Adicionar</button>
-                    <button>Editar</button>
-                    <button>Eliminar</button>
+                    <button onclick="document.getElementById('addPlanoModal').style.display = 'flex'">Adicionar</button>
                 </div>
                 <input type="text" placeholder="Pesquisar...">
             </div>
+
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data de Início</th>
+                        <th>Data de Fim</th>
+                        <th>Status</th>
+                        <th>Resource</th>
+                        <th>Level</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="planoTbody">
+                    <tr>
+                        <td>Projeto Reciclagem</td>
+                        <td>2025-01-10</td>
+                        <td>2025-03-20</td>
+                        <td>Ativo</td>
+                        <td>Recursos Humanos</td>
+                        <td>Alto</td>
+                        <td>
+                            <button onclick="openEditPlanoModal(this)" class="edit-btn">Editar</button>
+                            <button onclick="deletePlano(this)" class="delete-btn">Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <div id="utilizadores" class="section">
-            <h1>Utilizadores</h1>
-            <div class="section-tools">
-                <div class="buttons">
-                    <button>Adicionar</button>
-                    <button>Editar</button>
-                    <button>Eliminar</button>
-                </div>
-                <input type="text" placeholder="Pesquisar...">
+        <div id="addPlanoModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close"
+                    onclick="document.getElementById('addPlanoModal').style.display='none'">&times;</span>
+                <h2>Adicionar Plano de Atividades</h2>
+                <input type="text" id="planoNome" placeholder="Nome">
+                <input type="date" id="planoInicio" placeholder="Data de Início">
+                <input type="date" id="planoFim" placeholder="Data de Fim">
+                <input type="text" id="planoStatus" placeholder="Status">
+                <input type="text" id="planoResource" placeholder="Resource">
+                <input type="text" id="planoLevel" placeholder="Level">
+                <button onclick="salvarPlano()">Guardar</button>
+            </div>
+        </div>
+
+        <div id="editPlanoModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeEditPlanoModal()">&times;</span>
+                <h2>Editar Plano</h2>
+                <input id="editPlanoNome" type="text" placeholder="Nome">
+                <input id="editPlanoDataInicio" type="date" placeholder="Data de Início">
+                <input id="editPlanoDataFim" type="date" placeholder="Data de Fim">
+                <input id="editPlanoStatus" type="text" placeholder="Status">
+                <input id="editPlanoResource" type="text" placeholder="Resource">
+                <input id="editPlanoLevel" type="text" placeholder="Level">
+                <button onclick="savePlanoChanges()">Guardar</button>
             </div>
         </div>
 
@@ -81,25 +163,43 @@
             <div class="section-tools">
                 <div class="buttons">
                     <button>Adicionar</button>
-                    <button>Editar</button>
-                    <button>Eliminar</button>
                 </div>
                 <input type="text" placeholder="Pesquisar...">
+            </div>
         </div>
-    </div>
-    </div>
 
-    <script>
-        function showSection(sectionId) {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(sec => sec.classList.remove('active'));
+        <div id="notificacoes" class="section">
+            <h1>Notificações</h1>
+            <form id="notificacaoForm" onsubmit="enviarNotificacao(event)" class="notificacao-form">
+                <div class="form-group">
+                    <label for="tituloNotificacao">Título</label>
+                    <input type="text" id="tituloNotificacao" required placeholder="Insira o título da notificação">
+                </div>
+                <div class="form-group">
+                    <label for="mensagemNotificacao">Mensagem</label>
+                    <textarea id="mensagemNotificacao" rows="4" required placeholder="Escreva a mensagem..."></textarea>
+                </div>
+                <button type="submit" class="btn-enviar">Enviar Notificação</button>
+            </form>
 
-            const selectedSection = document.getElementById(sectionId);
-            if (selectedSection) {
-                selectedSection.classList.add('active');
-            }
-        }
-    </script>
+            <h2>Notificações Enviadas</h2>
+            <table class="user-table" id="tabelaNotificacoes">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Mensagem</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+    <script src="./Js/admin.js"></script>
 </body>
 
 </html>

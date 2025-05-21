@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="/Css/login.css">
 
 </head>
 
@@ -38,29 +38,7 @@
 
         </form>
     </div>
-
+    <script src="./Js/login.js"></script>
 </body>
-
-    <script>
-        function handleLogin(event) {
-            event.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            if (email === 'admin123@gmail.com' && password === '12345') {
-                window.location.href = 'admin.html'; 
-            } else {
-                document.getElementById('email-error').textContent = 'Email ou senha inválidos.';
-                document.getElementById('password-error').textContent = 'Email ou senha inválidos.';
-            }
-        }
-
-        function togglePassword() {
-            const passwordField = document.getElementById('password');
-            const type = passwordField.type === 'password' ? 'text' : 'password';
-            passwordField.type = type;
-        }
-    </script>
 
 </html>
