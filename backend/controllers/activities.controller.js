@@ -1,7 +1,6 @@
 // Import data models
 const Activity = require("../models/activity.model.js");
 const Plan = require("../models/plan.model.js");
-const Execution = require('../models/execution.model.js');
 
 const getAllActivities = async (req, res) => {
   // 401 Unauthorized: token não fornecido ou inválido
@@ -291,15 +290,6 @@ const deleteActivity = async (req, res) => {
       return res.status(404).json({
         errorCode: 'ACTIVITY_NOT_FOUND',
         message: 'A atividade solicitada não foi encontrada.'
-      });
-    }
-
-    // 409 Conflict: atividade vinculada a execuções ativas    FAZER ALTERAÇÕES
-    const blockingExecution = await Execution.findOne({ activity: id, isActive: true });
-    if (blockingExecution) {
-      return res.status(409).json({
-        errorCode: 'ACTIVITY_DELETE_BLOCKED',
-        message: 'Esta atividade está vinculada a outras execuções e não pode ser excluída.'
       });
     }
 

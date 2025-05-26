@@ -63,36 +63,25 @@ const getPlanById = async (req, res) => {
 };
 
 const createPlan = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: apenas Coordenadores podem criar planos
-  if (req.user.type !== "Coordenador") {
-    return res.status(403).json({
-      errorCode: "PLAN_CREATION_UNAUTHORIZED",
-      message: "Apenas Coordenadores podem criar planos de atividades.",
-    });
-  }
-
-  const {
+    const {
     nome,
     descricao,
     data_inicio,
     data_fim,
+    estado,
+    nivel,
     associatedActivities,
-    resources,
+    recursos,
   } = req.body;
 
+  user = req.user;
+  console.log(user);
+
   // 400 Bad Request: campos obrigatórios em falta
-  if (!nome || !descricao || !data_inicio || !data_fim || !resources) {
+  if (!nome || !descricao || !data_inicio || !data_fim || !estado || !nivel || !recursos) {
     return res.status(400).json({
       errorCode: "PLAN_CREATION_BAD_REQUEST",
-      message: "Nome, descrição, datas e recursos são obrigatórios!",
+      message: "Nome, descrição, datas, estado, nivel e recursos são obrigatórios!",
     });
   }
 
@@ -111,7 +100,7 @@ const createPlan = async (req, res) => {
       message: "A data de início deve ser anterior à data de término.",
     });
   }
-
+  
   try {
     // 409 Conflict: nome duplicado
     const existing = await Plan.findOne({ nome });
@@ -121,16 +110,19 @@ const createPlan = async (req, res) => {
         message: "Já existe um plano de atividades com esse nome.",
       });
     }
-
     // cria e guarda o plano
     const plan = new Plan({
       nome,
       descricao,
-      data_inicio: inicio,
-      data_fim: fim,
+      data_inicio,
+      data_fim,
+      nivel,
+      estado,
       associatedActivities: associatedActivities || [],
-      resources,
+      recursos,
+      createdUserId: user.userId, // ID do user que criou o plano
     });
+    console.log(plan);
     await plan.save();
 
     return res.status(201).json({
@@ -165,22 +157,25 @@ const updatePlan = async (req, res) => {
     descricao,
     data_inicio,
     data_fim,
+    estado,
+    nivel,
     associatedActivities,
-    resources,
+    recursos,
   } = req.body;
 
-  // 400 Bad Request: nenhum campo fornecido
-  if (
-    nome === undefined &&
+
+  // 400 Bad Request: campos obrigatórios em falta
+  if (nome === undefined &&
     descricao === undefined &&
     data_inicio === undefined &&
     data_fim === undefined &&
     associatedActivities === undefined &&
-    resources === undefined
-  ) {
+    recursos === undefined &&
+    estado === undefined &&
+    nivel === undefined) {
     return res.status(400).json({
       errorCode: "PLAN_CREATION_BAD_REQUEST",
-      message: "Nome, descrição, datas e atividades são obrigatórios!",
+      message: "Nome, descrição, datas, estado, nivel e recursos são obrigatórios!",
     });
   }
 
@@ -191,7 +186,7 @@ const updatePlan = async (req, res) => {
     if (isNaN(inicio.getTime())) {
       return res.status(400).json({
         errorCode: "PLAN_CREATION_BAD_REQUEST",
-        message: "Nome, descrição, datas e atividades são obrigatórios!",
+        message: "Data de início inválida!",
       });
     }
   }
@@ -200,7 +195,7 @@ const updatePlan = async (req, res) => {
     if (isNaN(fim.getTime())) {
       return res.status(400).json({
         errorCode: "PLAN_CREATION_BAD_REQUEST",
-        message: "Nome, descrição, datas e atividades são obrigatórios!",
+        message: "Data de fim inválida!",
       });
     }
   }
@@ -224,12 +219,14 @@ const updatePlan = async (req, res) => {
     // aplica apenas os campos fornecidos
     if (nome !== undefined) plan.nome = nome;
     if (descricao !== undefined) plan.descricao = descricao;
-    if (data_inicio !== undefined) plan.data_inicio = inicio;
-    if (data_fim !== undefined) plan.data_fim = fim;
-    if (associatedActivities !== undefined)
-      plan.associatedActivities = associatedActivities;
-    if (resources !== undefined) plan.resources = resources;
+    if (data_inicio !== undefined) plan.data_inicio = data_inicio;
+    if (data_fim !== undefined) plan.data_fim = data_fim;
+    if (associatedActivities !== undefined) plan.associatedActivities = associatedActivities;
+    if (recursos !== undefined) plan.recursos = recursos;
+    if (estado !== undefined) plan.estado = estado;
+    if (nivel !== undefined) plan.nivel = nivel;
 
+    // atualiza o plano
     await plan.save();
 
     return res.status(200).json({
@@ -269,15 +266,15 @@ const deletePlan = async (req, res) => {
       });
     }
 
-    // 409 Conflict: plano vinculado a atividades em andamento
-    const ongoing = await Activity.findOne({ plan: id, isActive: true });
+    /* // 409 Conflict: plano vinculado a atividades em andamento
+    const ongoing = await Activity.findOne({ plan: id, estado: true });
     if (ongoing) {
       return res.status(409).json({
         errorCode: "PLAN_DELETE_BLOCKED",
         message:
           "Este plano está vinculado a atividades em andamento e não pode ser removido.",
       });
-    }
+    } */
 
     // Remove o plano
     await Plan.findByIdAndDelete(id);
