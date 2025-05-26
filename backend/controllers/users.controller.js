@@ -82,7 +82,6 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  // 400 Bad Request: email e password são obrigatórios
   if (!email || !password) {
     return res.status(400).json({
       errorCode: "LOGIN_BAD_REQUEST",
@@ -91,7 +90,6 @@ const loginUser = async (req, res) => {
   }
 
   try {
-    // 404 Not Found: utilizador não registado
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({
@@ -100,7 +98,6 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // 401 Unauthorized: credenciais inválidas
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       return res.status(401).json({
@@ -115,14 +112,13 @@ const loginUser = async (req, res) => {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    // 200 OK: retorna id e tipo do utilizador
     return res.status(200).json({
-      /* id: user._id,
-      type: user.type, */
+      // id: user._id,
+      //type: user.type,
       token,
+      
     });
   } catch (err) {
-    // 500 Internal Server Error
     return res.status(500).json({ message: "Erro interno no login." });
   }
 };
@@ -150,10 +146,10 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { name, email, password } = req.body;
+  const { name, email, type } = req.body;
 
   // 400 Bad Request: nenhum campo para atualizar ou dados inválidos
-  if (!name && !email && !password) {
+  if (!name && !email && !type) {
     return res.status(400).json({
       errorCode: "USER_DATA_INVALID",
       message:
@@ -162,15 +158,8 @@ const updateUser = async (req, res) => {
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const pwdRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$%\^&\*]).{8,}$/;
+  /* const pwdRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$%\^&\*]).{8,}$/; */
   if (email && !emailRegex.test(email)) {
-    return res.status(400).json({
-      errorCode: "USER_DATA_INVALID",
-      message:
-        "Dados inválidos. Verifique os campos obrigatórios e tente novamente.",
-    });
-  }
-  if (password && !pwdRegex.test(password)) {
     return res.status(400).json({
       errorCode: "USER_DATA_INVALID",
       message:
@@ -179,7 +168,6 @@ const updateUser = async (req, res) => {
   }
 
   try {
-    // 404 Not Found: utilizador não existe
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({
@@ -201,11 +189,8 @@ const updateUser = async (req, res) => {
     }
 
     if (name) user.name = name;
-    if (password) {
-      const hash = await bcrypt.hash(password, 10);
-      user.password = hash;
-    }
-
+    if (email) user.email = email;
+    if (type) user.type = type;
     await user.save();
 
     return res.status(200).json({

@@ -7,8 +7,7 @@
     <title>Admin - Eco Escolas</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="/Css/admin.css">
-
+    <link rel="stylesheet" href="./Css/admin.css">
 </head>
 
 <body>
@@ -20,27 +19,50 @@
             <li onclick="showSection('utilizadores')">Utilizadores</li>
             <li onclick="showSection('relatorios')">Relatórios</li>
             <li onclick="showSection('notificacoes')">Notificações</li>
-            <li><a href="index.html" class="logout-btn">Logout</a></li>
+            <li><a class="logout-btn">Logout</a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <div id="utilizadores" class="section">
-            <h1>Utilizadores</h1>
+            <h1>Gestão de Utilizadores</h1>
             <div class="section-tools">
                 <button onclick="openAddUserModal()">Adicionar</button>
-
-                <div id="addUserModal" class="modal" style="display:none;">
+                <form id="create-user-form" class="modal" style="display:none;">
                     <div class="modal-content">
                         <span class="close" onclick="closeAddUserModal()">&times;</span>
                         <h2>Adicionar Utilizador</h2>
-                        <input type="text" id="newUsername" placeholder="Nome de utilizador" />
-                        <input type="email" id="newEmail" placeholder="Email" />
-                        <input type="password" id="newPassword" placeholder="Password" />
-                        <button onclick="addUser()">Guardar</button>
+                        <input type="text" id="newUsername" name="name" placeholder="Nome de utilizador" required />
+                        <input type="email" id="newEmail" name="email" placeholder="Email" required />
+                        <select id="newType" name="type" placeholder="Tipo de utilizador" required>
+                            <option value="">Escolha o tipo</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Secretariado">Secretariado</option>
+                            <option value="Coordenador">Coordenador</option>
+                            <option value="Conselho Eco-Escolas">Conselho Eco-Escolas</option>
+                        </select>
+                        <input type="password" name="password" id="newPassword" placeholder="Password" required />
+                        <button type="submit">Criar Utilizador</button>
                     </div>
-                </div>
-                <input type="text" placeholder="Pesquisar...">
+                </form>
+                <form id="edit-user-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeEditUserModal()">&times;</span>
+                        <h2>Editar Utilizador</h2>
+                        <input type="text" id="editUsername" name="name" placeholder="Nome de utilizador" required />
+                        <input type="email" id="editEmail" name="email" placeholder="Email" required />
+                        <select id="editType" name="type" required>
+                            <option value="">Escolha o tipo</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Secretariado">Secretariado</option>
+                            <option value="Coordenador">Coordenador</option>
+                            <option value="Conselho Eco-Escolas">Conselho Eco-Escolas</option>
+                        </select>
+                        <button type="submit">Editar Utilizador</button>
+                    </div>
+                </form>
+
+                <input type="text" id="searchInput" placeholder="Pesquisar...">
             </div>
 
             <table class="user-table">
@@ -48,36 +70,14 @@
                     <tr>
                         <th>Nome</th>
                         <th>E-mail</th>
-                        <th>Password</th>
+                        <th>Tipo</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="userTbody">
-                    <tr id="row-admin">
-                        <td>admin</td>
-                        <td class="email-cell">admin123@gmail.com</td>
-                        <td class="pass-cell">12345</td>
-                        <td>
-                            <button class="edit-btn" onclick="openEditModal('admin')">Editar</button>
-                            <button class="delete-btn" onclick="eliminarUtilizador('admin')">Eliminar</button>
-                        </td>
-                    </tr>
+
                 </tbody>
             </table>
-        </div>
-
-        <div id="editModal">
-            <div class="modal-content">
-                <h3>Edição de utilizador: <span id="editUsername"></span></h3>
-                <label for="editEmail">E-mail</label>
-                <input type="email" id="editEmail" required>
-                <label for="editPassword">Password</label>
-                <input type="text" id="editPassword" required>
-                <div class="actions">
-                    <button class="save-btn" onclick="saveUserChanges()">Gravar</button>
-                    <button class="cancel-btn" onclick="closeEditModal()">Cancelar</button>
-                </div>
-            </div>
         </div>
 
         <div id="atividades" class="section active">
@@ -199,7 +199,11 @@
 
 
     </div>
-    <script src="./Js/admin.js"></script>
+
+
+
+    <script type="module" src="/Js/users/usersEvents.js"></script>
+    <script src="/Js/users/userUI.js"></script>
 </body>
 
 </html>
