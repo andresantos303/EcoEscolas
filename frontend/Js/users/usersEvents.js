@@ -65,6 +65,8 @@ function setupCreateUserForm() {
       password: form.password.value,
       type: form.type.value,
     };
+    console.log(userData);
+    
 
     try {
       await createUser(userData);
