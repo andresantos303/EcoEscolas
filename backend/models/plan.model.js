@@ -1,15 +1,16 @@
 const mongoose = require("mongoose");
 
 const planSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  nome: { type: String, required: true },
+  descricao: { type: String, required: true },
   associatedActivities: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Activity" },
   ],
-  startDate: { type: Date },
-  endDate: { type: Date },
-  status: { type: String },
-  resources: { type: String },
-  level: { type: String },
+  data_inicio: { type: String, required: true },
+  data_fim: { type: String, required: true },
+  estado: { type: Boolean, required: true },
+  recursos: { type: String, required: true },
+  nivel: { type: Number, required: true },
   createdUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
