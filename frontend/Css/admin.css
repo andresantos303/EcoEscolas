@@ -228,7 +228,6 @@
             top: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.4);
             justify-content: center;
             align-items: center;
         }
@@ -255,40 +254,41 @@
             cursor: pointer;
         }
 
-        #addUserModal {
-            display: none;
+        #create-user-form {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 20%;
+            left: 40%;
             z-index: 1100;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        #addUserModal .modal-content {
+        #create-user-form .modal-content {
             background: #fff;
             padding: 30px 40px;
             width: 350px;
             border-radius: 5px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
             text-align: center;
             position: relative;
             font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        #addUserModal .modal-content h2 {
+        #create-user-form .modal-content h2 {
             margin-bottom: 25px;
             font-weight: 700;
             color: #2c3e50;
         }
 
-        #addUserModal .modal-content input[type="text"],
-        #addUserModal .modal-content input[type="email"],
-        #addUserModal .modal-content input[type="password"] {
+        #create-user-form .modal-content input[type="text"],
+        #create-user-form .modal-content input[type="email"],
+        #create-user-form .modal-content input[type="password"] {
             width: 100%;
             padding: 12px 15px;
             margin: 12px 0;
@@ -298,14 +298,14 @@
             transition: border-color 0.3s ease;
         }
 
-        #addUserModal .modal-content input[type="text"]:focus,
-        #addUserModal .modal-content input[type="email"]:focus,
-        #addUserModal .modal-content input[type="password"]:focus {
+        #create-user-form .modal-content input[type="text"]:focus,
+        #create-user-form .modal-content input[type="email"]:focus,
+        #create-user-form .modal-content input[type="password"]:focus {
             border-color: #4caf50;
             outline: none;
         }
 
-        #addUserModal .modal-content button {
+        #create-user-form .modal-content button {
             background-color: #4caf50;
             color: white;
             border: none;
@@ -318,12 +318,12 @@
             width: 100%;
         }
 
-        #addUserModal .modal-content button:hover {
+        #create-user-form .modal-content button:hover {
             background-color: #45a049;
             transform: scale(1.05);
         }
 
-        #addUserModal .modal-content .close {
+        #create-user-form .modal-content .close {
             position: absolute;
             top: 15px;
             right: 20px;
@@ -334,7 +334,7 @@
             transition: color 0.3s ease;
         }
 
-        #addUserModal .modal-content .close:hover {
+        #create-user-form .modal-content .close:hover {
             color: #4caf50;
         }
 
@@ -382,7 +382,7 @@
         }
 
         #addPlanoModal .modal-content input:focus {
-            border-color: #4caf50;  
+            border-color: #4caf50;
             outline: none;
         }
 
@@ -653,12 +653,12 @@
             }
 
             .modal-content,
-            #addUserModal .modal-content {
+            #create-user-form .modal-content {
                 width: 90%;
                 padding: 15px 20px;
             }
 
-            #addUserModal .modal-content button {
+            #create-user-form .modal-content button {
                 padding: 10px 15px;
             }
         }

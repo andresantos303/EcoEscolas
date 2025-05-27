@@ -6,15 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/frontend/Css/login.css">
-
+    <link rel="stylesheet" href="./Css/login.css">
 </head>
 
 <body>
     <div class="login-container">
-        <form class="login-form" onsubmit="return handleLogin(event)">
+        <form id="login-form" class="login-form">
             <h2>Iniciar Sessão</h2>
-
 
             <div class="input-group">
                 <label for="email">Email</label>
@@ -35,10 +33,12 @@
             </div>
 
             <button type="submit" class="login-btn">Entrar</button>
-
+            <p id="error-message" style="color: red;"></p>
         </form>
     </div>
-    <script src="./Js/login.js"></script>
+   
+
+<script type="module" src="./Js/auth/authEvents.js"></script>
 </body>
 
 </html>
