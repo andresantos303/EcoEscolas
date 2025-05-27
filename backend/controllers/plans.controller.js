@@ -74,9 +74,6 @@ const createPlan = async (req, res) => {
     recursos,
   } = req.body;
 
-  user = req.user;
-  console.log(user);
-
   // 400 Bad Request: campos obrigatórios em falta
   if (!nome || !descricao || !data_inicio || !data_fim || !estado || !nivel || !recursos) {
     return res.status(400).json({
@@ -120,7 +117,7 @@ const createPlan = async (req, res) => {
       estado,
       associatedActivities: associatedActivities || [],
       recursos,
-      createdUserId: user.userId, // ID do user que criou o plano
+      createdUserId: req.user.userId, // ID do user que criou o plano
     });
     console.log(plan);
     await plan.save();

@@ -21,7 +21,7 @@ const deleteNotification = async (req, res) => {
       }
   
       // 403 Forbidden: apenas o criador pode remover
-      if (notification.createdUserId.toString() !== req.user.id) {
+      if (notification.createdUserId.toString() !== req.user.userId) {
         return res.status(403).json({
           errorCode: "NOTIFICATION_DELETE_UNAUTHORIZED",
           message: "Apenas o criador da notificação pode removê-la.",
@@ -50,14 +50,6 @@ const getNotificationById = async (req, res) => {
       });
     }
   
-    // 403 Forbidden: apenas Admins podem obter detalhes de atividades
-    if (req.user.type !== "Admin") {
-      return res.status(403).json({
-        errorCode: "NOTIFICATION_REGISTRATION_UNAUTHORIZED",
-        message: "Não tem permissões para realizar esta ação",
-      });
-    }
-  
     try {
       const notification = await Notification.findById(req.params.id);
       if (!notification) {
@@ -83,18 +75,10 @@ const getAllNotifications = async (req, res) => {
       });
     }
   
-    // 403 Forbidden: apenas Admins podem listar atividades
-    if (req.user.type !== "Admin") {
-      return res.status(403).json({
-        errorCode: "NOTIFICATION_REGISTRATION_UNAUTHORIZED",
-        message: "Não tem permissões para realizar esta ação",
-      });
-    }
-  
     try {
       const filter = {};
-      if (req.query.date) filter.date = req.query.date;
-      if (req.query.body) filter.body = req.query.body;
+      if (req.query.titulo) filter.titulo = req.query.titulo;
+      filter.createdUserId = req.user.userId; // Filtra notificações do user atual
   
       const notification = await Notification.find(filter);
       return res.status(200).json({ notification });
@@ -114,18 +98,10 @@ const getAllNotifications = async (req, res) => {
       });
     }
   
-    // 403 Forbidden
-     if (req.user.type !== 'Admin') {
-       return res.status(403).json({
-         errorCode: "ACTIVITY_REGISTRATION_UNAUTHORIZED",
-         message: "Não tem permissões para realizar esta ação",
-      });
-     }
-  
-    const { body, associatedUsers } = req.body;
+    const { titulo, corpo, associatedRoles } = req.body;
   
     // 400 Bad Request
-    if (!body || !associatedUsers || !Array.isArray(associatedUsers) || associatedUsers.length === 0) {
+    if (!titulo || !corpo || !associatedRoles || !Array.isArray(associatedRoles) || associatedRoles.length === 0) {
       return res.status(400).json({
         errorCode: "NOTIFICATION_BAD_REQUEST",
         message: "Texto da notificação e utilizadores associados são obrigatórios.",
@@ -134,13 +110,13 @@ const getAllNotifications = async (req, res) => {
   
     try {
       const newNotification = new Notification({
-        body,
-        associatedUsers,
-        createdUserId: req.user.id,
+        titulo,
+        corpo,
+        associatedRoles,
+        createdUserId: req.user.userId,
       });
-  
       await newNotification.save();
-  
+
       return res.status(201).json({
         message: "Notificação criada com sucesso!",
         notificacaoId: newNotification._id,

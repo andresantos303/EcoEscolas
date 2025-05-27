@@ -5,7 +5,9 @@ const router = express.Router();
 
 // include controller functions
 const notificationsController= require('../controllers/notifications.controller.js');
+const authMiddleware = require('../auth.js');
 
+router.use(authMiddleware);
 
 // DELETE /notifications/:id — remove uma notificação
 router.delete("/:id", notificationsController.deleteNotification);
