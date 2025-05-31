@@ -254,6 +254,7 @@
             cursor: pointer;
         }
 
+
         #create-user-form {
             position: fixed;
             top: 20%;
@@ -338,40 +339,44 @@
             color: #4caf50;
         }
 
-        #addPlanoModal {
-            display: none;
+
+         #create-plan-form {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 2%;
+            left: 40%;
             z-index: 1100;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        #addPlanoModal .modal-content {
+         #create-plan-form .modal-content {
             background: #fff;
             padding: 30px 40px;
             width: 350px;
             border-radius: 5px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
             text-align: center;
             position: relative;
             font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
 
-        #addPlanoModal .modal-content h2 {
+        #create-plan-form .modal-content h2 {
             margin-bottom: 25px;
             font-weight: 700;
             color: #2c3e50;
         }
 
-        #addPlanoModal .modal-content input[type="text"],
-        #addPlanoModal .modal-content input[type="date"] {
+        #create-plan-form .modal-content input[type="text"],
+        #create-plan-form .modal-content textarea[type="text"],
+        #create-plan-form .modal-content input[type="number"],
+        #create-plan-form .modal-content input[type="date"] {
             width: 100%;
             padding: 12px 15px;
             margin: 12px 0;
@@ -381,12 +386,12 @@
             transition: border-color 0.3s ease;
         }
 
-        #addPlanoModal .modal-content input:focus {
+        #create-plan-form .modal-content input:focus {
             border-color: #4caf50;
             outline: none;
         }
 
-        #addPlanoModal .modal-content button {
+        #create-plan-form .modal-content button {
             background-color: #4caf50;
             color: white;
             border: none;
@@ -399,12 +404,12 @@
             width: 100%;
         }
 
-        #addPlanoModal .modal-content button:hover {
+        #create-plan-form .modal-content button:hover {
             background-color: #45a049;
             transform: scale(1.05);
         }
 
-        #addPlanoModal .modal-content .close {
+        #create-plan-form .modal-content .close {
             position: absolute;
             top: 15px;
             right: 20px;
@@ -415,7 +420,7 @@
             transition: color 0.3s ease;
         }
 
-        #addPlanoModal .modal-content .close:hover {
+        #create-plan-form .modal-content .close:hover {
             color: #4caf50;
         }
 

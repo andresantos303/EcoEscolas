@@ -94,68 +94,59 @@
         <div id="planoatividades" class="section">
             <h1>Plano de Atividades</h1>
             <div class="section-tools">
-                <div class="buttons">
-                    <button onclick="document.getElementById('addPlanoModal').style.display = 'flex'">Adicionar</button>
-                </div>
-                <input type="text" placeholder="Pesquisar...">
+                <button onclick="openAddPlanModal()">Adicionar</button>
+                <form id="create-plan-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeAddPlanModal()">&times;</span>
+                        <h2>Adicionar Plano</h2>
+                        <input type="text" id="newPlanname" name="name" placeholder="Nome de Plano" required />
+                        <textarea type="text" id="newPlandescription" name="description" placeholder="Descrição"
+                            required></textarea>
+                        <input type="date" id="newFirstDate" name="firstDate" placeholder="Data-Inicio" required />
+                        <input type="date" id="newLastDate" name="lastDate" placeholder="Data-Fim" required />
+                        <label for="newPlanStatus">
+                            Ativo:
+                            <input type="checkbox" id="newPlanStatus" name="status" />
+                        </label>
+                        <input type="number" id="newLevel" name="planLevel" placeholder="Nível" required />
+                        <input type="text" id="newPlanresource" name="planResource" placeholder="Recursos" required />
+                        <button type="submit">Criar Plano</button>
+                    </div>
+                </form>
+                <form id="edit-plan-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeEditPlanModal()">&times;</span>
+                        <h2>Editar Plano</h2>
+                        <input type="text" id="editPlanname" name="name" placeholder="Nome de Plano" required />
+                        <input type="text" id="editPlandescription" name="description" placeholder="Descrição"
+                            required />
+                        <input type="date" id="editFirstDate" name="firstDate" placeholder="Descrição" required />
+                        <input type="date" id="editLastDate" name="lastDate" placeholder="Descrição" required />
+                        <input type="number" id="editLevel" name="planLevel" placeholder="Descrição" required />
+                        <button type="submit">Editar Plano</button>
+                    </div>
+                </form>
+                <input type="text" id="searchPlanInput" placeholder="Pesquisar...">
             </div>
 
             <table class="user-table">
                 <thead>
                     <tr>
                         <th>Nome</th>
+                        <th>Descrição</th>
                         <th>Data de Início</th>
                         <th>Data de Fim</th>
-                        <th>Status</th>
-                        <th>Resource</th>
-                        <th>Level</th>
+                        <th>Estado</th>
+                        <th>Nivel</th>
+                        <th>Recursos</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="planoTbody">
-                    <tr>
-                        <td>Projeto Reciclagem</td>
-                        <td>2025-01-10</td>
-                        <td>2025-03-20</td>
-                        <td>Ativo</td>
-                        <td>Recursos Humanos</td>
-                        <td>Alto</td>
-                        <td>
-                            <button onclick="openEditPlanoModal(this)" class="edit-btn">Editar</button>
-                            <button onclick="deletePlano(this)" class="delete-btn">Eliminar</button>
-                        </td>
+                <tbody id="planTbody">
+
                     </tr>
                 </tbody>
             </table>
-        </div>
-
-        <div id="addPlanoModal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <span class="close"
-                    onclick="document.getElementById('addPlanoModal').style.display='none'">&times;</span>
-                <h2>Adicionar Plano de Atividades</h2>
-                <input type="text" id="planoNome" placeholder="Nome">
-                <input type="date" id="planoInicio" placeholder="Data de Início">
-                <input type="date" id="planoFim" placeholder="Data de Fim">
-                <input type="text" id="planoStatus" placeholder="Status">
-                <input type="text" id="planoResource" placeholder="Resource">
-                <input type="text" id="planoLevel" placeholder="Level">
-                <button onclick="salvarPlano()">Guardar</button>
-            </div>
-        </div>
-
-        <div id="editPlanoModal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <span class="close" onclick="closeEditPlanoModal()">&times;</span>
-                <h2>Editar Plano</h2>
-                <input id="editPlanoNome" type="text" placeholder="Nome">
-                <input id="editPlanoDataInicio" type="date" placeholder="Data de Início">
-                <input id="editPlanoDataFim" type="date" placeholder="Data de Fim">
-                <input id="editPlanoStatus" type="text" placeholder="Status">
-                <input id="editPlanoResource" type="text" placeholder="Resource">
-                <input id="editPlanoLevel" type="text" placeholder="Level">
-                <button onclick="savePlanoChanges()">Guardar</button>
-            </div>
         </div>
 
         <div id="relatorios" class="section">
@@ -203,7 +194,9 @@
 
 
     <script type="module" src="/Js/users/usersEvents.js"></script>
+    <script type="module" src="/Js/plans/planEvents.js"></script>
     <script src="/Js/users/userUI.js"></script>
+    <script src="/Js/plans/planUI.js"></script>
 </body>
 
 </html>
