@@ -91,5 +91,5 @@ const graficoAtividades = new Chart(ctx, {
         beginAtZero: true,
       },
     },
-  },
-});
+  }
+})

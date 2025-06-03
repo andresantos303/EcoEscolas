@@ -9,16 +9,25 @@ module.exports = (resource, action) => {
       });
     }
 
+
+    // USERS PERMISSIONS
     if (resource === "users") {
-      if (action === "read" && user.type === "Admin") return next();
-      if (action === "create" && user.type === "Admin") return next();
-      if (action === "update" && user.type === "Admin") return next();
-      if (action === "delete" && user.type === "Admin") return next();
+      if (user.type === "Admin" || user.type === "Coordenador") return next();
+
       if (action === "readById") {
         const requestedId = req.params.id;
-        if (user.type === "Admin" || user.userId === requestedId) return next();
+        if (user.userId === requestedId) return next();
       }
     }
+
+    // PLANS PERMISSIONS
+    if (resource === "plans") {
+      if (user.type === "Admin" || user.type === "Coordenador") {
+        return next();
+      }
+    }
+
+    //ACTIVITIES PERMISSIONS
 
     return res.status(403).json({
       errorCode: "AUTH_FORBIDDEN",

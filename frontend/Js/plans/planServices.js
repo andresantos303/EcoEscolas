@@ -21,6 +21,21 @@ export async function getAllPlans() {
     }
 }
 
+export async function getPlanById(planId) {
+  try {
+    const response = await axios.get(`${API_URL}/plans/${planId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao obter plano pelo ID:', error);
+    throw error;
+  }
+}
+
+
 export async function createPlan(planData) {
 
     try {
@@ -35,4 +50,34 @@ export async function createPlan(planData) {
         console.error('Erro ao criar Plano de Atividades:', error);
         throw error;
     }
+}
+
+export async function deletePlan(planId) {
+
+  try {
+    const response = await axios.delete(`${API_URL}/plans/${planId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao eliminar Plano:', error);
+    throw error;
+  }
+}
+
+export async function updatePlan(planId, updatedData) {
+  try {
+    const response = await axios.patch(`${API_URL}/plans/${planId}`, updatedData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao atualizar plano:', error);
+    throw error;
+  }
 }
