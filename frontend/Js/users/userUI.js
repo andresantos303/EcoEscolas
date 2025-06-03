@@ -12,18 +12,6 @@ function closeEditUserModal() {
   document.getElementById('edit-user-form').style.display = 'none';
 }
 
-function saveUserChanges() {
-    const username = document.getElementById('editUsername').textContent;
-    const email = document.getElementById('editEmail').value.trim();
-    const password = document.getElementById('editPassword').value.trim();
-    if (!email || !password) { alert('Preenche ambos os campos'); return; }
-
-    users[username] = { email, password };
-    saveUsers(users);
-    renderUsers();
-    closeEditModal();
-}
-
 
 function openAddUserModal() {
     document.getElementById('create-user-form').style.display = 'block';
@@ -32,6 +20,10 @@ function openAddUserModal() {
 function closeAddUserModal() {
     document.getElementById('create-user-form').style.display = 'none';
 }
+
+
+
+
 
 
 window.addEventListener("DOMContentLoaded", () => {

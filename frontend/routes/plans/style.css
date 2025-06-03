@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+}
+
+.planIdSection {
+  margin-left: 250px; 
+  padding: 40px;
+  background-color: #ffffff;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.planIdSection h1 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 28px;
+}
+
+#planDetails p {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+#planDetails strong {
+  color: #34495e;
+}
