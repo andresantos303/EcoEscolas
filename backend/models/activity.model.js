@@ -14,6 +14,7 @@ const activitySchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    participantsCount: { type: Number },
     participants: {
       type: [
         {

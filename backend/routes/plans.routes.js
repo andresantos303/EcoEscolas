@@ -13,6 +13,7 @@ router.get('/', checkPermissions('plans', 'read'), plansController.getAllPlans);
 router.get('/:id', checkPermissions('plans', 'readById'), plansController.getPlanById);
 router.post('/', checkPermissions('plans', 'create'), plansController.createPlan);
 router.patch('/:id', checkPermissions('plans', 'update'), plansController.updatePlan);
+router.put('/:id', checkPermissions('plans', 'update'), plansController.finalizePlan);
 router.delete('/:id', checkPermissions('plans', 'delete'), plansController.deletePlan);
 
 module.exports = router;

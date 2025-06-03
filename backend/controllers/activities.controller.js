@@ -153,6 +153,12 @@ const createActivity = async (req, res) => {
       await user.save();
     }
 
+    await enviarEmailNotificação(
+      "Secretariado",
+      `Criação da Atividade ${nome}`,
+      `O utilizador ${user.name} criou a atividades "${nome}" com a data ${data} e está incluida no plano ${plan.nome}.`
+    );
+
     return res.status(201).json({
       message: "Atividade registrada com sucesso!",
       atividadeId: activity._id,
@@ -331,6 +337,54 @@ const deleteActivity = async (req, res) => {
   }
 };
 
+const finalizeActivity = async (req, res) => {
+
+  // 403 Forbidden: apenas Coordenador ou Admin
+  const role = req.user.type;
+  if (role !== "Secretariado" && role !== "Admin") {
+    return res.status(403).json({
+      errorCode: "PLAN_CREATION_UNAUTHORIZED",
+      message: "Não tem permissões para realizar esta ação",
+    });
+  }
+
+  const { id } = req.params;
+  const { participantsCount } = req.body;
+
+  try {
+    // 404 Not Found: atividade não existe
+    const activity = await Activity.findById(id);
+    if (!activity) {
+      return res.status(404).json({
+        errorCode: "ACTIVITY_NOT_FOUND",
+        message: "A atividade solicitada não foi encontrada.",
+      });
+    }    
+
+    // 409 Conflict: data de fim é superior à data atual
+    const currentDate = new Date();
+    if (new Date(activity.data) > currentDate) {
+      return res.status(409).json({
+        errorCode: "ACTIVITY_FINALIZE_BLOCKED",
+        message: "A data da atividade é superior à data atual.",
+      });
+    }
+
+    // Atualizar estado a atividade e adicionar a contagem de participantes
+    await Activity.findByIdAndUpdate(id, {
+      estado: false,
+      participantsCount: participantsCount,
+    });
+    return res.status(200).json({
+      message: "Atividade finalizada com sucesso.",
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Erro interno ao remover atividade." });
+  }
+};
+
 module.exports = {
   getAllActivities,
   getActivityById,
@@ -338,4 +392,5 @@ module.exports = {
   addParticipant,
   updateActivity,
   deleteActivity,
+  finalizeActivity,
 };
