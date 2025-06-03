@@ -17,8 +17,8 @@
             <li onclick="showSection('atividades')">Atividades</li>
             <li onclick="showSection('planoatividades')">Plano de Atividades</li>
             <li onclick="showSection('utilizadores')">Utilizadores</li>
-            <li onclick="showSection('relatorios')">Relatórios</li>
             <li onclick="showSection('notificacoes')">Notificações</li>
+            <li onclick="showSection('perfil')">Perfil</li>
             <li><a class="logout-btn">Logout</a></li>
         </ul>
     </div>
@@ -149,13 +149,23 @@
             </table>
         </div>
 
-        <div id="relatorios" class="section">
-            <h1>Relatórios</h1>
-            <div class="section-tools">
-                <div class="buttons">
-                    <button>Adicionar</button>
+        <div id="perfil" class="section">
+            <h1>Perfil</h1>
+            <div class="profile-container">
+                <div class="profile-card">
+                    <h2 class="card-title">Alterar Perfil</h2>
+                    <form onsubmit="editOneUser()" id="meuPerfil" method="post">
+                        <!-- informações enviadas pela bd -->
+                    </form>
                 </div>
-                <input type="text" placeholder="Pesquisar...">
+
+                <!-- Cartão de atividades associadas -->
+                <div class="activities-card">
+                    <h3 class="card-title">Atividades associadas</h3>
+                    <ul class="activities-list" id="listaAtividades">
+                        <!-- informações enviadas pela bd -->
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -193,10 +203,11 @@
 
 
 
-    <script type="module" src="/Js/users/usersEvents.js"></script>
-    <script type="module" src="/Js/plans/planEvents.js"></script>
-    <script src="/Js/users/userUI.js"></script>
-    <script src="/Js/plans/planUI.js"></script>
+    <script type="module" src="./Js/users/usersEvents.js"></script>
+    <script type="module" src="./Js/plans/planEvents.js"></script>
+    <script src="./Js/users/userUI.js"></script>
+    <script src="./Js/plans/planUI.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
 </body>
 
 </html>
