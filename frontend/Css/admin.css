@@ -1,669 +1,787 @@
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-
-        .sidebar {
-            width: 200px;
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px;
-            height: 100vh;
-            position: fixed;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            padding: 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #34495e;
-            text-align: center;
-        }
-
-        .sidebar ul li:hover {
-            background-color: #34495e;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            width: 100%;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .logout-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #34495e;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            font-size: 16px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .logout-btn:hover {
-            background-color: #2c3e50;
-            transform: scale(1.05);
-        }
-
-        .logout-btn:active {
-            background-color: #1a252f;
-        }
-
-        .section {
-            display: none;
-            padding: 20px;
-        }
-
-        .section h1 {
-            text-align: center;
-            font-weight: 700;
-            font-size: 2rem;
-            margin-bottom: 40px;
-            color: #2c3e50;
-        }
-
-        .section-tools {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .section-tools .buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .section-tools input[type="text"] {
-            padding: 8px;
-            width: 200px;
-        }
-
-        .section-tools button {
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-
-        .active {
-            display: block;
-        }
-
-        .user-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-family: 'Poppins', sans-serif
-        }
-
-        .user-table th,
-        .user-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #ddd;
-            text-align: left
-        }
-
-        .user-table th {
-            background: #f0f0f0;
-            font-weight: 600
-        }
-
-        .edit-btn,
-        .delete-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500
-        }
-
-        .edit-btn {
-            background: #4CAF50;
-            color: #fff;
-            margin-right: 5px
-        }
-
-        .delete-btn {
-            background: #f44336;
-            color: #fff
-        }
-
-        .edit-btn:hover {
-            background: #45a049
-        }
-
-        .delete-btn:hover {
-            background: #e53935
-        }
-
-        #editModal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .5);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000
-        }
-
-        #editModal .modal-content {
-            background: #fff;
-            padding: 24px 32px;
-            border-radius: 5px;
-            min-width: 280px;
-            max-width: 90%;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, .2)
-        }
-
-        #editModal label {
-            display: block;
-            margin-top: 12px;
-            font-weight: 600
-        }
-
-        #editModal input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 4px;
-            border: 1px solid #ccc;
-            border-radius: 4px
-        }
-
-        #editModal .actions {
-            margin-top: 20px;
-            text-align: right
-        }
-
-        #editModal button {
-            padding: 8px 14px;
-            border: none;
-            border-radius: 5px;
-            font-weight: 500;
-            cursor: pointer
-        }
-
-        #editModal .save-btn {
-            background: #4CAF50;
-            color: #fff;
-            margin-right: 6px
-        }
-
-        #editModal .cancel-btn {
-            background: #bbb;
-            color: #fff
-        }
-
-        #editModal .save-btn:hover {
-            background: #45a049
-        }
-
-        #editModal .cancel-btn:hover {
-            background: #999
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100vw;
-            height: 100vh;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 400px;
-            max-width: 90%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-content input {
-            display: block;
-            margin: 10px auto;
-            padding: 8px;
-            width: 90%;
-        }
-
-        .modal-content .close {
-            float: right;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-
-        #create-user-form {
-            position: fixed;
-            top: 20%;
-            left: 40%;
-            z-index: 1100;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #create-user-form .modal-content {
-            background: #fff;
-            padding: 30px 40px;
-            width: 350px;
-            border-radius: 5px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            position: relative;
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #create-user-form .modal-content h2 {
-            margin-bottom: 25px;
-            font-weight: 700;
-            color: #2c3e50;
-        }
-
-        #create-user-form .modal-content input[type="text"],
-        #create-user-form .modal-content input[type="email"],
-        #create-user-form .modal-content input[type="password"] {
-            width: 100%;
-            padding: 12px 15px;
-            margin: 12px 0;
-            border: 1.8px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        #create-user-form .modal-content input[type="text"]:focus,
-        #create-user-form .modal-content input[type="email"]:focus,
-        #create-user-form .modal-content input[type="password"]:focus {
-            border-color: #4caf50;
-            outline: none;
-        }
-
-        #create-user-form .modal-content button {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            margin-top: 20px;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            width: 100%;
-        }
-
-        #create-user-form .modal-content button:hover {
-            background-color: #45a049;
-            transform: scale(1.05);
-        }
-
-        #create-user-form .modal-content .close {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 24px;
-            font-weight: 700;
-            color: #999;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        #create-user-form .modal-content .close:hover {
-            color: #4caf50;
-        }
-
-
-         #create-plan-form {
-            position: fixed;
-            top: 2%;
-            left: 40%;
-            z-index: 1100;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-         #create-plan-form .modal-content {
-            background: #fff;
-            padding: 30px 40px;
-            width: 350px;
-            border-radius: 5px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            position: relative;
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-
-        #create-plan-form .modal-content h2 {
-            margin-bottom: 25px;
-            font-weight: 700;
-            color: #2c3e50;
-        }
-
-        #create-plan-form .modal-content input[type="text"],
-        #create-plan-form .modal-content textarea[type="text"],
-        #create-plan-form .modal-content input[type="number"],
-        #create-plan-form .modal-content input[type="date"] {
-            width: 100%;
-            padding: 12px 15px;
-            margin: 12px 0;
-            border: 1.8px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        #create-plan-form .modal-content input:focus {
-            border-color: #4caf50;
-            outline: none;
-        }
-
-        #create-plan-form .modal-content button {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            margin-top: 20px;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            width: 100%;
-        }
-
-        #create-plan-form .modal-content button:hover {
-            background-color: #45a049;
-            transform: scale(1.05);
-        }
-
-        #create-plan-form .modal-content .close {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 24px;
-            font-weight: 700;
-            color: #999;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        #create-plan-form .modal-content .close:hover {
-            color: #4caf50;
-        }
-
-        #editPlanoModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1100;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #editPlanoModal .modal-content {
-            background: #fff;
-            padding: 30px 40px;
-            width: 350px;
-            border-radius: 5px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            text-align: center;
-            position: relative;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        #editPlanoModal .modal-content h2 {
-            margin-bottom: 25px;
-            font-weight: 700;
-            color: #2c3e50;
-        }
-
-        #editPlanoModal .modal-content input[type="text"],
-        #editPlanoModal .modal-content input[type="date"] {
-            width: 100%;
-            padding: 12px 15px;
-            margin: 12px 0;
-            border: 1.8px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        #editPlanoModal .modal-content input:focus {
-            border-color: #4caf50;
-            outline: none;
-        }
-
-        #editPlanoModal .modal-content button {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            margin-top: 20px;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            width: 100%;
-        }
-
-        #editPlanoModal .modal-content button:hover {
-            background-color: #45a049;
-            transform: scale(1.05);
-        }
-
-        #editPlanoModal .modal-content .close {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 24px;
-            font-weight: 700;
-            color: #999;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        #editPlanoModal .modal-content .close:hover {
-            color: #4caf50;
-        }
-
-
-        .notificacao-form {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 50px 40px;
-            width: 100%;
-            max-width: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            box-sizing: border-box;
-        }
-
-
-        .section#notificacoes {
-            width: 99%;
-        }
-
-        .notificacao-form .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-        }
-
-        .notificacao-form label {
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        .notificacao-form input,
-        .notificacao-form textarea {
-            padding: 20px;
-            font-size: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            transition: border-color 0.3s;
-        }
-
-        .notificacao-form input:focus,
-        .notificacao-form textarea:focus {
-            border-color: grey;
-            outline: none;
-        }
-
-        .btn-enviar {
-            background-color: grey;
-            color: white;
-            padding: 15px 25px;
-            border: none;
-            font-weight: 600;
-            font-size: 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .btn-enviar:hover {
-            background-color: black;
-        }
-
-        @media (max-width: 900px) {
-            body {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                padding: 10px 0;
-                display: flex;
-                justify-content: center;
-            }
-
-            .sidebar ul {
-                display: flex;
-                width: 100%;
-                justify-content: space-around;
-            }
-
-            .sidebar ul li {
-                border-bottom: none;
-                border-right: 1px solid #34495e;
-                padding: 10px;
-                flex: 1;
-                text-align: center;
-            }
-
-            .sidebar ul li:last-child {
-                border-right: none;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 15px 10px;
-                width: 100%;
-            }
-
-            .section-tools {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .section-tools input[type="text"] {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .sidebar ul {
-                flex-direction: column;
-            }
-
-            .sidebar ul li {
-                border-right: none;
-                border-bottom: 1px solid #34495e;
-                padding: 12px 0;
-            }
-
-            .main-content {
-                padding: 10px 5px;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-                margin-bottom: 20px;
-            }
-
-            .section-tools {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .section-tools input[type="text"] {
-                width: 100%;
-            }
-
-            .section-tools .buttons button {
-                width: 100%;
-            }
-
-            .user-table th,
-            .user-table td {
-                padding: 8px 10px;
-                font-size: 0.9rem;
-            }
-
-            .edit-btn,
-            .delete-btn {
-                padding: 5px 8px;
-                font-size: 0.85rem;
-            }
-
-            .modal-content,
-            #create-user-form .modal-content {
-                width: 90%;
-                padding: 15px 20px;
-            }
-
-            #create-user-form .modal-content button {
-                padding: 10px 15px;
-            }
-        }
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #2c3e50;
+  color: white;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #34495e;
+  text-align: center;
+}
+
+.sidebar ul li:hover {
+  background-color: #34495e;
+}
+
+.main-content {
+  margin-left: 250px;
+  padding: 20px;
+  width: 100%;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.logout-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #34495e;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #2c3e50;
+  transform: scale(1.05);
+}
+
+.logout-btn:active {
+  background-color: #1a252f;
+}
+
+.section {
+  display: none;
+  padding: 20px;
+}
+
+.section h1 {
+  text-align: center;
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: #2c3e50;
+}
+
+.section-tools {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-tools .buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.section-tools input[type="text"] {
+  padding: 8px;
+  width: 200px;
+}
+
+.section-tools button {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.active {
+  display: block;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.user-table th,
+.user-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.user-table th {
+  background: #f0f0f0;
+  font-weight: 600;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.edit-btn {
+  background: #4caf50;
+  color: #fff;
+  margin-right: 5px;
+}
+
+.delete-btn {
+  background: #f44336;
+  color: #fff;
+}
+
+.edit-btn:hover {
+  background: #45a049;
+}
+
+.delete-btn:hover {
+  background: #e53935;
+}
+
+#editModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#editModal .modal-content {
+  background: #fff;
+  padding: 24px 32px;
+  border-radius: 5px;
+  min-width: 280px;
+  max-width: 90%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#editModal label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+#editModal input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#editModal .actions {
+  margin-top: 20px;
+  text-align: right;
+}
+
+#editModal button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+#editModal .save-btn {
+  background: #4caf50;
+  color: #fff;
+  margin-right: 6px;
+}
+
+#editModal .cancel-btn {
+  background: #bbb;
+  color: #fff;
+}
+
+#editModal .save-btn:hover {
+  background: #45a049;
+}
+
+#editModal .cancel-btn:hover {
+  background: #999;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content input {
+  display: block;
+  margin: 10px auto;
+  padding: 8px;
+  width: 90%;
+}
+
+.modal-content .close {
+  float: right;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#create-user-form {
+  position: fixed;
+  top: 20%;
+  left: 40%;
+  z-index: 1100;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#create-user-form .modal-content {
+  background: #fff;
+  padding: 30px 40px;
+  width: 350px;
+  border-radius: 5px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#create-user-form .modal-content h2 {
+  margin-bottom: 25px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+#create-user-form .modal-content input[type="text"],
+#create-user-form .modal-content input[type="email"],
+#create-user-form .modal-content input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 12px 0;
+  border: 1.8px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+#create-user-form .modal-content input[type="text"]:focus,
+#create-user-form .modal-content input[type="email"]:focus,
+#create-user-form .modal-content input[type="password"]:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+#create-user-form .modal-content button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  margin-top: 20px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+
+#create-user-form .modal-content button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+#create-user-form .modal-content .close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+#create-user-form .modal-content .close:hover {
+  color: #4caf50;
+}
+
+#create-plan-form {
+  position: fixed;
+  top: 2%;
+  left: 40%;
+  z-index: 1100;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#create-plan-form .modal-content {
+  background: #fff;
+  padding: 30px 40px;
+  width: 350px;
+  border-radius: 5px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#create-plan-form .modal-content h2 {
+  margin-bottom: 25px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+#create-plan-form .modal-content input[type="text"],
+#create-plan-form .modal-content textarea[type="text"],
+#create-plan-form .modal-content input[type="number"],
+#create-plan-form .modal-content input[type="date"] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 12px 0;
+  border: 1.8px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+#create-plan-form .modal-content input:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+#create-plan-form .modal-content button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  margin-top: 20px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+
+#create-plan-form .modal-content button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+#create-plan-form .modal-content .close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+#create-plan-form .modal-content .close:hover {
+  color: #4caf50;
+}
+
+#editPlanoModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1100;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#editPlanoModal .modal-content {
+  background: #fff;
+  padding: 30px 40px;
+  width: 350px;
+  border-radius: 5px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  position: relative;
+  font-family: "Poppins", sans-serif;
+}
+
+#editPlanoModal .modal-content h2 {
+  margin-bottom: 25px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+#editPlanoModal .modal-content input[type="text"],
+#editPlanoModal .modal-content input[type="date"] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 12px 0;
+  border: 1.8px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+#editPlanoModal .modal-content input:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+#editPlanoModal .modal-content button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  margin-top: 20px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+
+#editPlanoModal .modal-content button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+#editPlanoModal .modal-content .close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+#editPlanoModal .modal-content .close:hover {
+  color: #4caf50;
+}
+
+.notificacao-form {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 50px 40px;
+  width: 100%;
+  max-width: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  box-sizing: border-box;
+}
+
+.section#notificacoes {
+  width: 99%;
+}
+
+.notificacao-form .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.notificacao-form label {
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.notificacao-form input,
+.notificacao-form textarea {
+  padding: 20px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s;
+}
+
+.notificacao-form input:focus,
+.notificacao-form textarea:focus {
+  border-color: grey;
+  outline: none;
+}
+
+.btn-enviar {
+  background-color: grey;
+  color: white;
+  padding: 15px 25px;
+  border: none;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-enviar:hover {
+  background-color: black;
+}
+
+@media (max-width: 900px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .sidebar ul {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .sidebar ul li {
+    border-bottom: none;
+    border-right: 1px solid #34495e;
+    padding: 10px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .sidebar ul li:last-child {
+    border-right: none;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 15px 10px;
+    width: 100%;
+  }
+
+  .section-tools {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .section-tools input[type="text"] {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar ul {
+    flex-direction: column;
+  }
+
+  .sidebar ul li {
+    border-right: none;
+    border-bottom: 1px solid #34495e;
+    padding: 12px 0;
+  }
+
+  .main-content {
+    padding: 10px 5px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .section-tools {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .section-tools input[type="text"] {
+    width: 100%;
+  }
+
+  .section-tools .buttons button {
+    width: 100%;
+  }
+
+  .user-table th,
+  .user-table td {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    padding: 5px 8px;
+    font-size: 0.85rem;
+  }
+
+  .modal-content,
+  #create-user-form .modal-content {
+    width: 90%;
+    padding: 15px 20px;
+  }
+
+  #create-user-form .modal-content button {
+    padding: 10px 15px;
+  }
+}
+
+/* ===== Container principal ===== */
+.profile-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Estilo dos cartões ===== */
+.profile-card,
+.activities-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 1.8rem;
+  flex: 1 1 280px; /* Flex-grow, flex-shrink e base */
+
+  /* Definimos uma altura fixa/máxima para o cartão de atividades */
+  max-height: 400px;       /* altura máxima do cartão */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Título dos cartões ===== */
+.card-title {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #2a3748;
+  border-bottom: 2px solid #e1e5eb;
+  padding-bottom: 0.5rem;
+}
+
+/* ===== Formulário de perfil ===== */
+.form-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+  color: #555;
+}
+
+.form-group input {
+  padding: 0.65rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccd0d5;
+  border-radius: 6px;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #7b9acc;
+  box-shadow: 0 0 6px rgba(123, 154, 204, 0.3);
+}
+
+/* Botão de salvar */
+.form-group--button {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-salvar {
+  padding: 0.65rem 1.5rem;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: #34495e;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.btn-salvar:hover {
+  background-color: #26374a;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* ===== Lista de atividades ===== */
+.activities-list {
+  list-style: none;
+  margin-top: 1rem;
+  max-height: 300px;       
+  overflow-y: auto;      
+  padding-right: 0.5rem;
+}
+
+.activities-list li {
+  background-color: #f0f4fa;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.8rem;
+  border-left: 4px solid #34495e;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: #2a3748;
+  transition: background-color 0.2s ease;
+}
+
+.activities-list li:hover {
+  background-color: #e1e8f5;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 640px) {
+  .profile-container {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .profile-card,
+  .activities-card {
+    flex: 1 1 100%;
+  }
+}

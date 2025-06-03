@@ -1,6 +1,7 @@
 // Import data models
 const Activity = require("../models/activity.model.js");
 const Plan = require("../models/plan.model.js");
+const User = require("../models/user.model.js");
 
 const getAllActivities = async (req, res) => {
   // 401 Unauthorized: token não fornecido ou inválido
@@ -145,6 +146,11 @@ const createActivity = async (req, res) => {
     plan.associatedActivities.push(activity._id);
     await plan.save();
 
+    const user = await User.findById(req.user.userId);
+    if (user) {
+      user.associatedActivities.push(activity._id);
+      await user.save();
+    }
 
     return res.status(201).json({
       message: "Atividade registrada com sucesso!",

@@ -20,6 +20,22 @@ export async function getAllUsers() {
     }
 }
 
+export async function getUserById(userId) {
+    
+    try {
+        const response = await axios.get(`${API_URL}/users/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+         console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar utilizadores:', error);
+        throw error;
+    }
+}
+
 export async function createUser(userData) {
 
     try {

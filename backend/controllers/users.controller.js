@@ -113,10 +113,8 @@ const loginUser = async (req, res) => {
     });
 
     return res.status(200).json({
-      // id: user._id,
-      //type: user.type,
-      token,
-      
+      id: user._id,
+      token,      
     });
   } catch (err) {
     return res.status(500).json({ message: "Erro interno no login." });
@@ -127,7 +125,7 @@ const getUserById = async (req, res) => {
   const requestedId = req.params.id;
 
   try {
-    const user = await User.findById(requestedId);
+    const user = await User.findById(requestedId).populate("associatedActivities");
     if (!user) {
       return res.status(404).json({
         errorCode: "AUTH_UNAUTHORIZED",
