@@ -5,7 +5,7 @@ const router = express.Router();
 
 // include controller functions
 const notificationsController= require('../controllers/notifications.controller.js');
-const authMiddleware = require('../auth.js');
+const authMiddleware = require('../utils/auth.js');
 
 router.use(authMiddleware);
 
