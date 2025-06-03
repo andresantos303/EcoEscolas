@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Detalhes do Plano</title>
+    <link rel="stylesheet" href="/Css/admin.css">
+    <link rel="stylesheet" href="/routes/plans/style.css">
+</head>
+
+<body>
+    <div>
+        <div class="sidebar">
+            <h2>Painel Admin</h2>
+            <ul>
+                <li onclick="showSection('estatisticas')">Estatísticas</li>
+                <li onclick="showSection('atividades')">Atividades</li>
+                <li onclick="showSection('planoatividades')">Plano de Atividades</li>
+                <li onclick="showSection('utilizadores')">Utilizadores</li>
+                <li onclick="showSection('relatorios')">Relatórios</li>
+                <li onclick="showSection('notificacoes')">Notificações</li>
+                <li><a class="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="planIdSection">
+            <h1>Detalhes do <span id="planNome"></span></h1>
+            <div id="planDetails">
+                <p><strong>Descrição:</strong> <span id="planDescricao"></span></p>
+                <p><strong>Data de Início:</strong> <span id="planDataInicio"></span></p>
+                <p><strong>Data de Fim:</strong> <span id="planDataFim"></span></p>
+                <p><strong>Estado:</strong> <span id="planEstado"></span></p>
+                <p><strong>Nível:</strong> <span id="planNivel"></span></p>
+                <p><strong>Recursos:</strong> <span id="planRecursos"></span></p>
+                <ul id="planActivities"></ul>
+            </div>
+            
+        </div>
+    </div>
+
+
+    <script type="module" src="/Js/users/usersEvents.js"></script>
+    <script type="module" src="/Js/plans/planEvents.js"></script>
+    <script src="/Js/users/userUI.js"></script>
+    <script src="/Js/plans/planUI.js"></script>
+    <script type="module" src="./plan.js"></script>
+</body>
+
+</html>

@@ -1,6 +1,8 @@
 // Import data models
 const Activity = require("../models/activity.model.js");
 const Plan = require("../models/plan.model.js");
+const User = require("../models/user.model.js");
+const { enviarEmail } = require("../utils/nodemailer.js");
 
 const getAllActivities = async (req, res) => {
   // 401 Unauthorized: token não fornecido ou inválido
@@ -85,7 +87,7 @@ const createActivity = async (req, res) => {
     });
   }
 
-  const { nome, descricao, local, fotos, data, estado} = req.body;
+  const { nome, descricao, local, fotos, data, estado } = req.body;
 
   // 400 Bad Request: campos obrigatórios em falta
   if (!nome || !descricao || !local || !data || !estado || !fotos) {
@@ -145,6 +147,11 @@ const createActivity = async (req, res) => {
     plan.associatedActivities.push(activity._id);
     await plan.save();
 
+    const user = await User.findById(req.user.userId);
+    if (user) {
+      user.associatedActivities.push(activity._id);
+      await user.save();
+    }
 
     return res.status(201).json({
       message: "Atividade registrada com sucesso!",
@@ -190,9 +197,15 @@ const addParticipant = async (req, res) => {
     }
     // adiciona participante
     activity.participants.push({ nome, email });
-    console.log("entrou2")
 
     await activity.save();
+
+    await enviarEmail(
+      `${email}`,
+      `Confirmação de Inscrição na Atividade ${activity.nome}`,
+      `Olá ${nome}!`,
+      `<p>Olá <strong>${nome}</strong>,</p><p>Sua inscrição na atividade "<strong>${activity.nome}</strong>" foi confirmada.</p><p>Em breve você receberá mais informações sobre data, horário e local.</p><p>Obrigado por participar!</p>`
+    );
 
     return res.status(200).json({
       message: "Participante adicionado com sucesso!",
@@ -209,29 +222,29 @@ const updateActivity = async (req, res) => {
   // 401 Unauthorized: token não fornecido ou inválido
   if (!req.user) {
     return res.status(401).json({
-      errorCode: 'AUTH_UNAUTHORIZED',
-      message: 'Token inválido ou não fornecido.'
+      errorCode: "AUTH_UNAUTHORIZED",
+      message: "Token inválido ou não fornecido.",
     });
   }
 
   // 403 Forbidden: apenas Conselho Eco-Escolas / Secretariado
   const role = req.user.type;
-  if (role !== 'Conselho Eco-Escolas' && role !== 'Secretariado') {
+  if (role !== "Conselho Eco-Escolas" && role !== "Secretariado") {
     return res.status(403).json({
-      errorCode: 'PLAN_CREATION_UNAUTHORIZED',
-      message: 'Não tem permissões para realizar esta ação'
+      errorCode: "PLAN_CREATION_UNAUTHORIZED",
+      message: "Não tem permissões para realizar esta ação",
     });
   }
 
   const { id } = req.params;
-  const { nome, descricao, local, fotos, data, estado} = req.body;
+  const { nome, descricao, local, fotos, data, estado } = req.body;
 
   try {
     const activity = await Activity.findById(id);
     if (!activity) {
       return res.status(404).json({
-        errorCode: 'ACTIVITY_NOT_FOUND',
-        message: 'A atividade solicitada não foi encontrada.'
+        errorCode: "ACTIVITY_NOT_FOUND",
+        message: "A atividade solicitada não foi encontrada.",
       });
     }
 
@@ -245,18 +258,20 @@ const updateActivity = async (req, res) => {
       const newDate = new Date(data);
       if (isNaN(newDate.getTime())) {
         return res.status(400).json({
-          errorCode: 'ACTIVITY_REGISTRATION_BAD_REQUEST',
-          message: 'Data inválida.'
+          errorCode: "ACTIVITY_REGISTRATION_BAD_REQUEST",
+          message: "Data inválida.",
         });
       }
     }
 
     await activity.save();
     return res.status(200).json({
-      message: 'Atividade atualizada com sucesso!'
+      message: "Atividade atualizada com sucesso!",
     });
   } catch (err) {
-    return res.status(500).json({ message: 'Erro interno ao atualizar atividade.' });
+    return res
+      .status(500)
+      .json({ message: "Erro interno ao atualizar atividade." });
   }
 };
 
@@ -264,17 +279,17 @@ const deleteActivity = async (req, res) => {
   // 401 Unauthorized: token não fornecido ou inválido
   if (!req.user) {
     return res.status(401).json({
-      errorCode: 'AUTH_UNAUTHORIZED',
-      message: 'Token inválido ou não fornecido.'
+      errorCode: "AUTH_UNAUTHORIZED",
+      message: "Token inválido ou não fornecido.",
     });
   }
 
   // 403 Forbidden: apenas Coordenador ou Admin
   const role = req.user.type;
-  if (role !== 'Secretariado' && role !== 'Admin') {
+  if (role !== "Secretariado" && role !== "Admin") {
     return res.status(403).json({
-      errorCode: 'PLAN_CREATION_UNAUTHORIZED',
-      message: 'Não tem permissões para realizar esta ação'
+      errorCode: "PLAN_CREATION_UNAUTHORIZED",
+      message: "Não tem permissões para realizar esta ação",
     });
   }
 
@@ -285,35 +300,34 @@ const deleteActivity = async (req, res) => {
     const activity = await Activity.findById(id);
     if (!activity) {
       return res.status(404).json({
-        errorCode: 'ACTIVITY_NOT_FOUND',
-        message: 'A atividade solicitada não foi encontrada.'
+        errorCode: "ACTIVITY_NOT_FOUND",
+        message: "A atividade solicitada não foi encontrada.",
       });
     }
     // 400 Bad Request: atividade não pode ser removida se estiver ativa
-    if(activity.estado){
+    if (activity.estado) {
       return res.status(400).json({
-        errorCode: 'ACTIVITY_CANNOT_DELETE',
-        message: 'Atividade não pode ser removida, pois esta em andamento.'
+        errorCode: "ACTIVITY_CANNOT_DELETE",
+        message: "Atividade não pode ser removida, pois esta em andamento.",
       });
     }
 
     //remover atividade do plano associado
     if (activity.planActivitiesId) {
-      await Plan.findByIdAndUpdate(
-        activity.planActivitiesId,
-        { 
-          $pull: { associatedActivities: activity._id } 
-        },
-      );
+      await Plan.findByIdAndUpdate(activity.planActivitiesId, {
+        $pull: { associatedActivities: activity._id },
+      });
     }
 
     // Remove a atividade
     await Activity.findByIdAndDelete(id);
     return res.status(200).json({
-      message: 'Atividade removida com sucesso.'
-    });      
+      message: "Atividade removida com sucesso.",
+    });
   } catch (err) {
-    return res.status(500).json({ message: 'Erro interno ao remover atividade.' });
+    return res
+      .status(500)
+      .json({ message: "Erro interno ao remover atividade." });
   }
 };
 
@@ -323,5 +337,5 @@ module.exports = {
   createActivity,
   addParticipant,
   updateActivity,
-  deleteActivity
+  deleteActivity,
 };

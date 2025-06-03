@@ -3,22 +3,6 @@ const Plan = require("../models/plan.model.js");
 const Activity = require("../models/activity.model.js");
 
 const getAllPlans = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: apenas admins podem listar planos
-  if (req.user.type !== "Admin") {
-    return res.status(403).json({
-      errorCode: "PLAN_CREATION_UNAUTHORIZED",
-      message: "Não tem permissões para realizar esta ação",
-    });
-  }
-
   try {
     const filter = {};
     if (req.query.name) filter.name = req.query.name;
@@ -32,22 +16,6 @@ const getAllPlans = async (req, res) => {
 };
 
 const getPlanById = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: apenas admins podem obter detalhes de um plano
-  if (req.user.type !== "Admin") {
-    return res.status(403).json({
-      errorCode: "PLAN_CREATION_UNAUTHORIZED",
-      message: "Não tem permissões para realizar esta ação",
-    });
-  }
-
   try {
     const plan = await Plan.findById(req.params.id);
     if (!plan) {
@@ -132,22 +100,6 @@ const createPlan = async (req, res) => {
 };
 
 const updatePlan = async (req, res) => {
-  // 401 Unauthorized
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: só Coordenadores podem editar planos
-  if (req.user.type !== "Coordenador") {
-    return res.status(403).json({
-      errorCode: "PLAN_CREATION_UNAUTHORIZED",
-      message: "Não tem permissões para realizar esta ação",
-    });
-  }
-
   const { id } = req.params;
   const {
     nome,
@@ -235,22 +187,6 @@ const updatePlan = async (req, res) => {
 };
 
 const deletePlan = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: apenas Admins podem remover planos
-  if (req.user.type !== "Admin") {
-    return res.status(403).json({
-      errorCode: "PLAN_CREATION_UNAUTHORIZED",
-      message: "Não tem permissões para realizar esta ação",
-    });
-  }
-
   const { id } = req.params;
 
   try {

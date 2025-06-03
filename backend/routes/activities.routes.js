@@ -5,7 +5,7 @@ const router = express.Router();
 
 // include controller functions
 const activitiesController= require('../controllers/activities.controller.js');
-const authMiddleware = require('../auth.js');
+const authMiddleware = require('../utils/auth.js');
 
 // POST /activities/:idActividade/participants — adiciona participantes a uma atividade
 router.post('/:idAtividade/participants', activitiesController.addParticipant);
