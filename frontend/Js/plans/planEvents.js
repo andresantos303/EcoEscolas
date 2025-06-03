@@ -24,7 +24,7 @@ async function renderPlans() {
             tbody.insertAdjacentHTML('beforeend', `
                 <tr id="row-${plan.id}">
                     <td class="plan-name">
-                        <a href="../routes/plans/plan.html?id=${plan._id}" class="plan-link">${plan.nome}</a>
+                        <a href="./routes/plans/plan.html?id=${plan._id}" class="plan-link">${plan.nome}</a>
                     </td>
                     <td class="plan-description">${plan.descricao}</td>
                     <td class="plan-first-date">${plan.data_inicio}</td>
