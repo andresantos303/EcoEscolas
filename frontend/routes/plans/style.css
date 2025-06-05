@@ -5,7 +5,7 @@ body {
 }
 
 .planIdSection {
-  margin-left: 250px; 
+  margin-left: 250px;
   padding: 40px;
   background-color: #ffffff;
   min-height: 100vh;
@@ -26,4 +26,21 @@ body {
 
 #planDetails strong {
   color: #34495e;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 115px;
+  color: #2d3e50;
+  text-decoration: none;
+}
+
+.btn-dashboard{
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
 }

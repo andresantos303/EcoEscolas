@@ -21,16 +21,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('planRecursos').textContent = plan.recursos;
 
         const activitiesList = document.getElementById('planActivities');
-        activitiesList.innerHTML = ''; // limpar antes
+        activitiesList.innerHTML = '';
+
+
+        const title = document.createElement('h3');
+        title.textContent = 'Atividades Associadas:';
+        activitiesList.appendChild(title);
 
         plan.associatedActivities.forEach(activity => {
             const li = document.createElement('li');
-            li.textContent = activity; // ou activity.nome se for objeto
+            li.textContent = activity.nome;
             activitiesList.appendChild(li);
         });
-
-
-        console.log(plan);
 
 
     } catch (error) {

@@ -1,4 +1,3 @@
-console.log("script userEvents.js loaded");
 import {
   getAllUsers,
   createUser,

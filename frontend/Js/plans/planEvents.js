@@ -1,4 +1,3 @@
-console.log('script planEvents.js loaded');
 import { getAllPlans, createPlan, deletePlan, updatePlan } from '../plans/planServices.js';
 import { requireAuth } from '../auth/authGuard.js';
 
@@ -31,7 +30,6 @@ async function renderPlans() {
                     <td class="plan-last-date">${plan.data_fim}</td>
                     <td class="plan-status">${plan.estado}</td>
                     <td class="plan-level">${plan.nivel}</td>
-                    <td class="plan-resources">${plan.recursos}</td>
                     <td>
                         <button class="edit-btn" data-planid="${plan._id}">Editar</button>
                         <button class="delete-btn" data-planid="${plan._id}">Eliminar</button>

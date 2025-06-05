@@ -17,7 +17,7 @@ const getAllPlans = async (req, res) => {
 
 const getPlanById = async (req, res) => {
   try {
-    const plan = await Plan.findById(req.params.id);
+    const plan = await Plan.findById(req.params.id).populate("associatedActivities");
     if (!plan) {
       return res.status(404).json({
         errorCode: "PLAN_NOT_FOUND",
@@ -43,7 +43,7 @@ const createPlan = async (req, res) => {
   } = req.body;
 
   // 400 Bad Request: campos obrigatórios em falta
-  if (!nome || !descricao || !data_inicio || !data_fim || !estado || !nivel || !recursos) {
+  if (!nome || !descricao || !data_inicio || !data_fim || typeof estado !== 'boolean' || !nivel || !recursos) {
     return res.status(400).json({
       errorCode: "PLAN_CREATION_BAD_REQUEST",
       message: "Nome, descrição, datas, estado, nivel e recursos são obrigatórios!",
@@ -208,6 +208,14 @@ const deletePlan = async (req, res) => {
           "Este plano está vinculado a atividades em andamento e não pode ser removido.",
       });
     } */
+
+       // 400 Bad Request: atividade não pode ser removida se estiver ativa
+    if(plan.estado){
+      return res.status(400).json({
+        errorCode: 'ACTIVITY_CANNOT_DELETE',
+        message: 'Atividade não pode ser removida, pois esta em andamento.'
+      });
+    }
 
     // Remove o plano
     await Plan.findByIdAndDelete(id);

@@ -14,16 +14,10 @@
     <div>
         <div class="sidebar">
             <h2>Painel Admin</h2>
-            <ul>
-                <li onclick="showSection('estatisticas')">Estatísticas</li>
-                <li onclick="showSection('atividades')">Atividades</li>
-                <li onclick="showSection('planoatividades')">Plano de Atividades</li>
-                <li onclick="showSection('utilizadores')">Utilizadores</li>
-                <li onclick="showSection('relatorios')">Relatórios</li>
-                <li onclick="showSection('notificacoes')">Notificações</li>
-                <li><a class="logout-btn">Logout</a></li>
-            </ul>
+           <a class="btn-dashboard" href="/admin.html"><div class="btn">Dashboard</div></a>
         </div>
+
+        
 
         <div class="planIdSection">
             <h1>Detalhes do <span id="planNome"></span></h1>
@@ -40,11 +34,6 @@
         </div>
     </div>
 
-
-    <script type="module" src="/Js/users/usersEvents.js"></script>
-    <script type="module" src="/Js/plans/planEvents.js"></script>
-    <script src="/Js/users/userUI.js"></script>
-    <script src="/Js/plans/planUI.js"></script>
     <script type="module" src="./plan.js"></script>
 </body>
 

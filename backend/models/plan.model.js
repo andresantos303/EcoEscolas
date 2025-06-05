@@ -9,7 +9,7 @@ const planSchema = new mongoose.Schema(
     ],
     data_inicio: { type: String, required: true },
     data_fim: { type: String, required: true },
-    estado: { type: Boolean, required: true },
+    estado: { type: Boolean, required: true, default: false },
     recursos: { type: String, required: true },
     nivel: { type: Number, required: true },
     createdUserId: {

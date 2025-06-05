@@ -88,15 +88,60 @@
             </table>
         </div>
 
-        <div id="atividades" class="section">
+       <div id="atividades" class="section">
             <h1>Atividades</h1>
-            <canvas id="graficoAtividadess" width="300" height="100"></canvas>
             <div class="section-tools">
-                <div class="buttons">
-                    <button>Adicionar</button>
-                </div>
-                <input type="text" placeholder="Pesquisar...">
+                <button onclick="openAddActivityModal()">Adicionar</button>
+                <form id="create-activity-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeAddActivityModal()">&times;</span>
+                        <h2>Adicionar Atividade</h2>
+                        <input type="text" id="newActivityname" name="name" placeholder="Nome de Atividade" required />
+                        <textarea type="text" id="newActivitydescription" name="description" placeholder="Descrição"
+                            required></textarea>
+                        <input type="date" id="newFirstDate" name="firstDate" placeholder="Data-Inicio" required />
+                        <input type="date" id="newLastDate" name="lastDate" placeholder="Data-Fim" required />
+                        <label for="newPlanStatus">
+                            Ativo:
+                            <input type="checkbox" id="newPlanStatus" name="status" />
+                        </label>
+                        <input type="number" id="newLevel" name="planLevel" placeholder="Nível" required />
+                        <input type="text" id="newPlanresource" name="planResource" placeholder="Recursos" required />
+                        <button type="submit">Criar Plano</button>
+                    </div>
+                </form>
+                <form id="edit-activity-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeEditActivityModal()">&times;</span>
+                        <h2>Editar Plano</h2>
+                        <input type="text" id="editPlanname" name="name" placeholder="Nome de Plano" required />
+                        <input type="text" id="editPlandescription" name="description" placeholder="Descrição"
+                            required />
+                        <input type="date" id="editFirstDate" name="firstDate" placeholder="Descrição" required />
+                        <input type="date" id="editLastDate" name="lastDate" placeholder="Descrição" required />
+                        <input type="number" id="editLevel" name="planLevel" placeholder="Descrição" required />
+                        <button type="submit">Editar Plano</button>
+                    </div>
+                </form>
+                <input type="text" id="searchActivityInput" placeholder="Pesquisar...">
             </div>
+
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Local</th>
+                        <th>Estado</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="activityTbody">
+
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div id="planoatividades" class="section">
@@ -146,7 +191,6 @@
                         <th>Data de Fim</th>
                         <th>Estado</th>
                         <th>Nivel</th>
-                        <th>Recursos</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -211,8 +255,10 @@
 
     <script type="module" src="./Js/users/usersEvents.js"></script>
     <script type="module" src="./Js/plans/planEvents.js"></script>
+    <script type="module" src="./Js/activities/activitiesEvents.js"></script>
     <script src="./Js/users/userUI.js"></script>
     <script src="./Js/plans/planUI.js"></script>
+    <script src="./Js/activities/activitiesUI.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
 </body>
 

@@ -1,5 +1,4 @@
 
-console.log('script planUI.js loaded');
 
 function showSection(id) {
     const sections = document.querySelectorAll('.section');
