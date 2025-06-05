@@ -74,11 +74,11 @@ async function renderOneUser() {
       `
                 <div class="form-group">
                   <label for="nome">Nome</label>
-                  <input type="text" id="nome" name="nome" value="${user.name}" placeholder="Seu nome" required/>
+                  <input type="text" id="nomePerfil" name="nome" value="${user.name}" placeholder="Seu nome" required/>
                 </div>
                 <div class="form-group">
                   <label for="email">Email</label>
-                  <input type="email" id="email" name="email" value="${user.email}" placeholder="seu@email.com" required/>
+                  <input type="email" id="emailPerfil" name="email" value="${user.email}" placeholder="seu@email.com" required/>
                 </div>
                 <div class="form-group form-group--button">
                   <button type="submit" class="btn-salvar">Guardar Alterações</button>
@@ -188,13 +188,28 @@ function setupEditUser() {
   });
 }
 
-function editOneUser() {
-  const name = document.getElementById("nome");
-  const email = document.getElementById("email");
-  const updatedData = {
-      name: document.getElementById("nome"),
-      email: document.getElementById("email"),
+async function editOneUser() {
+  const form = document.getElementById("meuPerfil");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const updatedData = {
+      name: document.getElementById("nomePerfil").value,
+      email: document.getElementById("emailPerfil").value,
     };
+    try {
+      await updateUser(sessionStorage.getItem("currentUser"), updatedData);
+      Swal.fire({
+        position: "top-end", // ou 'top' para centro
+        icon: "success",
+        title: "Perfil guardado com sucesso!",
+        showConfirmButton: false,
+        timer: 3500,
+        toast: true,
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar utilizador:", error);
+    }
+  });
 }
 
 function setupSearch() {

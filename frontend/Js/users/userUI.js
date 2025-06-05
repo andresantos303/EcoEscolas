@@ -23,9 +23,6 @@ function closeAddUserModal() {
 
 
 
-
-
-
 window.addEventListener("DOMContentLoaded", () => {
     carregarNotificacoes();
 });

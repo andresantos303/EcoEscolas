@@ -1,6 +1,8 @@
 // Import data models
 const Plan = require("../models/plan.model.js");
+const User = require("../models/user.model.js");
 const Activity = require("../models/activity.model.js");
+const { enviarEmailNotificação } = require("../utils/nodemailer.js");
 
 const getAllPlans = async (req, res) => {
   try {
@@ -89,6 +91,14 @@ const createPlan = async (req, res) => {
     });
     console.log(plan);
     await plan.save();
+
+    const user = User.findById(req.user.userId);
+
+    await enviarEmailNotificação(
+      "Coordenador/Conselho Eco-Escolas",
+      `Criação do Plano de Atividade ${nome}`,
+      `O utilizador ${user.name} criou o plano de atividades "${nome}" com data de início ${data_inicio} e data de fim ${data_fim} e de nível ${nivel}.`,
+    );
 
     return res.status(201).json({
       message: "Plano de atividades criado com sucesso!",
@@ -199,7 +209,7 @@ const deletePlan = async (req, res) => {
       });
     }
 
-    /* // 409 Conflict: plano vinculado a atividades em andamento
+    // 409 Conflict: plano vinculado a atividades em andamento
     const ongoing = await Activity.findOne({ plan: id, estado: true });
     if (ongoing) {
       return res.status(409).json({
@@ -207,7 +217,7 @@ const deletePlan = async (req, res) => {
         message:
           "Este plano está vinculado a atividades em andamento e não pode ser removido.",
       });
-    } */
+    }
 
        // 400 Bad Request: atividade não pode ser removida se estiver ativa
     if(plan.estado){
@@ -227,10 +237,53 @@ const deletePlan = async (req, res) => {
   }
 };
 
+const finalizePlan = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // 404 Not Found: plano não existe
+    const plan = await Plan.findById(id);
+    if (!plan) {
+      return res.status(404).json({
+        errorCode: "PLAN_NOT_FOUND",
+        message: "O plano de atividades solicitado não foi encontrado.",
+      });
+    }
+
+    // 409 Conflict: plano vinculado a atividades em andamento
+    const ongoing = await Activity.findOne({ plan: id, estado: true });
+    if (ongoing) {
+      return res.status(409).json({
+        errorCode: "PLAN_DELETE_BLOCKED",
+        message:
+          "Este plano está vinculado a atividades em andamento e não pode ser finalizado.",
+      });
+    }
+
+    // 409 Conflict: data de fim é superior à data atual
+    const currentDate = new Date();
+    if (new Date(plan.data_fim) > currentDate) {
+      return res.status(409).json({
+        errorCode: "PLAN_FINALIZE_BLOCKED",
+        message: "A data de fim do plano é superior à data atual.",
+      });
+    }
+
+    // Finalizar o plano
+    await Plan.findByIdAndUpdate(id, { estado: false });
+    return res.status(200).json({
+      message: "Plano de atividades finalizado com sucesso.",
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Erro interno ao remover plano." });
+  }
+};
+
 module.exports = {
   getAllPlans,
   getPlanById,
   createPlan,
   updatePlan,
   deletePlan,
+  finalizePlan,
 };

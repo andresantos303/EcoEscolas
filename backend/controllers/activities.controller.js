@@ -2,6 +2,7 @@
 const Activity = require("../models/activity.model.js");
 const Plan = require("../models/plan.model.js");
 const User = require("../models/user.model.js");
+const { enviarEmail } = require("../utils/nodemailer.js");
 
 const getAllActivities = async (req, res) => {
   // 401 Unauthorized: token não fornecido ou inválido
@@ -52,7 +53,9 @@ const getActivityById = async (req, res) => {
   }
 
   try {
-    const activity = await Activity.findById(req.params.id);
+    const activity = await Activity.findById(req.params.id)
+      .populate('planActivitiesId', 'nome')
+      .populate('createdUserId', 'nome email');
     if (!activity) {
       return res.status(404).json({
         errorCode: "ACTIVITY_NOT_FOUND",
@@ -78,7 +81,7 @@ const createActivity = async (req, res) => {
 
   // 403 Forbidden: apenas Conselho Eco-Escolas ou Secretariado
   const role = req.user.type;
-  if (role !== "Conselho Eco-Escolas" && role !== "Secretariado") {
+  if (role !== "Conselho Eco-Escolas" && role !== "Secretariado" && role !== "Admin") {
     return res.status(403).json({
       errorCode: "ACTIVITY_REGISTRATION_UNAUTHORIZED",
       message:
@@ -86,13 +89,14 @@ const createActivity = async (req, res) => {
     });
   }
 
-  const { nome, descricao, local, fotos, data, estado} = req.body;
+  const { nome, descricao, local, data, estado } = req.body;
+  const idPlano = req.params.idPlano;
 
   // 400 Bad Request: campos obrigatórios em falta
-  if (!nome || !descricao || !local || !data || !estado || !fotos) {
+  if (!nome || !descricao || !local || !data || typeof estado !== 'boolean' || !idPlano) {
     return res.status(400).json({
       errorCode: "ACTIVITY_REGISTRATION_BAD_REQUEST",
-      message: "Nome, descrição, local, estado e fotos são obrigatórios!",
+      message: "Nome, descrição, local, estado e plano associado são obrigatórios!",
     });
   }
 
@@ -134,7 +138,7 @@ const createActivity = async (req, res) => {
       nome,
       descricao,
       local,
-      fotos,
+      fotos: [],
       estado,
       data,
       planActivitiesId: req.params.idPlano,
@@ -150,6 +154,16 @@ const createActivity = async (req, res) => {
     if (user) {
       user.associatedActivities.push(activity._id);
       await user.save();
+    }
+
+    try {
+      await enviarEmailNotificação(
+        "Secretariado",
+        `Criação da Atividade ${nome}`,
+        `O utilizador ${user.name} criou a atividade "${nome}" com a data ${data} e está incluída no plano ${plan.nome}.`
+      );
+    } catch (emailError) {
+      console.error("Erro ao enviar notificação por e-mail:", emailError);
     }
 
     return res.status(201).json({
@@ -196,9 +210,15 @@ const addParticipant = async (req, res) => {
     }
     // adiciona participante
     activity.participants.push({ nome, email });
-    console.log("entrou2")
 
     await activity.save();
+
+    await enviarEmail(
+      `${email}`,
+      `Confirmação de Inscrição na Atividade ${activity.nome}`,
+      `Olá ${nome}!`,
+      `<p>Olá <strong>${nome}</strong>,</p><p>Sua inscrição na atividade "<strong>${activity.nome}</strong>" foi confirmada.</p><p>Em breve você receberá mais informações sobre data, horário e local.</p><p>Obrigado por participar!</p>`
+    );
 
     return res.status(200).json({
       message: "Participante adicionado com sucesso!",
@@ -215,29 +235,29 @@ const updateActivity = async (req, res) => {
   // 401 Unauthorized: token não fornecido ou inválido
   if (!req.user) {
     return res.status(401).json({
-      errorCode: 'AUTH_UNAUTHORIZED',
-      message: 'Token inválido ou não fornecido.'
+      errorCode: "AUTH_UNAUTHORIZED",
+      message: "Token inválido ou não fornecido.",
     });
   }
 
   // 403 Forbidden: apenas Conselho Eco-Escolas / Secretariado
   const role = req.user.type;
-  if (role !== 'Conselho Eco-Escolas' && role !== 'Secretariado') {
+  if (role !== "Conselho Eco-Escolas" && role !== "Secretariado") {
     return res.status(403).json({
-      errorCode: 'PLAN_CREATION_UNAUTHORIZED',
-      message: 'Não tem permissões para realizar esta ação'
+      errorCode: "PLAN_CREATION_UNAUTHORIZED",
+      message: "Não tem permissões para realizar esta ação",
     });
   }
 
   const { id } = req.params;
-  const { nome, descricao, local, fotos, data, estado} = req.body;
+  const { nome, descricao, local, fotos, data, estado } = req.body;
 
   try {
     const activity = await Activity.findById(id);
     if (!activity) {
       return res.status(404).json({
-        errorCode: 'ACTIVITY_NOT_FOUND',
-        message: 'A atividade solicitada não foi encontrada.'
+        errorCode: "ACTIVITY_NOT_FOUND",
+        message: "A atividade solicitada não foi encontrada.",
       });
     }
 
@@ -251,18 +271,20 @@ const updateActivity = async (req, res) => {
       const newDate = new Date(data);
       if (isNaN(newDate.getTime())) {
         return res.status(400).json({
-          errorCode: 'ACTIVITY_REGISTRATION_BAD_REQUEST',
-          message: 'Data inválida.'
+          errorCode: "ACTIVITY_REGISTRATION_BAD_REQUEST",
+          message: "Data inválida.",
         });
       }
     }
 
     await activity.save();
     return res.status(200).json({
-      message: 'Atividade atualizada com sucesso!'
+      message: "Atividade atualizada com sucesso!",
     });
   } catch (err) {
-    return res.status(500).json({ message: 'Erro interno ao atualizar atividade.' });
+    return res
+      .status(500)
+      .json({ message: "Erro interno ao atualizar atividade." });
   }
 };
 
@@ -270,17 +292,17 @@ const deleteActivity = async (req, res) => {
   // 401 Unauthorized: token não fornecido ou inválido
   if (!req.user) {
     return res.status(401).json({
-      errorCode: 'AUTH_UNAUTHORIZED',
-      message: 'Token inválido ou não fornecido.'
+      errorCode: "AUTH_UNAUTHORIZED",
+      message: "Token inválido ou não fornecido.",
     });
   }
 
   // 403 Forbidden: apenas Coordenador ou Admin
   const role = req.user.type;
-  if (role !== 'Secretariado' && role !== 'Admin') {
+  if (role !== "Secretariado" && role !== "Admin") {
     return res.status(403).json({
-      errorCode: 'PLAN_CREATION_UNAUTHORIZED',
-      message: 'Não tem permissões para realizar esta ação'
+      errorCode: "PLAN_CREATION_UNAUTHORIZED",
+      message: "Não tem permissões para realizar esta ação",
     });
   }
 
@@ -291,35 +313,82 @@ const deleteActivity = async (req, res) => {
     const activity = await Activity.findById(id);
     if (!activity) {
       return res.status(404).json({
-        errorCode: 'ACTIVITY_NOT_FOUND',
-        message: 'A atividade solicitada não foi encontrada.'
+        errorCode: "ACTIVITY_NOT_FOUND",
+        message: "A atividade solicitada não foi encontrada.",
       });
     }
     // 400 Bad Request: atividade não pode ser removida se estiver ativa
-    if(activity.estado){
+    if (activity.estado) {
       return res.status(400).json({
-        errorCode: 'ACTIVITY_CANNOT_DELETE',
-        message: 'Atividade não pode ser removida, pois esta em andamento.'
+        errorCode: "ACTIVITY_CANNOT_DELETE",
+        message: "Atividade não pode ser removida, pois esta em andamento.",
       });
     }
 
     //remover atividade do plano associado
     if (activity.planActivitiesId) {
-      await Plan.findByIdAndUpdate(
-        activity.planActivitiesId,
-        { 
-          $pull: { associatedActivities: activity._id } 
-        },
-      );
+      await Plan.findByIdAndUpdate(activity.planActivitiesId, {
+        $pull: { associatedActivities: activity._id },
+      });
     }
 
     // Remove a atividade
     await Activity.findByIdAndDelete(id);
     return res.status(200).json({
-      message: 'Atividade removida com sucesso.'
-    });      
+      message: "Atividade removida com sucesso.",
+    });
   } catch (err) {
-    return res.status(500).json({ message: 'Erro interno ao remover atividade.' });
+    return res
+      .status(500)
+      .json({ message: "Erro interno ao remover atividade." });
+  }
+};
+
+const finalizeActivity = async (req, res) => {
+
+  // 403 Forbidden: apenas Coordenador ou Admin
+  const role = req.user.type;
+  if (role !== "Secretariado" && role !== "Admin") {
+    return res.status(403).json({
+      errorCode: "PLAN_CREATION_UNAUTHORIZED",
+      message: "Não tem permissões para realizar esta ação",
+    });
+  }
+
+  const { id } = req.params;
+  const { participantsCount } = req.body;
+
+  try {
+    // 404 Not Found: atividade não existe
+    const activity = await Activity.findById(id);
+    if (!activity) {
+      return res.status(404).json({
+        errorCode: "ACTIVITY_NOT_FOUND",
+        message: "A atividade solicitada não foi encontrada.",
+      });
+    }
+
+    // 409 Conflict: data de fim é superior à data atual
+    const currentDate = new Date();
+    if (new Date(activity.data) > currentDate) {
+      return res.status(409).json({
+        errorCode: "ACTIVITY_FINALIZE_BLOCKED",
+        message: "A data da atividade é superior à data atual.",
+      });
+    }
+
+    // Atualizar estado a atividade e adicionar a contagem de participantes
+    await Activity.findByIdAndUpdate(id, {
+      estado: false,
+      participantsCount: participantsCount,
+    });
+    return res.status(200).json({
+      message: "Atividade finalizada com sucesso.",
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Erro interno ao remover atividade." });
   }
 };
 
@@ -329,5 +398,6 @@ module.exports = {
   createActivity,
   addParticipant,
   updateActivity,
-  deleteActivity
+  deleteActivity,
+  finalizeActivity,
 };
