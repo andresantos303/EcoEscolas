@@ -8,7 +8,7 @@ app.use(express.json());
 
 
 app.use(cors({
-  origin: 'http://127.0.0.1:5500', // Ou '*' temporariamente para testes
+  origin: '*', // Ou '*' temporariamente para testes
   credentials: true
 }));
 
