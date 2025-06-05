@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Detalhes do Plano</title>
+    <link rel="stylesheet" href="/Css/admin.css">
+    <link rel="stylesheet" href="./activity.css">
+</head>
+
+<body>
+    <div>
+        <div class="sidebar">
+            <h2>Painel Admin</h2>
+            <a class="btn-dashboard" href="/admin.html">
+                <div class="btn">Dashboard</div>
+            </a>
+        </div>
+
+
+
+        <div class="activityIdSection">
+            <h1>Detalhes da Atividade: <span id="activityNome"></span></h1>
+            <div id="activityDetails">
+                <p><strong>Descrição:</strong> <span id="activityDescricao"></span></p>
+                <p><strong>Local:</strong> <span id="activityLocal"></span></p>
+                <p><strong>Fotos:</strong> <span id="activityFotos"></span></p>
+                <p><strong>Data:</strong> <span id="activityData"></span></p>
+                <p><strong>Plano:</strong> <span id="activityPlano"></span></p>
+                <p><strong>Total de Participantes:</strong> <span id="activityParticipantsCounter"></span></p>
+                <p><strong>Participantes:</strong> <span id="activityParticipants"></span></p>
+                <ul id="planActivities"></ul>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <script type="module" src="./activity.js"></script>
+</body>
+
+</html>

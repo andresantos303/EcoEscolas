@@ -87,7 +87,7 @@
             </table>
         </div>
 
-       <div id="atividades" class="section">
+        <div id="atividades" class="section">
             <h1>Atividades</h1>
             <div class="section-tools">
                 <button onclick="openAddActivityModal()">Adicionar</button>
@@ -98,27 +98,27 @@
                         <input type="text" id="newActivityname" name="name" placeholder="Nome de Atividade" required />
                         <textarea type="text" id="newActivitydescription" name="description" placeholder="Descrição"
                             required></textarea>
-                        <input type="date" id="newFirstDate" name="firstDate" placeholder="Data-Inicio" required />
-                        <input type="date" id="newLastDate" name="lastDate" placeholder="Data-Fim" required />
-                        <label for="newPlanStatus">
+                        <input type="text" id="newActivityLocal" name="local" placeholder="Local" required />
+                        <label for="newActivityStatus">
                             Ativo:
-                            <input type="checkbox" id="newPlanStatus" name="status" />
+                            <input type="checkbox" id="newActivityStatus" name="status" />
                         </label>
-                        <input type="number" id="newLevel" name="planLevel" placeholder="Nível" required />
-                        <input type="text" id="newPlanresource" name="planResource" placeholder="Recursos" required />
-                        <button type="submit">Criar Plano</button>
+                        <input type="date" id="newActivityDate" name="date" placeholder="Data" required />
+                        <select id="activityPlanSelect" name="selectedPlanId" required>
+                            <option value="">Selecione um Plano</option>
+                        </select>
+                        <button type="submit">Criar Atividade</button>
                     </div>
                 </form>
                 <form id="edit-activity-form" class="modal" style="display:none;">
                     <div class="modal-content">
                         <span class="close" onclick="closeEditActivityModal()">&times;</span>
                         <h2>Editar Plano</h2>
-                        <input type="text" id="editPlanname" name="name" placeholder="Nome de Plano" required />
-                        <input type="text" id="editPlandescription" name="description" placeholder="Descrição"
+                        <input type="text" id="editActivityname" name="name" placeholder="Nome da Atividade" required />
+                        <input type="text" id="editActivitydescription" name="description" placeholder="Descrição"
                             required />
-                        <input type="date" id="editFirstDate" name="firstDate" placeholder="Descrição" required />
-                        <input type="date" id="editLastDate" name="lastDate" placeholder="Descrição" required />
-                        <input type="number" id="editLevel" name="planLevel" placeholder="Descrição" required />
+                        <input type="text" id="editLocal" name="local" placeholder="Local" required />
+                        <input type="date" id="editDate" name="date" placeholder="Data" required />
                         <button type="submit">Editar Plano</button>
                     </div>
                 </form>

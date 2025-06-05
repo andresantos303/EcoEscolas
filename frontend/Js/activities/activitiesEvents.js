@@ -1,4 +1,4 @@
-import { getAllActivities, deleteActivity } from '../activities/activitiesServices.js';
+import { getAllActivities, deleteActivity, updateActivity, createActivity, getAllPlans } from '../activities/activitiesServices.js';
 import { requireAuth } from '../auth/authGuard.js';
 
 requireAuth();
@@ -9,6 +9,10 @@ function init() {
     renderActivities();
     setupActivitySearch();
     setupDeleteActivity();
+    setupCreateActivityForm();
+    setupEditActivity();
+    openAddActivityModal();
+    populatePlansSelect();
 }
 
 async function renderActivities() {
@@ -20,7 +24,9 @@ async function renderActivities() {
         activities.forEach(activity => {
             tbody.insertAdjacentHTML('beforeend', `
                 <tr id="row-${activity.id}">
-                    <td class="activity-name">${activity.nome}</td>
+                     <td class="activity-name">
+                        <a href="./routes/activities/activity.html?id=${activity._id}" class="plan-link">${activity.nome}</a>
+                    </td>
                     <td class="activity-description">${activity.descricao}</td>
                     <td class="activity-local">${activity.local}</td>
                     <td class="activity-status">${activity.estado}</td>
@@ -72,5 +78,99 @@ function setupActivitySearch() {
             const name = row.querySelector('.activity-name')?.textContent.toLowerCase() || '';
             row.style.display = name.includes(searchTerm) ? '' : 'none';
         });
+    });
+}
+
+function openAddActivityModal() {
+    document.getElementById('create-activity-form').style.display = 'block';
+    populatePlansSelect();
+}
+
+function setupCreateActivityForm() {
+    const form = document.getElementById('create-activity-form');
+    if (!form) return;
+   
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const activityData = {
+            nome: form.name.value.trim(),
+            descricao: form.description.value.trim(),
+            local: form.local.value,
+            estado: form.status.checked,
+            data: form.date.value,
+            planActivitiesId: form.selectedPlanId.value,
+        };
+        try {
+            await createActivity(activityData);
+            await renderActivities();
+            closeAddActivityModal();
+            form.reset();
+        } catch (error) {
+            console.error('Erro ao criar Atividade:', error);
+        }
+    });
+}
+
+async function populatePlansSelect() {
+    try {
+        const plans = await getAllPlans();
+        const select = document.getElementById('activityPlanSelect');
+        select.innerHTML = '<option value="">Selecione um Plano</option>';
+
+        plans.forEach(plan => {
+            const option = document.createElement('option');
+            option.value = plan._id;
+            option.textContent = plan.nome;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar planos:', error);
+    }
+}
+
+function setupEditActivity() {
+    const tbody = document.getElementById('activityTbody');
+    const editForm = document.getElementById('edit-activity-form');
+    const activityNameInput = document.getElementById('editActivityname');
+    const activityDescriptionInput = document.getElementById('editActivitydescription');
+    const activityLocalInput = document.getElementById('editLocal');
+    const activityDateInput = document.getElementById('editDate');
+
+    let currentActivityId = null;
+
+    if (!tbody || !editForm) return;
+
+    tbody.addEventListener('click', (event) => {
+        if (!event.target.classList.contains('edit-btn')) return;
+
+        const row = event.target.closest('tr');
+        currentActivityId = event.target.getAttribute('data-activityid');
+
+        activityNameInput.value = row.querySelector('.activity-name')?.textContent || '';
+        activityDescriptionInput.value = row.querySelector('.activity-description')?.textContent || '';
+        activityLocalInput.value = row.querySelector('.activity-local')?.textContent || '';
+        activityDateInput.value = row.querySelector('.activity-date')?.textContent || '';
+
+        editForm.style.display = 'flex';
+    });
+
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const updatedData = {
+            nome: plannameInput.value.trim(),
+            descricao: descriptionInput.value.trim(),
+            local: firstdateInput.value.trim(),
+            data: lastdateInput.value.trim(),
+        };
+
+        try {
+            await updateActivity(currentActivityId, updatedData);
+            editForm.style.display = 'none';
+            await renderActivities();
+        } catch (error) {
+            console.error('Erro ao atualizar atividade:', error);
+        }
     });
 }

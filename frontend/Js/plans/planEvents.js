@@ -59,7 +59,6 @@ function setupCreatePlanForm() {
             nivel: parseInt(form.planLevel.value, 10),
             recursos: form.planResource.value.trim(),
         };
-        console.log(planData);
 
 
         try {

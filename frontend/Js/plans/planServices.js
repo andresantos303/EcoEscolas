@@ -13,7 +13,6 @@ export async function getAllPlans() {
                 Authorization: `Bearer ${token}`,
             },
         });
-         console.log(response.data);
         return response.data;
     } catch (error) {
         console.error('Erro ao buscar os Planos de Atividades:', error);
