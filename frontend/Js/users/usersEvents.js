@@ -194,11 +194,19 @@ async function editOneUser() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const updatedData = {
-      name: document.getElementById("nomePerfil"),
-      email: document.getElementById("emailPerfil"),
+      name: document.getElementById("nomePerfil").value,
+      email: document.getElementById("emailPerfil").value,
     };
     try {
       await updateUser(sessionStorage.getItem("currentUser"), updatedData);
+      Swal.fire({
+        position: "top-end", // ou 'top' para centro
+        icon: "success",
+        title: "Perfil guardado com sucesso!",
+        showConfirmButton: false,
+        timer: 3500,
+        toast: true,
+      });
     } catch (error) {
       console.error("Erro ao atualizar utilizador:", error);
     }
