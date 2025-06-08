@@ -17,6 +17,7 @@ body {
 .sidebar h2 {
   text-align: center;
   margin-bottom: 30px;
+  cursor: pointer;
 }
 
 .sidebar ul {
@@ -769,7 +770,7 @@ h1 {
   flex: 1 1 280px; /* Flex-grow, flex-shrink e base */
 
   /* Definimos uma altura fixa/máxima para o cartão de atividades */
-  max-height: 400px;       /* altura máxima do cartão */
+  max-height: 400px; /* altura máxima do cartão */
   display: flex;
   flex-direction: column;
 }
@@ -836,8 +837,8 @@ h1 {
 .activities-list {
   list-style: none;
   margin-top: 1rem;
-  max-height: 300px;       
-  overflow-y: auto;      
+  max-height: 300px;
+  overflow-y: auto;
   padding-right: 0.5rem;
 }
 
@@ -866,5 +867,143 @@ h1 {
   .profile-card,
   .activities-card {
     flex: 1 1 100%;
+  }
+}
+
+:root {
+  --card-bg: #fff;
+  --card-radius: 8px;
+  --card-padding: 16px;
+  --card-shadow: rgba(0, 0, 0, 0.05) 0px 4px 12px;
+  --gap: 16px;
+  --font-base: 16px;
+  --color-primary: #4f46e5;
+  --color-green: #10b981;
+  --color-yellow: #fbbf24;
+  --color-border: #e5e7eb;
+  font-family: Arial, sans-serif;
+  font-size: var(--font-base);
+}
+body {
+  margin: 0;
+  background: #f9fafb;
+  color: #111;
+}
+.dashboard {
+  max-width: 1200px;
+  margin: auto;
+  padding: var(--gap);
+}
+/* Cards */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+.card {
+  flex: 1 1 200px;
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card .info {
+  display: flex;
+  flex-direction: column;
+}
+.card .info .title {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+.card .info .value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 4px 0;
+}
+.card .info .subtitle {
+  font-size: 0.8rem;
+  color: var(--color-green);
+}
+
+/* Main grid */
+.main {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--gap);
+}
+/* Attendance Overview */
+.attendance {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+  box-shadow: var(--card-shadow);
+}
+.attendance h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.attendance p {
+  margin: 4px 0 16px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+.chart {
+  width: 100%;
+  height: auto;
+}
+/* Upcoming Events */
+.events {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+  box-shadow: var(--card-shadow);
+}
+.events h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+.events ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.events li {
+  display: flex;
+  margin-bottom: 12px;
+}
+.events .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.events .content {
+  font-size: 0.9rem;
+}
+.events .content .title {
+  font-weight: bold;
+  margin: 0;
+}
+.events .content .time {
+  color: #6b7280;
+  margin: 2px 0;
+  font-size: 0.8rem;
+}
+.events .content .desc {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #374151;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main {
+    grid-template-columns: 1fr;
   }
 }
