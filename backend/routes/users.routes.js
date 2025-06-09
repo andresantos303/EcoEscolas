@@ -14,6 +14,4 @@ router.get('/:id', checkPermissions('users', 'readById'), usersController.getUse
 router.patch('/:id', checkPermissions('users', 'update'), usersController.updateUser);
 router.delete('/:id', checkPermissions('users', 'delete'), usersController.deleteUser);
 
-/* router.post('/create-admin', usersController.createAdmin); rota para criar o admin  */
-
 module.exports = router;

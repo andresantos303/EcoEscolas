@@ -28,6 +28,11 @@ module.exports = (resource, action) => {
     }
 
     //ACTIVITIES PERMISSIONS
+    if (resource === "activities") {
+      if (user.type === "Admin" || user.type === "Secretariado") {
+        return next();
+      }
+    }
 
     return res.status(403).json({
       errorCode: "AUTH_FORBIDDEN",

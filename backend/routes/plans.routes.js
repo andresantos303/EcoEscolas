@@ -1,4 +1,3 @@
-// route for /plans requests
 const express = require('express');
 const router = express.Router();
 

@@ -1,8 +1,8 @@
-// Import data models
 const Plan = require("../models/plan.model.js");
 const User = require("../models/user.model.js");
 const Activity = require("../models/activity.model.js");
 const { enviarEmailNotificação } = require("../utils/nodemailer.js");
+const { handleError } = require("../utils/errorHandler.js");
 
 const getAllPlans = async (req, res) => {
   try {
@@ -21,10 +21,7 @@ const getPlanById = async (req, res) => {
   try {
     const plan = await Plan.findById(req.params.id).populate("associatedActivities");
     if (!plan) {
-      return res.status(404).json({
-        errorCode: "PLAN_NOT_FOUND",
-        message: "O plano de atividades solicitado não foi encontrado.",
-      });
+      return handleError(res, "PLAN_NOT_FOUND");
     }
     return res.status(200).json(plan);
   } catch (err) {
@@ -33,7 +30,7 @@ const getPlanById = async (req, res) => {
 };
 
 const createPlan = async (req, res) => {
-    const {
+  const {
     nome,
     descricao,
     data_inicio,
@@ -44,40 +41,25 @@ const createPlan = async (req, res) => {
     recursos,
   } = req.body;
 
-  // 400 Bad Request: campos obrigatórios em falta
   if (!nome || !descricao || !data_inicio || !data_fim || typeof estado !== 'boolean' || !nivel || !recursos) {
-    return res.status(400).json({
-      errorCode: "PLAN_CREATION_BAD_REQUEST",
-      message: "Nome, descrição, datas, estado, nivel e recursos são obrigatórios!",
-    });
+    return handleError(res, "PLAN_CREATION_BAD_REQUEST");
   }
 
-  // validação de datas
   const inicio = new Date(data_inicio);
   const fim = new Date(data_fim);
   if (isNaN(inicio.getTime()) || isNaN(fim.getTime())) {
-    return res.status(400).json({
-      errorCode: "PLAN_CREATION_BAD_REQUEST",
-      message: "Nome, descrição, datas e recursos são obrigatórios!",
-    });
+    return handleError(res, "PLAN_CREATION_BAD_REQUEST");
   }
   if (inicio >= fim) {
-    return res.status(409).json({
-      errorCode: "PLAN_CREATION_INVALID_DATE",
-      message: "A data de início deve ser anterior à data de término.",
-    });
+    return handleError(res, "PLAN_CREATION_INVALID_DATE");
   }
-  
+
   try {
-    // 409 Conflict: nome duplicado
     const existing = await Plan.findOne({ nome });
     if (existing) {
-      return res.status(409).json({
-        errorCode: "PLAN_CREATION_DUPLICATE",
-        message: "Já existe um plano de atividades com esse nome.",
-      });
+      return handleError(res, "PLAN_CREATION_DUPLICATE");
     }
-    // cria e guarda o plano
+
     const plan = new Plan({
       nome,
       descricao,
@@ -87,17 +69,15 @@ const createPlan = async (req, res) => {
       estado,
       associatedActivities: associatedActivities || [],
       recursos,
-      createdUserId: req.user.userId, // ID do user que criou o plano
+      createdUserId: req.user.userId,
     });
-    console.log(plan);
     await plan.save();
 
-    const user = User.findById(req.user.userId);
-
+    const user = await User.findById(req.user.userId);
     await enviarEmailNotificação(
       "Coordenador/Conselho Eco-Escolas",
       `Criação do Plano de Atividade ${nome}`,
-      `O utilizador ${user.name} criou o plano de atividades "${nome}" com data de início ${data_inicio} e data de fim ${data_fim} e de nível ${nivel}.`,
+      `O utilizador ${user.name} criou o plano de atividades "${nome}" com data de início ${data_inicio} e data de fim ${data_fim} e de nível ${nivel}.`
     );
 
     return res.status(201).json({
@@ -122,60 +102,42 @@ const updatePlan = async (req, res) => {
     recursos,
   } = req.body;
 
-
-  // 400 Bad Request: campos obrigatórios em falta
-  if (nome === undefined &&
+  if (
+    nome === undefined &&
     descricao === undefined &&
     data_inicio === undefined &&
     data_fim === undefined &&
     associatedActivities === undefined &&
     recursos === undefined &&
     estado === undefined &&
-    nivel === undefined) {
-    return res.status(400).json({
-      errorCode: "PLAN_CREATION_BAD_REQUEST",
-      message: "Nome, descrição, datas, estado, nivel e recursos são obrigatórios!",
-    });
+    nivel === undefined
+  ) {
+    return handleError(res, "PLAN_CREATION_BAD_REQUEST");
   }
 
-  // validações de datas, se fornecidas
   let inicio, fim;
   if (data_inicio) {
     inicio = new Date(data_inicio);
     if (isNaN(inicio.getTime())) {
-      return res.status(400).json({
-        errorCode: "PLAN_CREATION_BAD_REQUEST",
-        message: "Data de início inválida!",
-      });
+      return handleError(res, "PLAN_CREATION_BAD_REQUEST");
     }
   }
   if (data_fim) {
     fim = new Date(data_fim);
     if (isNaN(fim.getTime())) {
-      return res.status(400).json({
-        errorCode: "PLAN_CREATION_BAD_REQUEST",
-        message: "Data de fim inválida!",
-      });
+      return handleError(res, "PLAN_CREATION_BAD_REQUEST");
     }
   }
   if (inicio && fim && inicio >= fim) {
-    return res.status(400).json({
-      errorCode: "PLAN_CREATION_BAD_REQUEST",
-      message: "A data de início deve ser anterior à data de término.",
-    });
+    return handleError(res, "PLAN_CREATION_BAD_REQUEST");
   }
 
   try {
     const plan = await Plan.findById(id);
     if (!plan) {
-      // 404 Not Found
-      return res.status(404).json({
-        errorCode: "PLAN_NOT_FOUND",
-        message: "O plano de atividades solicitado não foi encontrado.",
-      });
+      return handleError(res, "PLAN_NOT_FOUND");
     }
 
-    // aplica apenas os campos fornecidos
     if (nome !== undefined) plan.nome = nome;
     if (descricao !== undefined) plan.descricao = descricao;
     if (data_inicio !== undefined) plan.data_inicio = data_inicio;
@@ -185,12 +147,8 @@ const updatePlan = async (req, res) => {
     if (estado !== undefined) plan.estado = estado;
     if (nivel !== undefined) plan.nivel = nivel;
 
-    // atualiza o plano
     await plan.save();
-
-    return res.status(200).json({
-      message: "Plano de atividades atualizado com sucesso!",
-    });
+    return res.status(200).json({ message: "Plano de atividades atualizado com sucesso!" });
   } catch (err) {
     return res.status(500).json({ message: "Erro interno ao atualizar plano." });
   }
@@ -200,38 +158,22 @@ const deletePlan = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // 404 Not Found: plano não existe
     const plan = await Plan.findById(id);
     if (!plan) {
-      return res.status(404).json({
-        errorCode: "PLAN_NOT_FOUND",
-        message: "O plano de atividades solicitado não foi encontrado.",
-      });
+      return handleError(res, "PLAN_NOT_FOUND");
     }
 
-    // 409 Conflict: plano vinculado a atividades em andamento
     const ongoing = await Activity.findOne({ plan: id, estado: true });
     if (ongoing) {
-      return res.status(409).json({
-        errorCode: "PLAN_DELETE_BLOCKED",
-        message:
-          "Este plano está vinculado a atividades em andamento e não pode ser removido.",
-      });
+      return handleError(res, "PLAN_DELETE_BLOCKED");
     }
 
-       // 400 Bad Request: atividade não pode ser removida se estiver ativa
-    if(plan.estado){
-      return res.status(400).json({
-        errorCode: 'ACTIVITY_CANNOT_DELETE',
-        message: 'Atividade não pode ser removida, pois esta em andamento.'
-      });
+    if (plan.estado) {
+      return handleError(res, "ACTIVITY_CANNOT_DELETE");
     }
 
-    // Remove o plano
     await Plan.findByIdAndDelete(id);
-    return res.status(200).json({
-      message: "Plano de atividades removido com sucesso.",
-    });
+    return res.status(200).json({ message: "Plano de atividades removido com sucesso." });
   } catch (err) {
     return res.status(500).json({ message: "Erro interno ao remover plano." });
   }
@@ -241,39 +183,23 @@ const finalizePlan = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // 404 Not Found: plano não existe
     const plan = await Plan.findById(id);
     if (!plan) {
-      return res.status(404).json({
-        errorCode: "PLAN_NOT_FOUND",
-        message: "O plano de atividades solicitado não foi encontrado.",
-      });
+      return handleError(res, "PLAN_NOT_FOUND");
     }
 
-    // 409 Conflict: plano vinculado a atividades em andamento
     const ongoing = await Activity.findOne({ plan: id, estado: true });
     if (ongoing) {
-      return res.status(409).json({
-        errorCode: "PLAN_DELETE_BLOCKED",
-        message:
-          "Este plano está vinculado a atividades em andamento e não pode ser finalizado.",
-      });
+      return handleError(res, "PLAN_DELETE_BLOCKED");
     }
 
-    // 409 Conflict: data de fim é superior à data atual
     const currentDate = new Date();
     if (new Date(plan.data_fim) > currentDate) {
-      return res.status(409).json({
-        errorCode: "PLAN_FINALIZE_BLOCKED",
-        message: "A data de fim do plano é superior à data atual.",
-      });
+      return handleError(res, "PLAN_FINALIZE_BLOCKED");
     }
 
-    // Finalizar o plano
     await Plan.findByIdAndUpdate(id, { estado: false });
-    return res.status(200).json({
-      message: "Plano de atividades finalizado com sucesso.",
-    });
+    return res.status(200).json({ message: "Plano de atividades finalizado com sucesso." });
   } catch (err) {
     return res.status(500).json({ message: "Erro interno ao remover plano." });
   }

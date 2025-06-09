@@ -1,8 +1,9 @@
-// Import data models
 const User = require("../models/user.model.js");
-const Plan = require('../models/plan.model.js');
+const Plan = require("../models/plan.model.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { handleError } = require("../utils/errorHandler.js");
+
 require("dotenv").config();
 
 const getAllUsers = async (req, res) => {
@@ -19,53 +20,33 @@ const getAllUsers = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-
   const { name, email, password, type } = req.body;
 
-  // 400 Bad Request: campos em falta
   if (!name || !email || !password || !type) {
-    return res.status(400).json({
-      errorCode: "USER_REGISTRATION_BAD_REQUEST",
-      message: "Todos os campos obrigatórios devem ser preenchidos!",
-    });
+    return handleError(res, "USER_REGISTRATION_BAD_REQUEST");
   }
 
-  // 400 Bad Request: email inválido
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return res.status(400).json({
-      errorCode: "USER_REGISTRATION_INVALID_EMAIL",
-      message: "O e-mail fornecido não é válido. Insira um e-mail correto!",
-    });
+    return handleError(res, "USER_REGISTRATION_INVALID_EMAIL");
   }
 
-  // 400 Bad Request: password fraca
   const pwdRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$%\^&\*]).{8,}$/;
   if (!pwdRegex.test(password)) {
-    return res.status(400).json({
-      errorCode: "USER_REGISTRATION_WEAK_PASSWORD",
-      message:
-        "A password deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, números e caracteres especiais.",
-    });
+    return handleError(res, "USER_REGISTRATION_WEAK_PASSWORD");
   }
 
   try {
-    // 409 Conflict: email já existe
     const existing = await User.findOne({ email });
     if (existing) {
-      return res.status(409).json({
-        errorCode: "USER_EMAIL_ALREADY_EXISTS",
-        message: "O e-mail fornecido já está em uso. Escolha outro e-mail!",
-      });
+      return handleError(res, "USER_EMAIL_ALREADY_EXISTS");
     }
 
-    // cria e guarda o novo utilizador
     const saltRounds = 10;
     const hash = await bcrypt.hash(password, saltRounds);
     const user = new User({ name, email, password: hash, type });
     await user.save();
 
-    // 201 Created
     return res.status(201).json({
       id: user._id,
       name: user.name,
@@ -73,9 +54,7 @@ const createUser = async (req, res) => {
       type: user.type,
     });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao registar utilizador." });
+    return res.status(500).json({ message: "Erro interno ao registar utilizador." });
   }
 };
 
@@ -83,30 +62,20 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({
-      errorCode: "LOGIN_BAD_REQUEST",
-      message: "E-mail e password são obrigatórios!",
-    });
+    return handleError(res, "LOGIN_BAD_REQUEST");
   }
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({
-        errorCode: "LOGIN_USER_NOT_REGISTERED",
-        message: "Utilizador não encontrado. Registe-se primeiro!",
-      });
+      return handleError(res, "LOGIN_USER_NOT_REGISTERED");
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.status(401).json({
-        errorCode: "LOGIN_INVALID_CREDENTIALS",
-        message: "E-mail ou password incorretos!",
-      });
+      return handleError(res, "LOGIN_INVALID_CREDENTIALS");
     }
 
-    //criação do jwt token
     const payload = { userId: user._id, type: user.type };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
@@ -114,7 +83,7 @@ const loginUser = async (req, res) => {
 
     return res.status(200).json({
       id: user._id,
-      token,      
+      token,
     });
   } catch (err) {
     return res.status(500).json({ message: "Erro interno no login." });
@@ -127,61 +96,37 @@ const getUserById = async (req, res) => {
   try {
     const user = await User.findById(requestedId).populate("associatedActivities");
     if (!user) {
-      return res.status(404).json({
-        errorCode: "AUTH_UNAUTHORIZED",
-        message: "Utilizador não encontrado",
-      });
+      return handleError(res, "AUTH_UNAUTHORIZED");
     }
-
     return res.status(200).json(user);
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao obter utilizador." });
+    return res.status(500).json({ message: "Erro interno ao obter utilizador." });
   }
 };
-
 
 const updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, email, type } = req.body;
 
-  // 400 Bad Request: nenhum campo para atualizar ou dados inválidos
   if (!name && !email && !type) {
-    return res.status(400).json({
-      errorCode: "USER_DATA_INVALID",
-      message:
-        "Dados inválidos. Verifique os campos obrigatórios e tente novamente.",
-    });
+    return handleError(res, "USER_DATA_INVALID");
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  /* const pwdRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$%\^&\*]).{8,}$/; */
   if (email && !emailRegex.test(email)) {
-    return res.status(400).json({
-      errorCode: "USER_DATA_INVALID",
-      message:
-        "Dados inválidos. Verifique os campos obrigatórios e tente novamente.",
-    });
+    return handleError(res, "USER_DATA_INVALID");
   }
 
   try {
     const user = await User.findById(id);
     if (!user) {
-      return res.status(404).json({
-        errorCode: "USER_NOT_FOUND",
-        message: "O utilizador solicitado não foi encontrado.",
-      });
+      return handleError(res, "USER_NOT_FOUND");
     }
 
-    // 409 Conflict: email já está em uso por outro utilizador
     if (email && email !== user.email) {
       const exists = await User.findOne({ email });
       if (exists) {
-        return res.status(409).json({
-          errorCode: "USER_ALREADY_EXISTS",
-          message: "Este e-mail já está registado no sistema.",
-        });
+        return handleError(res, "USER_ALREADY_EXISTS");
       }
       user.email = email;
     }
@@ -198,48 +143,36 @@ const updateUser = async (req, res) => {
       type: user.type,
     });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao atualizar utilizador." });
+    return res.status(500).json({ message: "Erro interno ao atualizar utilizador." });
   }
 };
 
 const deleteUser = async (req, res) => {
+  const { id } = req.params;
 
-    const { id } = req.params;
-  
-    try {
-      // 404 Not Found: utilizador não existe
-      const user = await User.findById(id);
-      if (!user) {
-        return res.status(404).json({
-          errorCode: 'USER_NOT_FOUND',
-          message: 'O utilizador solicitado não foi encontrado.'
-        });
-      }
-  
-      // 403 Forbidden: associado a projeto ativo (ajuste a query ao seu schema)  É NECESSARIO REVER
-      const activeProject = await Plan.findOne({ owner: id, isActive: true });
-      if (activeProject) {
-        return res.status(403).json({
-          errorCode: 'USER_DELETE_BLOCKED',
-          message: 'Este utilizador está associado a um projeto ativo e não pode ser removido.'
-        });
-      }
-  
-      // Remove o utilizador
-      await User.findByIdAndDelete(id);
-      return res.status(200).json({ message: 'Utilizador removido com sucesso.' });
-    } catch (err) {
-      return res.status(500).json({ message: 'Erro interno ao remover utilizador.' });
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return handleError(res, "USER_NOT_FOUND");
     }
-  };
 
-  module.exports = {
-    getAllUsers,
-    createUser,
-    loginUser,
-    getUserById,
-    updateUser,
-    deleteUser,
-  };
+    const activeProject = await Plan.findOne({ owner: id, isActive: true });
+    if (activeProject) {
+      return handleError(res, "USER_DELETE_BLOCKED");
+    }
+
+    await User.findByIdAndDelete(id);
+    return res.status(200).json({ message: 'Utilizador removido com sucesso.' });
+  } catch (err) {
+    return res.status(500).json({ message: 'Erro interno ao remover utilizador.' });
+  }
+};
+
+module.exports = {
+  getAllUsers,
+  createUser,
+  loginUser,
+  getUserById,
+  updateUser,
+  deleteUser,
+};

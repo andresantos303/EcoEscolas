@@ -1,26 +1,10 @@
-// Import data models
 const Activity = require("../models/activity.model.js");
 const Plan = require("../models/plan.model.js");
 const User = require("../models/user.model.js");
 const { enviarEmail } = require("../utils/nodemailer.js");
+const { handleError } = require("../utils/errorHandler.js");
 
 const getAllActivities = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: apenas Admins podem listar atividades
-  if (req.user.type !== "Secretariado" && req.user.type !== "Admin") {
-    return res.status(403).json({
-      errorCode: "ACTIVITY_REGISTRATION_UNAUTHORIZED",
-      message: "Não tem permissões para realizar esta ação",
-    });
-  }
-
   try {
     const filter = {};
     if (req.query.name) filter.name = req.query.name;
@@ -29,111 +13,53 @@ const getAllActivities = async (req, res) => {
     const atividades = await Activity.find(filter);
     return res.status(200).json(atividades);
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao buscar atividades." });
+    return res.status(500).json({ message: "Erro interno ao buscar atividades." });
   }
 };
 
 const getActivityById = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: apenas Admins podem obter detalhes de atividades
-  if (req.user.type !== "Secretariado" && req.user.type !== "Admin") {
-    return res.status(403).json({
-      errorCode: "ACTIVITY_REGISTRATION_UNAUTHORIZED",
-      message: "Não tem permissões para realizar esta ação",
-    });
-  }
-
   try {
     const activity = await Activity.findById(req.params.id)
       .populate('planActivitiesId', 'nome')
       .populate('createdUserId', 'nome email');
     if (!activity) {
-      return res.status(404).json({
-        errorCode: "ACTIVITY_NOT_FOUND",
-        message: "A atividade solicitada não foi encontrada.",
-      });
+      return handleError(res, "ACTIVITY_NOT_FOUND");
     }
     return res.status(200).json(activity);
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao obter atividade." });
+    return res.status(500).json({ message: "Erro interno ao obter atividade." });
   }
 };
 
 const createActivity = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: apenas Conselho Eco-Escolas ou Secretariado
   const role = req.user.type;
   if (role !== "Conselho Eco-Escolas" && role !== "Secretariado" && role !== "Admin") {
-    return res.status(403).json({
-      errorCode: "ACTIVITY_REGISTRATION_UNAUTHORIZED",
-      message:
-        "Apenas membros do Conselho Eco-Escolas ou Secretariado podem registrar atividades.",
-    });
+    return handleError(res, "ACTIVITY_REGISTRATION_UNAUTHORIZED");
   }
 
   const { nome, descricao, local, data, estado } = req.body;
   const idPlano = req.params.idPlano;
 
-  // 400 Bad Request: campos obrigatórios em falta
   if (!nome || !descricao || !local || !data || typeof estado !== 'boolean' || !idPlano) {
-    return res.status(400).json({
-      errorCode: "ACTIVITY_REGISTRATION_BAD_REQUEST",
-      message: "Nome, descrição, local, estado e plano associado são obrigatórios!",
-    });
+    return handleError(res, "ACTIVITY_REGISTRATION_BAD_REQUEST");
   }
 
-  // 400 Bad Request: data deve ser futura
   const activityDate = new Date(data);
   if (isNaN(activityDate.getTime()) || activityDate <= new Date()) {
-    return res.status(400).json({
-      errorCode: "ACTIVITY_REGISTRATION_INVALID_DATE",
-      message: "A data da atividade deve ser futura.",
-    });
+    return handleError(res, "ACTIVITY_REGISTRATION_INVALID_DATE");
   }
 
   try {
-    // 404 Not Found: plano de atividades não existe
-    const plan = await Plan.findById(req.params.idPlano);
+    const plan = await Plan.findById(idPlano);
     if (!plan) {
-      return res.status(404).json({
-        errorCode: "PLAN_ACTIVITY_NOT_FOUND",
-        message: "Plano de atividade solicitado não foi encontrado.",
-      });
+      return handleError(res, "PLAN_ACTIVITY_NOT_FOUND");
     }
 
-    // 409 Conflict: atividade duplicada (mesmo nome, area e data)
-    const duplicate = await Activity.findOne({
-      nome,
-      local: local,
-      data: data,
-    });
+    const duplicate = await Activity.findOne({ nome, local, data });
     if (duplicate) {
-      return res.status(409).json({
-        errorCode: "ACTIVITY_REGISTRATION_DUPLICATE",
-        message:
-          "Já existe uma atividade com esse nome e local para essa data.",
-      });
+      return handleError(res, "ACTIVITY_REGISTRATION_DUPLICATE");
     }
 
-    // cria e guarda a atividade
     const activity = new Activity({
       nome,
       descricao,
@@ -141,12 +67,11 @@ const createActivity = async (req, res) => {
       fotos: [],
       estado,
       data,
-      planActivitiesId: req.params.idPlano,
+      planActivitiesId: idPlano,
       createdUserId: req.user.userId,
     });
 
     await activity.save();
-    // associa a atividade ao plano
     plan.associatedActivities.push(activity._id);
     await plan.save();
 
@@ -157,10 +82,11 @@ const createActivity = async (req, res) => {
     }
 
     try {
-      await enviarEmailNotificação(
-        "Secretariado",
-        `Criação da Atividade ${nome}`,
-        `O utilizador ${user.name} criou a atividade "${nome}" com a data ${data} e está incluída no plano ${plan.nome}.`
+      await enviarEmail(
+        `${user.email}`,
+        `Confirmação de Inscrição na Atividade ${activity.nome}`,
+        `Olá ${user.name}!`,
+        `<p>Olá <strong>${user.name}</strong>,</p><p>Sua inscrição na atividade "<strong>${activity.nome}</strong>" foi confirmada.</p><p>Em breve você receberá mais informações sobre data, horário e local.</p><p>Obrigado por participar!</p>`
       );
     } catch (emailError) {
       console.error("Erro ao enviar notificação por e-mail:", emailError);
@@ -171,46 +97,28 @@ const createActivity = async (req, res) => {
       atividadeId: activity._id,
     });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao registrar atividade." });
+    return res.status(500).json({ message: "Erro interno ao registrar atividade." });
   }
 };
 
 const addParticipant = async (req, res) => {
   const { nome, email } = req.body;
 
-  // 400 Bad Request: campos obrigatórios em falta
   if (!nome || !email) {
-    return res.status(400).json({
-      errorCode: "ACTIVITY_REGISTRATION_BAD_REQUEST",
-      message: "Nome, email são obrigatórios!",
-    });
+    return handleError(res, "ACTIVITY_REGISTRATION_BAD_REQUEST");
   }
 
   try {
-    // verifica se a atividade existe
     const activity = await Activity.findById(req.params.idAtividade);
     if (!activity) {
-      return res.status(404).json({
-        errorCode: "ACTIVITY_NOT_FOUND",
-        message: "A atividade solicitada não foi encontrada.",
-      });
+      return handleError(res, "ACTIVITY_NOT_FOUND");
     }
 
-    // 409 Conflict: participante já inscrito
-    if (
-      activity.participants &&
-      activity.participants.find((p) => p.email === email)
-    ) {
-      return res.status(409).json({
-        errorCode: "ACTIVITY_REGISTRATION_DUPLICATE",
-        message: "Aluno já inscrito nesta atividade",
-      });
+    if (activity.participants && activity.participants.find(p => p.email === email)) {
+      return handleError(res, "ACTIVITY_REGISTRATION_DUPLICATE");
     }
-    // adiciona participante
+
     activity.participants.push({ nome, email });
-
     await activity.save();
 
     await enviarEmail(
@@ -225,28 +133,14 @@ const addParticipant = async (req, res) => {
       atividadeId: activity._id,
     });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao adicionar participante." });
+    return res.status(500).json({ message: "Erro interno ao adicionar participante." });
   }
 };
 
 const updateActivity = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: apenas Conselho Eco-Escolas / Secretariado
   const role = req.user.type;
   if (role !== "Conselho Eco-Escolas" && role !== "Secretariado") {
-    return res.status(403).json({
-      errorCode: "PLAN_CREATION_UNAUTHORIZED",
-      message: "Não tem permissões para realizar esta ação",
-    });
+    return handleError(res, "PLAN_CREATION_UNAUTHORIZED");
   }
 
   const { id } = req.params;
@@ -255,140 +149,86 @@ const updateActivity = async (req, res) => {
   try {
     const activity = await Activity.findById(id);
     if (!activity) {
-      return res.status(404).json({
-        errorCode: "ACTIVITY_NOT_FOUND",
-        message: "A atividade solicitada não foi encontrada.",
-      });
+      return handleError(res, "ACTIVITY_NOT_FOUND");
     }
 
-    // Atualiza apenas os campos fornecidos
     if (nome !== undefined) activity.nome = nome;
     if (descricao !== undefined) activity.descricao = descricao;
-    if (local !== undefined) activity.area = local;
-    if (fotos !== undefined) activity.photos = fotos;
+    if (local !== undefined) activity.local = local;
+    if (fotos !== undefined) activity.fotos = fotos;
     if (estado !== undefined) activity.estado = estado;
     if (data !== undefined) {
       const newDate = new Date(data);
       if (isNaN(newDate.getTime())) {
-        return res.status(400).json({
-          errorCode: "ACTIVITY_REGISTRATION_BAD_REQUEST",
-          message: "Data inválida.",
-        });
+        return handleError(res, "ACTIVITY_REGISTRATION_BAD_REQUEST");
       }
+      activity.data = data;
     }
 
     await activity.save();
-    return res.status(200).json({
-      message: "Atividade atualizada com sucesso!",
-    });
+    return res.status(200).json({ message: "Atividade atualizada com sucesso!" });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao atualizar atividade." });
+    return res.status(500).json({ message: "Erro interno ao atualizar atividade." });
   }
 };
 
 const deleteActivity = async (req, res) => {
-  // 401 Unauthorized: token não fornecido ou inválido
-  if (!req.user) {
-    return res.status(401).json({
-      errorCode: "AUTH_UNAUTHORIZED",
-      message: "Token inválido ou não fornecido.",
-    });
-  }
-
-  // 403 Forbidden: apenas Coordenador ou Admin
   const role = req.user.type;
   if (role !== "Secretariado" && role !== "Admin") {
-    return res.status(403).json({
-      errorCode: "PLAN_CREATION_UNAUTHORIZED",
-      message: "Não tem permissões para realizar esta ação",
-    });
+    return handleError(res, "PLAN_CREATION_UNAUTHORIZED");
   }
 
   const { id } = req.params;
 
   try {
-    // 404 Not Found: atividade não existe
     const activity = await Activity.findById(id);
     if (!activity) {
-      return res.status(404).json({
-        errorCode: "ACTIVITY_NOT_FOUND",
-        message: "A atividade solicitada não foi encontrada.",
-      });
+      return handleError(res, "ACTIVITY_NOT_FOUND");
     }
-    // 400 Bad Request: atividade não pode ser removida se estiver ativa
     if (activity.estado) {
-      return res.status(400).json({
-        errorCode: "ACTIVITY_CANNOT_DELETE",
-        message: "Atividade não pode ser removida, pois esta em andamento.",
-      });
+      return handleError(res, "ACTIVITY_CANNOT_DELETE");
     }
 
-    //remover atividade do plano associado
     if (activity.planActivitiesId) {
       await Plan.findByIdAndUpdate(activity.planActivitiesId, {
         $pull: { associatedActivities: activity._id },
       });
     }
 
-    // Remove a atividade
     await Activity.findByIdAndDelete(id);
-    return res.status(200).json({
-      message: "Atividade removida com sucesso.",
-    });
+    return res.status(200).json({ message: "Atividade removida com sucesso." });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao remover atividade." });
+    return res.status(500).json({ message: "Erro interno ao remover atividade." });
   }
 };
 
 const finalizeActivity = async (req, res) => {
-
-  // 403 Forbidden: apenas Coordenador ou Admin
   const role = req.user.type;
   if (role !== "Secretariado" && role !== "Admin") {
-    return res.status(403).json({
-      errorCode: "PLAN_CREATION_UNAUTHORIZED",
-      message: "Não tem permissões para realizar esta ação",
-    });
+    return handleError(res, "PLAN_CREATION_UNAUTHORIZED");
   }
 
   const { id } = req.params;
   const { participantsCount } = req.body;
 
   try {
-    // 404 Not Found: atividade não existe
     const activity = await Activity.findById(id);
     if (!activity) {
-      return res.status(404).json({
-        errorCode: "ACTIVITY_NOT_FOUND",
-        message: "A atividade solicitada não foi encontrada.",
-      });
+      return handleError(res, "ACTIVITY_NOT_FOUND");
     }
 
-    // 409 Conflict: data de fim é superior à data atual
     const currentDate = new Date();
     if (new Date(activity.data) > currentDate) {
-      return res.status(409).json({
-        errorCode: "ACTIVITY_FINALIZE_BLOCKED",
-        message: "A data da atividade é superior à data atual.",
-      });
+      return handleError(res, "ACTIVITY_FINALIZE_BLOCKED");
     }
 
-    // Atualizar estado a atividade e adicionar a contagem de participantes
     await Activity.findByIdAndUpdate(id, {
       estado: false,
-      participantsCount: participantsCount,
+      participantsCount,
     });
-    return res.status(200).json({
-      message: "Atividade finalizada com sucesso.",
-    });
+    return res.status(200).json({ message: "Atividade finalizada com sucesso." });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erro interno ao remover atividade." });
+    return res.status(500).json({ message: "Erro interno ao remover atividade." });
   }
 };
 
