@@ -10,7 +10,15 @@ const planSchema = new mongoose.Schema(
     data_inicio: { type: String, required: true },
     data_fim: { type: String, required: true },
     estado: { type: Boolean, required: true, default: false },
-    recursos: { type: String, required: true },
+    recursos: {
+      type: [
+        {
+          profile_image: { type: String, required: true },
+          cloudinary_id: { type: String, required: true },
+        },
+      ],
+      default: [],
+    },
     nivel: { type: Number, required: true },
     createdUserId: {
       type: mongoose.Schema.Types.ObjectId,

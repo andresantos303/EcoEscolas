@@ -29,7 +29,7 @@ async function enviarEmailNotificação(tipo, assunto, texto, html) {
     // Busca todos os users cujo campo "type" seja igual a tipo
     const users = await User.find({ type: tipo }).select('email');
     if (users.length === 0) {
-      console.log(`Nenhum usuário encontrado com o cargo "${tipo}".`);
+      console.log(`Nenhum utilizador encontrado com o cargo "${tipo}".`);
       return;
     }
 
@@ -42,9 +42,9 @@ async function enviarEmailNotificação(tipo, assunto, texto, html) {
       )
     );
 
-    console.log(`E-mails enviados para ${users.length} usuário(s) com cargo "${tipo}".`);
+    console.log(`E-mails enviados para ${users.length} utilizador(s) com cargo "${tipo}".`);
   } catch (err) {
-    console.error('Erro ao notificar usuários por cargo:', err);
+    console.error('Erro ao notificar utilizadores por cargo:', err);
     throw err;
   }
 }

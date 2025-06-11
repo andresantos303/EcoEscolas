@@ -19,7 +19,7 @@ const errorMap = {
   PLAN_CREATION_INVALID_DATE:          { status: 409, message: "A data de início deve ser anterior à data de término." },
   PLAN_CREATION_DUPLICATE:             { status: 409, message: "Já existe um plano de atividades com esse nome." },
   PLAN_DELETE_BLOCKED:                 { status: 409, message: "Este plano está vinculado a atividades em andamento e não pode ser removido." },
-  ACTIVITY_CANNOT_DELETE:              { status: 400, message: "Atividade não pode ser removida, pois esta em andamento." },
+  PLAN_CANNOT_DELETE:              { status: 400, message: "Este plano não pode ser removido, pois esta em andamento." },
   PLAN_FINALIZE_BLOCKED:               { status: 409, message: "A data de fim do plano é superior à data atual." },
 
   // Activities

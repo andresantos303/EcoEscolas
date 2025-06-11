@@ -3,6 +3,8 @@ const Plan = require("../models/plan.model.js");
 const User = require("../models/user.model.js");
 const { enviarEmail } = require("../utils/nodemailer.js");
 const { handleError } = require("../utils/errorHandler.js");
+const { cloudinary } = require('../utils/upload.js');
+
 
 const getAllActivities = async (req, res) => {
   try {
@@ -32,12 +34,8 @@ const getActivityById = async (req, res) => {
 };
 
 const createActivity = async (req, res) => {
-  const role = req.user.type;
-  if (role !== "Conselho Eco-Escolas" && role !== "Secretariado" && role !== "Admin") {
-    return handleError(res, "ACTIVITY_REGISTRATION_UNAUTHORIZED");
-  }
-
-  const { nome, descricao, local, data, estado } = req.body;
+  const { nome, descricao, local, data } = req.body;
+  const estado = req.body.estado === 'true';
   const idPlano = req.params.idPlano;
 
   if (!nome || !descricao || !local || !data || typeof estado !== 'boolean' || !idPlano) {
@@ -60,11 +58,16 @@ const createActivity = async (req, res) => {
       return handleError(res, "ACTIVITY_REGISTRATION_DUPLICATE");
     }
 
+    const recursosCloud = (req.files || []).map(file => ({
+      profile_image: file.path,
+      cloudinary_id: file.filename,
+    }));
+
     const activity = new Activity({
       nome,
       descricao,
       local,
-      fotos: [],
+      fotos: recursosCloud,
       estado,
       data,
       planActivitiesId: idPlano,
@@ -82,11 +85,10 @@ const createActivity = async (req, res) => {
     }
 
     try {
-      await enviarEmail(
-        `${user.email}`,
-        `Confirmação de Inscrição na Atividade ${activity.nome}`,
-        `Olá ${user.name}!`,
-        `<p>Olá <strong>${user.name}</strong>,</p><p>Sua inscrição na atividade "<strong>${activity.nome}</strong>" foi confirmada.</p><p>Em breve você receberá mais informações sobre data, horário e local.</p><p>Obrigado por participar!</p>`
+      await enviarEmailNotificação(
+      "Secretariado",
+      `Criação da Atividade ${nome}`,
+      `O utilizador ${user.name} criou a atividade "${nome}" dentro do plano ${plan.nome} com a data de início ${data} e no local ${local}.`
       );
     } catch (emailError) {
       console.error("Erro ao enviar notificação por e-mail:", emailError);
@@ -195,6 +197,14 @@ const deleteActivity = async (req, res) => {
       });
     }
 
+    // --- Remoção das imagens no Cloudinary ---
+    if (Array.isArray(activity.fotos) && activity.fotos.length > 0) {
+      // chama destroy para cada public_id salvo
+      await Promise.all(activity.fotos.map(({ cloudinary_id }) => 
+        cloudinary.uploader.destroy(cloudinary_id)
+      ));
+    }
+
     await Activity.findByIdAndDelete(id);
     return res.status(200).json({ message: "Atividade removida com sucesso." });
   } catch (err) {
@@ -203,11 +213,6 @@ const deleteActivity = async (req, res) => {
 };
 
 const finalizeActivity = async (req, res) => {
-  const role = req.user.type;
-  if (role !== "Secretariado" && role !== "Admin") {
-    return handleError(res, "PLAN_CREATION_UNAUTHORIZED");
-  }
-
   const { id } = req.params;
   const { participantsCount } = req.body;
 
@@ -222,8 +227,14 @@ const finalizeActivity = async (req, res) => {
       return handleError(res, "ACTIVITY_FINALIZE_BLOCKED");
     }
 
+    const novasImagens = (req.files || []).map(file => ({
+      profile_image: file.path,
+      cloudinary_id: file.filename,
+    }));
+
     await Activity.findByIdAndUpdate(id, {
       estado: false,
+      fotos: [...activity.fotos, ...novasImagens],
       participantsCount,
     });
     return res.status(200).json({ message: "Atividade finalizada com sucesso." });
