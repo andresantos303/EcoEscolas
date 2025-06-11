@@ -10,8 +10,8 @@ function init() {
     setupActivitySearch();
     setupDeleteActivity();
     setupCreateActivityForm();
-    setupEditActivity();
     openAddActivityModal();
+    setupEditActivity();
     populatePlansSelect();
 }
 
@@ -89,7 +89,7 @@ function openAddActivityModal() {
 function setupCreateActivityForm() {
     const form = document.getElementById('create-activity-form');
     if (!form) return;
-   
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -159,10 +159,10 @@ function setupEditActivity() {
         e.preventDefault();
 
         const updatedData = {
-            nome: plannameInput.value.trim(),
-            descricao: descriptionInput.value.trim(),
-            local: firstdateInput.value.trim(),
-            data: lastdateInput.value.trim(),
+            nome: activityNameInput.value.trim(),
+            descricao: activityDescriptionInput.value.trim(),
+            local: activityLocalInput.value.trim(),
+            data: activityDateInput.value.trim(),
         };
 
         try {

@@ -156,71 +156,6 @@ h1 {
   background: #e53935;
 }
 
-#editModal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-#editModal .modal-content {
-  background: #fff;
-  padding: 24px 32px;
-  border-radius: 5px;
-  min-width: 280px;
-  max-width: 90%;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-#editModal label {
-  display: block;
-  margin-top: 12px;
-  font-weight: 600;
-}
-
-#editModal input {
-  width: 100%;
-  padding: 8px;
-  margin-top: 4px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-#editModal .actions {
-  margin-top: 20px;
-  text-align: right;
-}
-
-#editModal button {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 5px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-#editModal .save-btn {
-  background: #4caf50;
-  color: #fff;
-  margin-right: 6px;
-}
-
-#editModal .cancel-btn {
-  background: #bbb;
-  color: #fff;
-}
-
-#editModal .save-btn:hover {
-  background: #45a049;
-}
-
-#editModal .cancel-btn:hover {
-  background: #999;
-}
-
 .modal {
   display: none;
   position: fixed;
@@ -422,86 +357,6 @@ h1 {
   color: #4caf50;
 }
 
-#editPlanoModal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1100;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#editPlanoModal .modal-content {
-  background: #fff;
-  padding: 30px 40px;
-  width: 350px;
-  border-radius: 5px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  text-align: center;
-  position: relative;
-  font-family: "Poppins", sans-serif;
-}
-
-#editPlanoModal .modal-content h2 {
-  margin-bottom: 25px;
-  font-weight: 700;
-  color: #2c3e50;
-}
-
-#editPlanoModal .modal-content input[type="text"],
-#editPlanoModal .modal-content input[type="date"] {
-  width: 100%;
-  padding: 12px 15px;
-  margin: 12px 0;
-  border: 1.8px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-#editPlanoModal .modal-content input:focus {
-  border-color: #4caf50;
-  outline: none;
-}
-
-#editPlanoModal .modal-content button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  margin-top: 20px;
-  border-radius: 5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  width: 100%;
-}
-
-#editPlanoModal .modal-content button:hover {
-  background-color: #45a049;
-  transform: scale(1.05);
-}
-
-#editPlanoModal .modal-content .close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 24px;
-  font-weight: 700;
-  color: #999;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-#editPlanoModal .modal-content .close:hover {
-  color: #4caf50;
-}
-
 #create-activity-form {
   position: fixed;
   top: 2%;
@@ -583,48 +438,6 @@ h1 {
 
 #create-activity-form .modal-content .close:hover {
   color: #4caf50;
-}
-
-.notificacao-form {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 50px 40px;
-  width: 100%;
-  max-width: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
-  box-sizing: border-box;
-}
-
-.section#notificacoes {
-  width: 99%;
-}
-
-.notificacao-form .form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
-}
-
-.notificacao-form label {
-  font-weight: 700;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-.notificacao-form input,
-.notificacao-form textarea {
-  padding: 20px;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  transition: border-color 0.3s;
-}
-
-.notificacao-form input:focus,
-.notificacao-form textarea:focus {
-  border-color: grey;
-  outline: none;
 }
 
 .btn-enviar {

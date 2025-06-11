@@ -235,6 +235,16 @@ const finalizePlan = async (req, res) => {
   }
 };
 
+const getPublicPlanNames = async (req, res) => {
+  try {
+    const planos = await Plan.find({}, { nome: 1, _id: 1 });
+    return res.status(200).json(planos);
+  } catch (err) {
+    return res.status(500).json({ message: "Erro ao buscar nomes dos planos." });
+  }
+};
+
+
 module.exports = {
   getAllPlans,
   getPlanById,
@@ -242,4 +252,5 @@ module.exports = {
   updatePlan,
   deletePlan,
   finalizePlan,
+  getPublicPlanNames,
 };

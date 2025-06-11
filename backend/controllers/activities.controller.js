@@ -140,11 +140,7 @@ const addParticipant = async (req, res) => {
 };
 
 const updateActivity = async (req, res) => {
-  const role = req.user.type;
-  if (role !== "Conselho Eco-Escolas" && role !== "Secretariado") {
-    return handleError(res, "PLAN_CREATION_UNAUTHORIZED");
-  }
-
+  
   const { id } = req.params;
   const { nome, descricao, local, fotos, data, estado } = req.body;
 
@@ -175,11 +171,6 @@ const updateActivity = async (req, res) => {
 };
 
 const deleteActivity = async (req, res) => {
-  const role = req.user.type;
-  if (role !== "Secretariado" && role !== "Admin") {
-    return handleError(res, "PLAN_CREATION_UNAUTHORIZED");
-  }
-
   const { id } = req.params;
 
   try {
@@ -213,6 +204,7 @@ const deleteActivity = async (req, res) => {
 };
 
 const finalizeActivity = async (req, res) => {
+
   const { id } = req.params;
   const { participantsCount } = req.body;
 

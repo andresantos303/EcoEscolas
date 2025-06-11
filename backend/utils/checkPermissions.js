@@ -27,9 +27,13 @@ module.exports = (resource, action) => {
       }
     }
 
+    if (resource === "plans" && action === "read") {
+      return next(); // Permitir leitura para todos
+    }
+
     //ACTIVITIES PERMISSIONS
     if (resource === "activities") {
-      if (user.type === "Admin" || user.type === "Secretariado") {
+      if (user.type === "Admin" || user.type === "Secretariado" || user.type === "Conselho Eco-Escolas") {
         return next();
       }
     }
