@@ -20,6 +20,18 @@ export async function getAllPlans() {
     }
 }
 
+export async function getPublicPlanNames() {
+    try {
+        const response = await axios.get(`${API_URL}/plans/public/names`, {
+            
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar os Planos de Atividades:', error);
+        throw error;
+    }
+}
+
 export async function getPlanById(planId) {
   try {
     const response = await axios.get(`${API_URL}/plans/${planId}`, {
