@@ -20,6 +20,21 @@ export async function getAllPlans() {
     }
 }
 
+export async function getPlansActive() {
+  try {
+    const query = new URLSearchParams({ estado: true });
+    const response = await axios.get(`${API_URL}/plans/?${query}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar planos ativos:', error);
+    throw error;
+  }
+}
+
 export async function getPublicPlanNames() {
     try {
         const response = await axios.get(`${API_URL}/plans/public/names`, {

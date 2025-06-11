@@ -1,4 +1,4 @@
-import { getAllActivities, deleteActivity, updateActivity, createActivity, getAllPlans } from '../activities/activitiesServices.js';
+import { getAllActivities, getActivitiesActive, deleteActivity, updateActivity, createActivity, getAllPlans } from '../activities/activitiesServices.js';
 import { requireAuth } from '../auth/authGuard.js';
 
 requireAuth();
@@ -18,8 +18,24 @@ function init() {
 async function renderActivities() {
     try {
         const activities = await getAllActivities();
+        const activitiesActives = await getActivitiesActive();
+        const spanActivitiesActive = document.getElementById('atividadesAtivas');
+        const spanNextActivities = document.getElementById('proximasAtividades');
+        spanActivitiesActive.innerHTML = activitiesActives.length;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // zera hora/min/seg para comparar só a data
+
+        const nextActivitiesCount = activities.filter(({ data }) => {
+            const activityDate = new Date(data);
+            return activityDate > today;
+        });
+        spanNextActivities.innerHTML = nextActivitiesCount.length;
+
         const tbody = document.getElementById('activityTbody');
+        const nextActivities = document.getElementById('sectionNextActivities');
         tbody.innerHTML = '';
+        nextActivities.innerHTML= '';
 
         activities.forEach(activity => {
             tbody.insertAdjacentHTML('beforeend', `
@@ -30,13 +46,59 @@ async function renderActivities() {
                     <td class="activity-description">${activity.descricao}</td>
                     <td class="activity-local">${activity.local}</td>
                     <td class="activity-status">${activity.estado}</td>
-                    <td class="activity-data">${activity.data}</td>
+                    <td class="activity-data">${activity.data.split('-').reverse().join('-')}</td>
                     <td>
                         <button class="edit-btn" data-activityid="${activity._id}">Editar</button>
                         <button class="delete-btn" data-activityid="${activity._id}">Eliminar</button>
                     </td>
                 </tr>
             `);
+        });
+
+        nextActivitiesCount.slice(0, 4).forEach(nextActivity => {
+            nextActivities.insertAdjacentHTML('beforeend', `
+                <li>
+                    <span class="dot" style="background: #2c3e50"></span>
+                    <div class="content">
+                    <p class="title">${nextActivity.nome}</p>
+                    <p class="time">${nextActivity.data.split('-').reverse().join('-')}</p>
+                    </div>
+                </li>
+            `);
+        });
+
+        const currentYear = today.getFullYear();
+
+        const countsPerMonth = Array(12).fill(0);
+
+        activities.forEach(({ data }) => {
+        const activityDate = new Date(data);
+        if (activityDate.getFullYear() === currentYear) {
+            const monthIndex = activityDate.getMonth();
+            countsPerMonth[monthIndex]++;
+        }
+        });
+        const ctx = document.getElementById('graficoAtividades').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
+                datasets: [{
+                    label: 'Atividades por mês',
+                    data: countsPerMonth,
+                    backgroundColor: '#4CAF50',
+                    borderColor: '#388E3C',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
         });
 
     } catch (error) {

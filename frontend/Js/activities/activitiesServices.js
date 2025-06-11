@@ -19,6 +19,22 @@ export async function getAllActivities() {
     }
 }
 
+export async function getActivitiesActive() {
+    try {
+        const query = new URLSearchParams({ estado: true });
+        const response = await axios.get(`${API_URL}/activities/`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+  
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar as Atividades:', error);
+        throw error;
+    }
+}
+
 export async function deleteActivity(activityId) {
 
   try {

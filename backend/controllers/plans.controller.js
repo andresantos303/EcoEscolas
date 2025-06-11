@@ -8,9 +8,9 @@ const { cloudinary } = require('../utils/upload.js');
 const getAllPlans = async (req, res) => {
   try {
     const filter = {};
-    if (req.query.name) filter.name = req.query.name;
-    if (req.query.status) filter.status = req.query.status;
-
+    if (req.query.nome) filter.nome = req.query.nome;
+    if (req.query.estado) filter.estado = req.query.estado;
+    
     const planos = await Plan.find(filter);
     return res.status(200).json(planos);
   } catch (err) {

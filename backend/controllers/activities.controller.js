@@ -9,9 +9,9 @@ const { cloudinary } = require('../utils/upload.js');
 const getAllActivities = async (req, res) => {
   try {
     const filter = {};
-    if (req.query.name) filter.name = req.query.name;
-    if (req.query.status) filter.status = req.query.status;
-
+    if (req.query.nome) filter.nome = req.query.nome;
+    if (req.params.estado) filter.estado = req.params.estado;
+    
     const atividades = await Activity.find(filter);
     return res.status(200).json(atividades);
   } catch (err) {
