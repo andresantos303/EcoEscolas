@@ -8,7 +8,7 @@ const chrome = require("selenium-webdriver/chrome");
     .build();
 
   try {
-    await driver.get("http://127.0.0.1:5500/index.html");
+    await driver.get("http://127.0.0.1:5500/frontend/index.html");
 
     try {
       const cookieButton = await driver.findElement(By.id("pAtividades"));

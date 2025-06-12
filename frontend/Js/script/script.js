@@ -69,28 +69,3 @@ const observer = new IntersectionObserver(
 );
 
 observer.observe(document.querySelector("#estatisticas"));
-
-const ctx = document.getElementById("graficoAtividades").getContext("2d");
-const graficoAtividades = new Chart(ctx, {
-  type: "bar",
-  data: {
-    labels: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio"],
-    datasets: [
-      {
-        label: "Atividades por mês",
-        data: [5, 8, 4, 7, 6],
-        backgroundColor: "#F5F5F5",
-        borderColor: "#696969",
-        borderWidth: 1,
-      },
-    ],
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  }
-})
