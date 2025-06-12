@@ -1,14 +1,16 @@
 const Activity = require("../models/activity.model.js");
 const Plan = require("../models/plan.model.js");
 const User = require("../models/user.model.js");
-const { enviarEmail } = require("../utils/nodemailer.js");
+const { enviarEmailNotificação } = require("../utils/nodemailer.js");
 const { handleError } = require("../utils/errorHandler.js");
+const { cloudinary } = require('../utils/upload.js');
+
 
 const getAllActivities = async (req, res) => {
   try {
     const filter = {};
-    if (req.query.name) filter.name = req.query.name;
-    if (req.query.status) filter.status = req.query.status;
+    if (req.query.nome) filter.nome = req.query.nome;
+    if (req.params.estado) filter.estado = req.params.estado;
 
     const atividades = await Activity.find(filter);
     return res.status(200).json(atividades);
@@ -32,8 +34,8 @@ const getActivityById = async (req, res) => {
 };
 
 const createActivity = async (req, res) => {
-
-  const { nome, descricao, local, data, estado } = req.body;
+  const { nome, descricao, local, data } = req.body;
+  const estado = req.body.estado === 'true';
   const idPlano = req.params.idPlano;
 
   if (!nome || !descricao || !local || !data || typeof estado !== 'boolean' || !idPlano) {
@@ -47,20 +49,27 @@ const createActivity = async (req, res) => {
 
   try {
     const plan = await Plan.findById(idPlano);
-    if (!plan) {
-      return handleError(res, "PLAN_ACTIVITY_NOT_FOUND");
-    }
+    if (!plan) return handleError(res, "PLAN_ACTIVITY_NOT_FOUND");
 
     const duplicate = await Activity.findOne({ nome, local, data });
-    if (duplicate) {
-      return handleError(res, "ACTIVITY_REGISTRATION_DUPLICATE");
+    if (duplicate) return handleError(res, "ACTIVITY_REGISTRATION_DUPLICATE");
+
+    const recursosCloud = [];
+
+    for (const file of req.files) {
+      const result = await cloudinary.uploader.upload(file.path);
+      recursosCloud.push({
+        profile_image: result.secure_url,
+        cloudinary_id: result.public_id,
+      });
     }
+
 
     const activity = new Activity({
       nome,
       descricao,
       local,
-      fotos: [],
+      fotos: recursosCloud,
       estado,
       data,
       planActivitiesId: idPlano,
@@ -68,8 +77,8 @@ const createActivity = async (req, res) => {
     });
 
     await activity.save();
-    plan.associatedActivities.push(activity._id);
-    await plan.save();
+
+    await Plan.findByIdAndUpdate(idPlano, { $push: { associatedActivities: activity._id } });
 
     const user = await User.findById(req.user.userId);
     if (user) {
@@ -78,11 +87,10 @@ const createActivity = async (req, res) => {
     }
 
     try {
-      await enviarEmail(
-        `${user.email}`,
-        `Confirmação de Inscrição na Atividade ${activity.nome}`,
-        `Olá ${user.name}!`,
-        `<p>Olá <strong>${user.name}</strong>,</p><p>Sua inscrição na atividade "<strong>${activity.nome}</strong>" foi confirmada.</p><p>Em breve você receberá mais informações sobre data, horário e local.</p><p>Obrigado por participar!</p>`
+      await enviarEmailNotificação(
+        "Secretariado",
+        `Criação da Atividade ${nome}`,
+        `O utilizador ${user.name} criou a atividade "${nome}" dentro do plano ${plan.nome} com a data de início ${data} e no local ${local}.`
       );
     } catch (emailError) {
       console.error("Erro ao enviar notificação por e-mail:", emailError);
@@ -93,8 +101,10 @@ const createActivity = async (req, res) => {
       atividadeId: activity._id,
     });
   } catch (err) {
+    console.error("Erro interno ao registrar atividade:", err);
     return res.status(500).json({ message: "Erro interno ao registrar atividade." });
   }
+
 };
 
 const addParticipant = async (req, res) => {
@@ -134,7 +144,7 @@ const addParticipant = async (req, res) => {
 };
 
 const updateActivity = async (req, res) => {
-  
+
   const { id } = req.params;
   const { nome, descricao, local, fotos, data, estado } = req.body;
 
@@ -182,6 +192,14 @@ const deleteActivity = async (req, res) => {
       });
     }
 
+    // --- Remoção das imagens no Cloudinary ---
+    if (Array.isArray(activity.fotos) && activity.fotos.length > 0) {
+      // chama destroy para cada public_id salvo
+      await Promise.all(activity.fotos.map(({ cloudinary_id }) =>
+        cloudinary.uploader.destroy(cloudinary_id)
+      ));
+    }
+
     await Activity.findByIdAndDelete(id);
     return res.status(200).json({ message: "Atividade removida com sucesso." });
   } catch (err) {
@@ -199,8 +217,12 @@ const finalizeActivity = async (req, res) => {
       return handleError(res, "ACTIVITY_NOT_FOUND");
     }
 
+    // Extrair URLs das imagens do Cloudinary
+    const novasImagens = req.files?.map(file => file.path) || [];
+
     await Activity.findByIdAndUpdate(id, {
       estado: false,
+      fotos: [...activity.fotos, ...novasImagens],
       participantsCount,
     });
 

@@ -766,7 +766,22 @@ body {
 }
 .chart {
   width: 100%;
-  height: auto;
+  aspect-ratio: 16 / 9;
+}
+.score{
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+  box-shadow: var(--card-shadow);
+}
+.score h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.score p {
+  margin: 4px 0 16px;
+  color: #6b7280;
+  font-size: 0.9rem;
 }
 /* Upcoming Events */
 .events {
@@ -814,9 +829,37 @@ body {
   color: #374151;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 768px) and (max-width: 1023px) {
+  .main {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
   .main {
     grid-template-columns: 1fr;
+  }
+
+  /* reduz paddings e fontes para ecrãs muito pequenos */
+  .attendance,
+  .score,
+  .events {
+    padding: calc(var(--card-padding) / 2);
+  }
+  .attendance h2,
+  .score h2,
+  .events h2 {
+    font-size: 1rem;
+  }
+  .attendance p,
+  .score p,
+  .events .content {
+    font-size: 0.8rem;
+  }
+  .events .dot {
+    width: 8px;
+    height: 8px;
+    margin-top: 4px;
+    margin-right: 6px;
   }
 }

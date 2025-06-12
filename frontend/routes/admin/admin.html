@@ -24,36 +24,34 @@
 
     <div class="main-content">
 
-        <div id="estatisticas" class="section active">
+           <div id="estatisticas" class="section active">
             <div class="dashboard">
                 <div class="cards">
                 <div class="card">
                     <div class="info">
                     <span class="title">Planos ativos</span>
-                    <span class="value" id="activePlanCount">0</span>
+                    <span class="value" id="planosAtivos"></span>
                     </div>
                     <div class="icon"><img style="height: 35px;" src="/Img/task.png"></div>
                 </div>
                 <div class="card">
                     <div class="info">
-                    <span class="title">Presentes na última atividade</span>
-                    <span class="value">26</span>
-                    <span class="subtitle">92.9% participações</span>
+                    <span class="title">Atividades ativas</span>
+                    <span class="value" id="atividadesAtivas"></span>
                     </div>
-                    <div class="icon"><img style="height: 35px;" src="/Img/check.png"></div>
+                    <div class="icon"><img style="height: 35px;" src="/Img/eco-tag.png"></div>
                 </div>
                 <div class="card">
                     <div class="info">
                     <span class="title">Nº de participações</span>
-                    <span class="value">85.4</span>
+                    <span class="value">85.4%</span>
                     </div>
                     <div class="icon"><img style="height: 35px;" src="/Img/participation.png"></div>
                 </div>
-                <div class="card" id="activity-count-card">
+                <div class="card">
                     <div class="info">
                     <span class="title">Próximas atividades</span>
-                    <span id="countActivities" class="value"></span>
-                    <span class="subtitle">Esta semana</span>
+                    <span class="value" id="proximasAtividades"></span>
                     </div>
                     <div class="icon"><img style="height: 35px;" src="/Img/schedule.png"></div>
                 </div>
@@ -64,68 +62,16 @@
                     <canvas id="graficoAtividades" width="300" height="100"></canvas>
                 </section>
                 <section class="events">
-                    <h2>Próximos eventos</h2>
-                    <ul>
-                    <li>
-                        <span class="dot" style="background: blue"></span>
-                        <div class="content">
-                        <p class="title">Parent-Teacher Conference</p>
-                        <p class="time">June 5, 2025 • 2:00 PM</p>
-                        <p class="desc">Meeting with Emma Smith’s parents</p>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="dot" style="background: orange"></span>
-                        <div class="content">
-                        <p class="title">Math Quiz</p>
-                        <p class="time">June 7, 2025 • 10:00 AM</p>
-                        <p class="desc">Chapter 6: Quadratic Equations</p>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="dot" style="background: yellowgreen"></span>
-                        <div class="content">
-                        <p class="title">Field Trip</p>
-                        <p class="time">June 10, 2025 • 9:00 AM</p>
-                        <p class="desc">Science Museum Visit</p>
-                        </div>
-                    </li>
-                    </ul>
-                </section>
-                <section class="attendance">
-                <h2>Score Distribution</h2>
-
-                </section>
-                <section class="events">
-                    <h2>Próximos eventos</h2>
-                    <ul>
-                    <li>
-                        <span class="dot" style="background: blue"></span>
-                        <div class="content">
-                        <p class="title">Parent-Teacher Conference</p>
-                        <p class="time">June 5, 2025 • 2:00 PM</p>
-                        <p class="desc">Meeting with Emma Smith’s parents</p>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="dot" style="background: orange"></span>
-                        <div class="content">
-                        <p class="title">Math Quiz</p>
-                        <p class="time">June 7, 2025 • 10:00 AM</p>
-                        <p class="desc">Chapter 6: Quadratic Equations</p>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="dot" style="background: yellowgreen"></span>
-                        <div class="content">
-                        <p class="title">Field Trip</p>
-                        <p class="time">June 10, 2025 • 9:00 AM</p>
-                        <p class="desc">Science Museum Visit</p>
-                        </div>
-                    </li>
+                    <h2>Próximas atividades</h2>
+                    <ul id="sectionNextActivities">
+                    
                     </ul>
                 </section>
                 </div>
+                <section class="score">
+                <h2>Número de planos por prioridade</h2>
+                <canvas id="graficoPlanos" width="300" height="100"></canvas>
+                </section>
             </div>
         </div>
 
@@ -190,7 +136,7 @@
             <h1>Atividades</h1>
             <div class="section-tools">
                 <button onclick="openAddActivityModal()">Adicionar</button>
-                <form id="create-activity-form" class="modal" style="display:none;">
+                <form id="create-activity-form" class="modal" style="display:none;" enctype="multipart/form-data">
                     <div class="modal-content">
                         <span class="close" onclick="closeAddActivityModal()">&times;</span>
                         <h2>Adicionar Atividade</h2>
@@ -206,6 +152,7 @@
                         <select id="activityPlanSelect" name="selectedPlanId" required>
                             <option value="">Selecione um Plano</option>
                         </select>
+                        <input type="file" id="fotos" name="fotos" accept="image/*" multiple />
                         <button type="submit">Criar Atividade</button>
                     </div>
                 </form>
@@ -218,7 +165,8 @@
                             required />
                         <input type="text" id="editLocal" name="local" placeholder="Local" required />
                         <input type="date" id="editDate" name="date" placeholder="Data" required />
-                        <button type="submit">Editar Plano</button>
+                       
+                        <button type="submit">Editar Atividade</button>
                     </div>
                 </form>
                 <input type="text" id="searchActivityInput" placeholder="Pesquisar...">
@@ -260,7 +208,7 @@
                             <input type="checkbox" id="newPlanStatus" name="status" />
                         </label>
                         <input type="number" id="newLevel" name="planLevel" placeholder="Nível" required />
-                        <input type="text" id="newPlanresource" name="planResource" placeholder="Recursos" required />
+                        <input type="file" id="recursos" name="files" multiple />
                         <button type="submit">Criar Plano</button>
                     </div>
                 </form>

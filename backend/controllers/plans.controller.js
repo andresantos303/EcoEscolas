@@ -3,12 +3,13 @@ const User = require("../models/user.model.js");
 const Activity = require("../models/activity.model.js");
 const { enviarEmailNotificação } = require("../utils/nodemailer.js");
 const { handleError } = require("../utils/errorHandler.js");
+const { cloudinary } = require('../utils/upload.js');
 
 const getAllPlans = async (req, res) => {
   try {
     const filter = {};
-    if (req.query.name) filter.name = req.query.name;
-    if (req.query.status) filter.status = req.query.status;
+    if (req.query.nome) filter.nome = req.query.nome;
+    if (req.query.estado) filter.estado = req.query.estado;
 
     const planos = await Plan.find(filter);
     return res.status(200).json(planos);
@@ -35,13 +36,12 @@ const createPlan = async (req, res) => {
     descricao,
     data_inicio,
     data_fim,
-    estado,
     nivel,
-    associatedActivities,
-    recursos,
+    //recursos vem do req.files
   } = req.body;
+  const estado = req.body.estado === 'true';
 
-  if (!nome || !descricao || !data_inicio || !data_fim || typeof estado !== 'boolean' || !nivel || !recursos) {
+  if (!nome || !descricao || !data_inicio || !data_fim || typeof estado !== 'boolean' || !nivel) {
     return handleError(res, "PLAN_CREATION_BAD_REQUEST");
   }
 
@@ -60,6 +60,11 @@ const createPlan = async (req, res) => {
       return handleError(res, "PLAN_CREATION_DUPLICATE");
     }
 
+    const recursosCloud = (req.files || []).map(file => ({
+      profile_image: file.path,
+      cloudinary_id: file.filename,
+    }));
+
     const plan = new Plan({
       nome,
       descricao,
@@ -67,18 +72,23 @@ const createPlan = async (req, res) => {
       data_fim,
       nivel,
       estado,
-      associatedActivities: associatedActivities || [],
-      recursos,
+      associatedActivities: [],
+      recursos: recursosCloud,
       createdUserId: req.user.userId,
     });
     await plan.save();
 
     const user = await User.findById(req.user.userId);
-    await enviarEmailNotificação(
-      "Coordenador/Conselho Eco-Escolas",
-      `Criação do Plano de Atividade ${nome}`,
-      `O utilizador ${user.name} criou o plano de atividades "${nome}" com data de início ${data_inicio} e data de fim ${data_fim} e de nível ${nivel}.`
-    );
+
+    try {
+      await enviarEmailNotificação(
+        "Coordenador",
+        `Criação do Plano de Atividade ${nome}`,
+        `O utilizador ${user.name} criou o plano de atividades "${nome}" com data de início ${data_inicio} e data de fim ${data_fim} e de nível ${nivel}.`
+      );
+    } catch (emailError) {
+      console.error("Erro ao enviar notificação por e-mail:", emailError);
+    }
 
     return res.status(201).json({
       message: "Plano de atividades criado com sucesso!",
@@ -163,18 +173,27 @@ const deletePlan = async (req, res) => {
       return handleError(res, "PLAN_NOT_FOUND");
     }
 
-    const ongoing = await Activity.findOne({ plan: id, estado: true });
+    const ongoing = await Activity.findOne({ planActivitiesId: id, estado: true });
     if (ongoing) {
       return handleError(res, "PLAN_DELETE_BLOCKED");
     }
 
     if (plan.estado) {
-      return handleError(res, "ACTIVITY_CANNOT_DELETE");
+      return handleError(res, "PLAN_CANNOT_DELETE");
+    }
+
+    if (Array.isArray(plan.recursos) && plan.recursos.length > 0) {
+      await Promise.all(
+        plan.recursos
+          .filter(recurso => recurso.cloudinary_id) // só recursos com cloudinary_id
+          .map(({ cloudinary_id }) => cloudinary.uploader.destroy(cloudinary_id))
+      );
     }
 
     await Plan.findByIdAndDelete(id);
     return res.status(200).json({ message: "Plano de atividades removido com sucesso." });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ message: "Erro interno ao remover plano." });
   }
 };
@@ -194,14 +213,20 @@ const finalizePlan = async (req, res) => {
       return handleError(res, "PLAN_DELETE_BLOCKED");
     }
 
-    // Atualiza o estado do plano para finalizado (false)
-    await Plan.findByIdAndUpdate(id, { estado: false });
+    const novasImagens = req.files?.map(file => file.path) || [];
+
+    await Plan.findByIdAndUpdate(id, {
+      estado: false,
+      recursos: [...plan.recursos, ...novasImagens],
+    });
 
     return res.status(200).json({ message: "Plano de atividades finalizado com sucesso." });
   } catch (err) {
+    console.error('Erro interno ao finalizar plano:', err);
     return res.status(500).json({ message: "Erro interno ao finalizar plano." });
   }
 };
+
 
 const startPlan = async (req, res) => {
   const { id } = req.params;

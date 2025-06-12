@@ -1,4 +1,4 @@
-import { getAllPlans, createPlan, deletePlan, updatePlan, getActivePlanCount } from '../plans/planServices.js';
+import { getAllPlans, getPlansActive, createPlan, deletePlan, updatePlan } from '../plans/planServices.js';
 import { requireAuth } from '../auth/authGuard.js';
 
 requireAuth();
@@ -11,12 +11,15 @@ function init() {
     setupPlanSearch();
     setupDeletePlan();
     setupEditPlan();
-    countPlans();
 }
 
 async function renderPlans() {
     try {
         const plans = await getAllPlans();
+        const plansActives = await getPlansActive();
+        const spanPlanosAtivos = document.getElementById('planosAtivos');
+        spanPlanosAtivos.innerHTML = plansActives.length;
+        
         const tbody = document.getElementById('planTbody');
         tbody.innerHTML = '';
 
@@ -27,8 +30,8 @@ async function renderPlans() {
                         <a href="../plans/plan.html?id=${plan._id}" class="plan-link">${plan.nome}</a>
                     </td>
                     <td class="plan-description">${plan.descricao}</td>
-                    <td class="plan-first-date">${plan.data_inicio}</td>
-                    <td class="plan-last-date">${plan.data_fim}</td>
+                    <td class="plan-first-date">${plan.data_inicio.split('-').reverse().join('-')}</td>
+                    <td class="plan-last-date">${plan.data_fim.split('-').reverse().join('-')}</td>
                     <td class="plan-status">${plan.estado}</td>
                     <td class="plan-level">${plan.nivel}</td>
                     <td>
@@ -37,6 +40,50 @@ async function renderPlans() {
                     </td>
                 </tr>
             `);
+        });
+
+        const countsByNivel = Array(11).fill(0); // índices 0–10
+        plans.forEach(plan => {
+        const nivel = Number(plan.nivel);
+        if (!isNaN(nivel) && nivel >= 0 && nivel <= 10) {
+            countsByNivel[nivel]++;
+        }
+        });
+
+        // 3. Configura o gráfico de barras horizontais
+        const ctx = document.getElementById('graficoPlanos').getContext('2d');
+        new Chart(ctx, {
+        type: 'bar',
+        data: {
+            // rótulos de 0 a 10
+            labels: Array.from({ length: 11 }, (_, i) => `${i}`),
+            datasets: [{
+            label: 'Número de planos por nível',
+            data: countsByNivel,
+            backgroundColor: '#4CAF50',
+            borderColor: '#388E3C',
+            borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',       // inverte para barras horizontais
+            responsive: true,
+            scales: {
+            x: {
+                beginAtZero: true,
+                title: {
+                display: true,
+                text: 'Quantidade de planos'
+                }
+            },
+            y: {
+                title: {
+                display: true,
+                text: 'Nível de prioridade'
+                }
+            }
+            }
+        }
         });
 
     } catch (error) {
@@ -51,19 +98,23 @@ function setupCreatePlanForm() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const planData = {
-            nome: form.name.value.trim(),
-            descricao: form.description.value.trim(),
-            data_inicio: form.firstDate.value,
-            data_fim: form.lastDate.value,
-            estado: form.status.checked, // Checkbox -> true ou false
-            nivel: parseInt(form.planLevel.value, 10),
-            recursos: form.planResource.value.trim(),
-        };
+        const recursosInput = form.querySelector('#recursos'); // input file
+        const recursos = recursosInput?.files || [];
 
+        const formData = new FormData();
+        formData.append('nome', form.querySelector('[name="name"]').value.trim());
+        formData.append('descricao', form.querySelector('[name="description"]').value.trim());
+        formData.append('data_inicio', form.querySelector('[name="firstDate"]').value);
+        formData.append('data_fim', form.querySelector('[name="lastDate"]').value);
+        formData.append('estado', form.querySelector('[name="status"]').checked ? 'true' : 'false'); // string
+        formData.append('nivel', parseInt(form.querySelector('[name="planLevel"]').value, 10));
+
+        for (let i = 0; i < recursos.length; i++) {
+            formData.append('recursos', recursos[i]); // nome deve bater com multer
+        }
 
         try {
-            await createPlan(planData);
+            await createPlan(formData); // certifique que o service aceita FormData
             await renderPlans();
             closeAddPlanModal();
             form.reset();
@@ -72,6 +123,7 @@ function setupCreatePlanForm() {
         }
     });
 }
+
 
 function setupPlanSearch() {
     const searchInput = document.getElementById('searchPlanInput');
@@ -157,15 +209,6 @@ function setupEditPlan() {
             console.error('Erro ao atualizar plano:', error);
         }
     });
-}
-
-async function countPlans() {
-    try {
-        const count = await getActivePlanCount();
-        document.getElementById('activePlanCount').textContent = count;
-    } catch (err) {
-        document.getElementById('activePlanCount').textContent = 'Erro';
-    }
 }
 
 

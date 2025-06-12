@@ -76,8 +76,13 @@ async function handleFinalizePlan(plan) {
         if (!confirmEarly) return;
     }
 
+    // 1. Obter os arquivos do input de recursos
+    const recursosInput = document.getElementById('recursos-input'); // <input type="file" id="recursos-input" multiple>
+    const recursos = recursosInput?.files || [];
+
     try {
-        await finalizePlan(plan._id);  // Chama o serviço que faz a requisição para a rota do backend
+        // 3. Chamar o serviço passando o FormData
+        await finalizePlan(plan._id, recursos); // função do service
         alert("Plano finalizado com sucesso!");
         location.reload();
     } catch (err) {
@@ -88,7 +93,7 @@ async function handleFinalizePlan(plan) {
         } else if (message === "PLAN_FINALIZE_BLOCKED") {
             alert("A data de fim do plano ainda não foi atingida.");
         } else {
-            alert("Erro ao finalizar plano. Existem Atividades em andamento");
+            alert("Erro ao finalizar plano.");
         }
 
         console.error(err);

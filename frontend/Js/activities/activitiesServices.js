@@ -19,6 +19,22 @@ export async function getAllActivities() {
     }
 }
 
+export async function getActivitiesActive() {
+    try {
+        const query = new URLSearchParams({ estado: true });
+        const response = await axios.get(`${API_URL}/activities/`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+  
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar as Atividades:', error);
+        throw error;
+    }
+}
+
 export async function deleteActivity(activityId) {
 
   try {
@@ -63,20 +79,18 @@ export async function getActivityById(activityId) {
 }
 
 
-export async function createActivity(activityData) {
-
-    try {
-        const response = await axios.post( `${API_URL}/activities/${activityData.planActivitiesId}`, activityData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Erro ao criar Atividade:', error);
-        throw error;
-    }
+export async function createActivity(formData, planId) {
+  try {
+    const response = await axios.post(`${API_URL}/activities/${planId}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao criar Atividade:', error);
+    throw error;
+  }
 }
 
 export async function getAllPlans() {
@@ -93,22 +107,28 @@ export async function getAllPlans() {
     }
 }
 
-export async function finalizeActivity(activityId, participantsCount) {
-  try {
-    const response = await axios.put(`${API_URL}/activities/${activityId}/finalize`, {
-      participantsCount
-    }, {
+export async function finalizeActivity(activityId, participantsCount, fotos) {
+  const formData = new FormData();
+  formData.append('participantsCount', participantsCount);
+
+  if (fotos && fotos.length > 0) {
+    for (let i = 0; i < fotos.length; i++) {
+      formData.append('fotos', fotos[i]);
+    }
+  }
+
+  const response = await axios.put(`${API_URL}/activities/${activityId}/finalize`,formData,
+    {
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
       },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Erro ao finalizar a atividade:', error);
-    throw error;
-  }
+    }
+  );
+
+  return response.data;
 }
+
 
 export async function startActivity(activityId) {
   try {
@@ -120,20 +140,6 @@ export async function startActivity(activityId) {
     return response.data;
   } catch (error) {
     console.error('Erro ao inicializar a atividade:', error);
-    throw error;
-  }
-}
-
-export async function getActivitiesCount() {
-  try {
-    const response = await axios.get(`${API_URL}/activities/stats/count`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data.count;
-  } catch (error) {
-    console.error('Erro ao contar atividade:', error);
     throw error;
   }
 }

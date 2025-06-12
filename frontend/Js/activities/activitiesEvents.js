@@ -1,4 +1,4 @@
-import { getAllActivities, deleteActivity, updateActivity, createActivity, getAllPlans, getActivitiesCount  } from '../activities/activitiesServices.js';
+import { getAllActivities, deleteActivity, updateActivity, createActivity, getAllPlans, getActivitiesActive  } from '../activities/activitiesServices.js';
 import { requireAuth } from '../auth/authGuard.js';
 
 requireAuth();
@@ -13,14 +13,29 @@ function init() {
     openAddActivityModal();
     setupEditActivity();
     populatePlansSelect();
-    renderActivityCount();
 }
 
 async function renderActivities() {
     try {
         const activities = await getAllActivities();
+        const activitiesActives = await getActivitiesActive();
+        const spanActivitiesActive = document.getElementById('atividadesAtivas');
+        const spanNextActivities = document.getElementById('proximasAtividades');
+        spanActivitiesActive.innerHTML = activitiesActives.length;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // zera hora/min/seg para comparar só a data
+
+        const nextActivitiesCount = activities.filter(({ data }) => {
+            const activityDate = new Date(data);
+            return activityDate > today;
+        });
+        spanNextActivities.innerHTML = nextActivitiesCount.length;
+
         const tbody = document.getElementById('activityTbody');
+        const nextActivities = document.getElementById('sectionNextActivities');
         tbody.innerHTML = '';
+        nextActivities.innerHTML= '';
 
         activities.forEach(activity => {
             tbody.insertAdjacentHTML('beforeend', `
@@ -31,13 +46,60 @@ async function renderActivities() {
                     <td class="activity-description">${activity.descricao}</td>
                     <td class="activity-local">${activity.local}</td>
                     <td class="activity-status">${activity.estado}</td>
-                    <td class="activity-data">${activity.data}</td>
+                    <td class="activity-data">${activity.data.split('-').reverse().join('-')}</td>
                     <td>
                         <button class="edit-btn" data-activityid="${activity._id}">Editar</button>
                         <button class="delete-btn" data-activityid="${activity._id}">Eliminar</button>
                     </td>
                 </tr>
             `);
+        });
+
+        nextActivitiesCount.slice(0, 4).forEach(nextActivity => {
+            nextActivities.insertAdjacentHTML('beforeend', `
+                <li>
+                    <span class="dot" style="background: #2c3e50"></span>
+                    <div class="content">
+                    <p class="title">${nextActivity.nome}</p>
+                    <p class="time">${nextActivity.data.split('-').reverse().join('-')}</p>
+                    </div>
+                </li>
+            `);
+        });
+
+        const currentYear = today.getFullYear();
+
+        const countsPerMonth = Array(12).fill(0);
+
+        activities.forEach(({ data }) => {
+        const activityDate = new Date(data);
+        if (activityDate.getFullYear() === currentYear) {
+            const monthIndex = activityDate.getMonth();
+            countsPerMonth[monthIndex]++;
+        }
+        });
+        const ctx = document.getElementById('graficoAtividades').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
+                datasets: [{
+                    label: 'Atividades por mês',
+                    data: countsPerMonth,
+                    backgroundColor: '#4CAF50',
+                    borderColor: '#388E3C',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
         });
 
     } catch (error) {
@@ -94,16 +156,23 @@ function setupCreateActivityForm() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const activityData = {
-            nome: form.name.value.trim(),
-            descricao: form.description.value.trim(),
-            local: form.local.value,
-            estado: form.status.checked,
-            data: form.date.value,
-            planActivitiesId: form.selectedPlanId.value,
-        };
+        const fotosInput = form.querySelector('#fotos'); // <input type="file" id="fotos" multiple>
+        const fotos = fotosInput?.files || [];
+
+        const formData = new FormData();
+        formData.append('nome', form.name.value.trim());
+        formData.append('descricao', form.description.value.trim());
+        formData.append('local', form.local.value);
+        formData.append('estado', form.status.checked);
+        formData.append('data', form.date.value);
+        formData.append('planActivitiesId', form.selectedPlanId.value);
+
+        for (let i = 0; i < fotos.length; i++) {
+            formData.append('fotos', fotos[i]);
+        }
+
         try {
-            await createActivity(activityData);
+            await createActivity(formData, form.selectedPlanId.value); // função atualizada no service
             await renderActivities();
             closeAddActivityModal();
             form.reset();
@@ -112,6 +181,8 @@ function setupCreateActivityForm() {
         }
     });
 }
+
+
 
 async function populatePlansSelect() {
     try {
@@ -174,13 +245,4 @@ function setupEditActivity() {
             console.error('Erro ao atualizar atividade:', error);
         }
     });
-}
-
-async function renderActivityCount() {
-  try {
-    const count = await getActivitiesCount();
-    document.getElementById('countActivities').textContent = count;
-  } catch (err) {
-    document.getElementById('countActivities').textContent = 'Erro';
-  }
 }

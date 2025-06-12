@@ -6,30 +6,45 @@ const sessionData = JSON.parse(sessionStorage.getItem('eco-escolas-session'));
 const token = sessionData?.token;
 
 export async function getAllPlans() {
-    
-    try {
-        const response = await axios.get(`${API_URL}/plans/`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Erro ao buscar os Planos de Atividades:', error);
-        throw error;
-    }
+
+  try {
+    const response = await axios.get(`${API_URL}/plans/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar os Planos de Atividades:', error);
+    throw error;
+  }
+}
+
+export async function getPlansActive() {
+  try {
+    const query = new URLSearchParams({ estado: true });
+    const response = await axios.get(`${API_URL}/plans/?${query}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar planos ativos:', error);
+    throw error;
+  }
 }
 
 export async function getPublicPlanNames() {
-    try {
-        const response = await axios.get(`${API_URL}/plans/public/names`, {
-            
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Erro ao buscar os Planos de Atividades:', error);
-        throw error;
-    }
+  try {
+    const response = await axios.get(`${API_URL}/plans/public/names`, {
+
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar os Planos de Atividades:', error);
+    throw error;
+  }
 }
 
 export async function getPlanById(planId) {
@@ -47,20 +62,20 @@ export async function getPlanById(planId) {
 }
 
 
-export async function createPlan(planData) {
+export async function createPlan(formData) {
 
-    try {
-        const response = await axios.post(`${API_URL}/plans/`, planData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Erro ao criar Plano de Atividades:', error);
-        throw error;
-    }
+  try {
+    const response = await axios.post(`${API_URL}/plans/`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao criar Plano de Atividades:', error);
+    throw error;
+  }
 }
 
 export async function deletePlan(planId) {
@@ -93,24 +108,27 @@ export async function updatePlan(planId, updatedData) {
   }
 }
 
-export async function finalizePlan(planId) {
-  try {
-    const response = await axios.put(
-      `${API_URL}/plans/${planId}/finalize`,
-      {}, // corpo vazio
+export async function finalizePlan(planId, recursos) {
+  const formData = new FormData();
+
+  if (recursos && recursos.length > 0) {
+    for (let i = 0; i < recursos.length; i++) {
+      formData.append('recursos', recursos[i]);
+    }
+  }
+    const response = await axios.put(`${API_URL}/plans/${planId}/finalize`,
+      formData,
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       }
     );
     return response.data;
-  } catch (error) {
-    console.error('Erro ao finalizar plano:', error);
-    throw error;
-  }
 }
+
+
 
 export async function startPlan(planId) {
   try {
@@ -122,20 +140,6 @@ export async function startPlan(planId) {
     return response.data;
   } catch (error) {
     console.error('Erro ao inicializar plano:', error);
-    throw error;
-  }
-}
-
-export async function getActivePlanCount() {
-  try {
-    const response = await axios.get(`${API_URL}/plans/stats/active-count`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data.count;
-  } catch (error) {
-    console.error('Erro ao buscar número de planos ativos:', error);
     throw error;
   }
 }

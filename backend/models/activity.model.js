@@ -6,7 +6,15 @@ const activitySchema = new mongoose.Schema(
     descricao: { type: String, required: true },
     local: { type: String, required: true },
     estado: { type: Boolean, required: true },
-    fotos: [{ type: String, required: true }],
+    fotos: {
+      type: [
+        {
+          profile_image: { type: String, required: true },
+          cloudinary_id: { type: String, required: true },
+        },
+      ],
+      default: [],
+    },
     data: { type: String, required: true },
     planActivitiesId: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
     createdUserId: {

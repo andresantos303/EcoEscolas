@@ -56,14 +56,12 @@ function setupActionButtons(activity) {
   }
 }
 
-async function handleFinalize(activity, activityDate, currentDate) {
-  if (activityDate > currentDate) {
-    const confirmEarly = confirm("A data da atividade é futura. Tem a certeza que pretende finalizá-la?");
-    if (!confirmEarly) return;
-  }
+async function handleFinalize(activity) {
+  const fotosInput = document.getElementById('fotos-input');
+  const fotos = fotosInput?.files || [];
 
   try {
-    await finalizeActivity(activity._id, activity.participants.length);
+    await finalizeActivity(activity._id, activity.participants.length, fotos);
     alert("Atividade finalizada com sucesso!");
     location.reload();
   } catch (err) {
@@ -71,6 +69,7 @@ async function handleFinalize(activity, activityDate, currentDate) {
     console.error(err);
   }
 }
+
 
 async function handleStart(activity) {
   try {

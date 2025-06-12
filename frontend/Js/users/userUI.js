@@ -56,26 +56,3 @@ function adicionarNotificacaoTabela(notificacao) {
 
     tabela.appendChild(novaLinha);
 }
-
-const ctx = document.getElementById('graficoAtividades').getContext('2d');
-const graficoAtividades = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio'],
-        datasets: [{
-            label: 'Atividades por mês',
-            data: [5, 8, 4, 7, 6],
-            backgroundColor: '#4CAF50',
-            borderColor: '#388E3C',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
