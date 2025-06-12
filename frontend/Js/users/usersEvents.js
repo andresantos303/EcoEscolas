@@ -29,7 +29,7 @@ function setupLogout() {
     logoutBtn.addEventListener("click", (e) => {
       e.preventDefault();
       logout();
-      window.location.href = "login.html";
+      window.location.href = "../login.html"; // Redireciona para a página de login
     });
   }
 }

@@ -1,4 +1,4 @@
-import { getAllPlans, createPlan, deletePlan, updatePlan } from '../plans/planServices.js';
+import { getAllPlans, createPlan, deletePlan, updatePlan, getActivePlanCount } from '../plans/planServices.js';
 import { requireAuth } from '../auth/authGuard.js';
 
 requireAuth();
@@ -11,6 +11,7 @@ function init() {
     setupPlanSearch();
     setupDeletePlan();
     setupEditPlan();
+    countPlans();
 }
 
 async function renderPlans() {
@@ -23,7 +24,7 @@ async function renderPlans() {
             tbody.insertAdjacentHTML('beforeend', `
                 <tr id="row-${plan.id}">
                     <td class="plan-name">
-                        <a href="./routes/plans/plan.html?id=${plan._id}" class="plan-link">${plan.nome}</a>
+                        <a href="../plans/plan.html?id=${plan._id}" class="plan-link">${plan.nome}</a>
                     </td>
                     <td class="plan-description">${plan.descricao}</td>
                     <td class="plan-first-date">${plan.data_inicio}</td>
@@ -157,3 +158,14 @@ function setupEditPlan() {
         }
     });
 }
+
+async function countPlans() {
+    try {
+        const count = await getActivePlanCount();
+        document.getElementById('activePlanCount').textContent = count;
+    } catch (err) {
+        document.getElementById('activePlanCount').textContent = 'Erro';
+    }
+}
+
+

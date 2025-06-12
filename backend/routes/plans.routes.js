@@ -16,8 +16,10 @@ router.get('/', checkPermissions('plans', 'read'), plansController.getAllPlans);
 router.get('/:id', checkPermissions('plans', 'readById'), plansController.getPlanById);
 router.post('/', checkPermissions('plans', 'create'), plansController.createPlan);
 router.patch('/:id', checkPermissions('plans', 'update'), plansController.updatePlan);
-router.put('/:id', checkPermissions('plans', 'update'), plansController.finalizePlan);
+router.put('/:id/finalize', checkPermissions('plans', 'update'), plansController.finalizePlan);
+router.put('/:id/start', checkPermissions('plans', 'update'), plansController.startPlan);
 router.delete('/:id', checkPermissions('plans', 'delete'), plansController.deletePlan);
+router.get('/stats/active-count', checkPermissions('plans', 'read'), plansController.countActivePlans);
 
 
 

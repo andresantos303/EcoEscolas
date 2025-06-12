@@ -14,7 +14,7 @@
     <div>
         <div class="sidebar">
             <h2>Painel Admin</h2>
-           <a class="btn-dashboard" href="/admin.html"><div class="btn">Dashboard</div></a>
+           <a class="btn-dashboard" href="/routes/admin/admin.html"><div class="btn">Dashboard</div></a>
         </div>
 
         
@@ -30,7 +30,12 @@
                 <p><strong>Recursos:</strong> <span id="planRecursos"></span></p>
                 <ul id="planActivities"></ul>
             </div>
-            
+             <div id="actionButtons">
+                    <button id="finalizePlanBtn" class="action-btn finalize-btn" style="display: none;">Finalizar
+                        Plano</button>
+                    <button id="startPlanBtn" class="action-btn start-btn" style="display: none;">Inicializar
+                        Plano</button>
+                </div>
         </div>
     </div>
 

@@ -4,28 +4,17 @@ body {
   background-color: #ffffff;
 }
 
-.activityIdSection {
-  margin-left: 250px;
-  padding: 40px;
-  background-color: #ffffff;
-  min-height: 100vh;
-  box-sizing: border-box;
+.container {
+  display: flex;
+  flex-direction: row;
 }
 
-.activityIdSection h1 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #2c3e50;
-  font-size: 28px;
-}
-
-#activityDetails p {
-  font-size: 16px;
-  margin: 10px 0;
-}
-
-#activityDetails strong {
-  color: #34495e;
+.sidebar {
+    width: 200px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    height: 100vh;
 }
 
 .btn {
@@ -39,8 +28,99 @@ body {
   text-decoration: none;
 }
 
-.btn-dashboard{
+.btn-dashboard {
   display: flex;
   justify-content: center;
   text-decoration: none;
 }
+
+.activityIdSection {
+  background: #fff;
+  padding: 30px 35px;
+  margin-left: 40px;
+  border-radius: 14px;
+  width: 600px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.activityIdSection h1 {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #2c3e50;
+  user-select: none;
+}
+
+#activityNome {
+  color: #3498db;
+  font-weight: 700;
+}
+
+/* Detalhes texto */
+#activityDetails p {
+  margin-bottom: 16px;
+  line-height: 1.5;
+  font-size: 1.1rem;
+}
+
+#activityDetails strong {
+  color: #34495e;
+  user-select: none;
+}
+
+#activityFotos, #activityParticipants, #activityPlano {
+  color: #555;
+  font-weight: 500;
+}
+
+/* Lista de atividades do plano */
+#planActivities {
+  list-style-type: disc;
+  margin-left: 20px;
+  margin-top: 15px;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Botões de ação */
+#actionButtons {
+  margin-top: 30px;
+  display: flex;
+  gap: 20px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 14px 0;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.finalize-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.finalize-btn:hover {
+  background-color: #c0392b;
+  box-shadow: 0 6px 18px rgba(192, 57, 43, 0.6);
+}
+
+.start-btn {
+  background-color: #27ae60;
+  color: white;
+}
+
+.start-btn:hover {
+  background-color: #1e8449;
+  box-shadow: 0 6px 18px rgba(30, 132, 73, 0.6);
+}
+
+

@@ -92,3 +92,51 @@ export async function updatePlan(planId, updatedData) {
     throw error;
   }
 }
+
+export async function finalizePlan(planId) {
+  try {
+    const response = await axios.put(
+      `${API_URL}/plans/${planId}/finalize`,
+      {}, // corpo vazio
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao finalizar plano:', error);
+    throw error;
+  }
+}
+
+export async function startPlan(planId) {
+  try {
+    const response = await axios.put(`${API_URL}/plans/${planId}/start`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao inicializar plano:', error);
+    throw error;
+  }
+}
+
+export async function getActivePlanCount() {
+  try {
+    const response = await axios.get(`${API_URL}/plans/stats/active-count`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.count;
+  } catch (error) {
+    console.error('Erro ao buscar número de planos ativos:', error);
+    throw error;
+  }
+}
+

@@ -188,22 +188,38 @@ const finalizePlan = async (req, res) => {
       return handleError(res, "PLAN_NOT_FOUND");
     }
 
-    const ongoing = await Activity.findOne({ plan: id, estado: true });
-    if (ongoing) {
+    // Bloqueia se existir alguma atividade ativa relacionada a este plano
+    const ongoingActivity = await Activity.findOne({ planActivitiesId: id, estado: true });
+    if (ongoingActivity) {
       return handleError(res, "PLAN_DELETE_BLOCKED");
     }
 
-    const currentDate = new Date();
-    if (new Date(plan.data_fim) > currentDate) {
-      return handleError(res, "PLAN_FINALIZE_BLOCKED");
-    }
-
+    // Atualiza o estado do plano para finalizado (false)
     await Plan.findByIdAndUpdate(id, { estado: false });
+
     return res.status(200).json({ message: "Plano de atividades finalizado com sucesso." });
   } catch (err) {
-    return res.status(500).json({ message: "Erro interno ao remover plano." });
+    return res.status(500).json({ message: "Erro interno ao finalizar plano." });
   }
 };
+
+const startPlan = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const plan = await Plan.findById(id);
+    if (!plan) {
+      return handleError(res, "PLAN_NOT_FOUND");
+    }
+
+    await Plan.findByIdAndUpdate(id, { estado: true });
+
+    return res.status(200).json({ message: "Plano inicializad com sucesso." });
+  } catch (err) {
+    return res.status(500).json({ message: "Erro interno ao inicializar plano." });
+  }
+};
+
 
 const getPublicPlanNames = async (req, res) => {
   try {
@@ -214,6 +230,16 @@ const getPublicPlanNames = async (req, res) => {
   }
 };
 
+const countActivePlans = async (req, res) => {
+  try {
+    const count = await Plan.countDocuments({ estado: true });
+    return res.status(200).json({ count });
+  } catch (err) {
+    return res.status(500).json({ message: "Erro ao contar planos ativos." });
+  }
+};
+
+
 
 module.exports = {
   getAllPlans,
@@ -223,4 +249,6 @@ module.exports = {
   deletePlan,
   finalizePlan,
   getPublicPlanNames,
+  startPlan,
+  countActivePlans
 };

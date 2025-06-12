@@ -10,6 +10,12 @@ body {
     overflow-x: hidden;
 }
 
+.logo{
+    width: 50px;
+    height: auto;
+    border-radius: 10px;
+}
+
 .header-actions {
     display: flex;
     align-items: center;

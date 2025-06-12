@@ -1,4 +1,4 @@
-import { getAllActivities, deleteActivity, updateActivity, createActivity, getAllPlans } from '../activities/activitiesServices.js';
+import { getAllActivities, deleteActivity, updateActivity, createActivity, getAllPlans, getActivitiesCount  } from '../activities/activitiesServices.js';
 import { requireAuth } from '../auth/authGuard.js';
 
 requireAuth();
@@ -13,6 +13,7 @@ function init() {
     openAddActivityModal();
     setupEditActivity();
     populatePlansSelect();
+    renderActivityCount();
 }
 
 async function renderActivities() {
@@ -25,7 +26,7 @@ async function renderActivities() {
             tbody.insertAdjacentHTML('beforeend', `
                 <tr id="row-${activity.id}">
                      <td class="activity-name">
-                        <a href="./routes/activities/activity.html?id=${activity._id}" class="plan-link">${activity.nome}</a>
+                        <a href="../activities/activity.html?id=${activity._id}" class="plan-link">${activity.nome}</a>
                     </td>
                     <td class="activity-description">${activity.descricao}</td>
                     <td class="activity-local">${activity.local}</td>
@@ -173,4 +174,13 @@ function setupEditActivity() {
             console.error('Erro ao atualizar atividade:', error);
         }
     });
+}
+
+async function renderActivityCount() {
+  try {
+    const count = await getActivitiesCount();
+    document.getElementById('countActivities').textContent = count;
+  } catch (err) {
+    document.getElementById('countActivities').textContent = 'Erro';
+  }
 }

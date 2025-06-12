@@ -190,7 +190,6 @@ const deleteActivity = async (req, res) => {
 };
 
 const finalizeActivity = async (req, res) => {
-
   const { id } = req.params;
   const { participantsCount } = req.body;
 
@@ -200,18 +199,40 @@ const finalizeActivity = async (req, res) => {
       return handleError(res, "ACTIVITY_NOT_FOUND");
     }
 
-    const currentDate = new Date();
-    if (new Date(activity.data) > currentDate) {
-      return handleError(res, "ACTIVITY_FINALIZE_BLOCKED");
-    }
-
     await Activity.findByIdAndUpdate(id, {
       estado: false,
       participantsCount,
     });
+
     return res.status(200).json({ message: "Atividade finalizada com sucesso." });
   } catch (err) {
-    return res.status(500).json({ message: "Erro interno ao remover atividade." });
+    return res.status(500).json({ message: "Erro interno ao finalizar atividade." });
+  }
+};
+
+const startActivity = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const activity = await Activity.findById(id);
+    if (!activity) {
+      return handleError(res, "ACTIVITY_NOT_FOUND");
+    }
+
+    await Activity.findByIdAndUpdate(id, { estado: true });
+
+    return res.status(200).json({ message: "Atividade inicializada com sucesso." });
+  } catch (err) {
+    return res.status(500).json({ message: "Erro interno ao inicializar atividade." });
+  }
+};
+
+const getActivitiesCount = async (req, res) => {
+  try {
+    const count = await Activity.countDocuments();
+    res.status(200).json({ count });
+  } catch (err) {
+    res.status(500).json({ message: 'Erro ao contar atividades.' });
   }
 };
 
@@ -223,4 +244,6 @@ module.exports = {
   updateActivity,
   deleteActivity,
   finalizeActivity,
+  startActivity,
+  getActivitiesCount,
 };

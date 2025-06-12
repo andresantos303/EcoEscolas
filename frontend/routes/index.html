@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/Css/style.css">
+    <title>Eco-Escola</title>
+</head>
+
+
+
+<body>
+    <header class="navbar">
+
+        <div>
+            <img src="/Img/logo.png" class="logo" alt="Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a id="pAtividades" href="#planoatividades">Plano de Atividades</a></li>
+            <li><a href="#About">Sobre</a></li>
+            <li><a href="#Contact">Contacto</a></li>
+        </ul>
+        <div class="header-actions">
+            <a href="login.html" class="contact-btn">Login</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links mobile">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#planoatividades">Plano de Atividades</a></li>
+            <li><a href="#About">Sobre</a></li>
+            <li><a href="#Contact">Contacto</a></li>
+            <li><a href="login.html">Login</a></li>
+        </ul>
+    </header>
+
+
+    <section id="home" class="banner">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="3000"
+            data-pause="false">
+            <ol class="carousel-indicators">
+                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="d-block w-100" src="/Img/ecoescola3.png">
+
+                    <div class="carousel-caption d-none d-md-block">
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100" src="/Img/ecoescola1.png">
+                    <div class="carousel-caption d-none d-md-block">
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100" src="/Img/ecoescola2.png">
+                    <div class="carousel-caption d-none d-md-block">
+                    </div>
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Anterior</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Próximo</span>
+            </a>
+        </div>
+    </section>
+
+
+    <section id="planoatividades" class="content-section">
+        <h2><b>Plano de atividades</b></h2>
+        <br>
+        <h5>
+            Conheça os nossos planos ecológicos para promover a <br> sustentabilidade e a
+            preservação do ambiente.<br> <b>Juntos, fazemos a diferença!</b>
+        </h5>
+
+        <div class="recipe-container" id="plansContainer">
+            <!-- Os planos vão ser inseridos aqui  -->
+        </div>
+    </section>
+
+
+    <section id="estatisticas" class="content-section" style="background-color: #f8f9fa; padding: 80px 0;">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-md-3">
+                    <h2 class="counter counter-large" data-target="250">0</h2>
+                    <p>Municípios</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 class="counter counter-large" data-target="2046">0</h2>
+                    <p>Escolas Inscritas</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 class="counter counter-large" data-target="3069">0</h2>
+                    <p>Professores Coordenadores</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 class="counter counter-large" data-target="849829">0</h2>
+                    <p>Alunos Envolvidos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="About" class="content-section">
+        <h2>Sobre Nos</h2>
+        <p>Somos uma equipa apaixonada pela sustentabilidade, pelo ambiente e pelas pessoas. Acreditamos que pequenas
+            ações geram grandes impactos — e é com essa missão que desenvolvemos planos e atividades que promovem a
+            consciencialização ecológica, a preservação da natureza e o envolvimento ativo da comunidade.
+            <br>
+            Desde workshops educativos a iniciativas de reflorestação, trabalhamos todos os dias para criar um futuro
+            mais verde, justo e equilibrado.
+            <br>
+            Juntos, podemos construir um mundo mais sustentável — um passo de cada vez.</p>
+        <canvas id="graficoAtividades" width="300" height="100"></canvas>
+    </section>
+
+
+    <section id="video"
+        style="display: flex; justify-content: center; align-items: center; padding: 100px 0; background-color: #a8e063;">
+        <div style="max-width: 100%; width: 80%;">
+            <iframe width="100%" height="700" src="https://www.youtube.com/embed/xBTnQ5xx-LI"
+                title="Eco-Escolas faz a diferença na educação ambiental" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+            </iframe>
+        </div>
+    </section>
+
+
+    <section id="Contact" class="content-section">
+        <div class="contact-container">
+            <form action="https://api.web3forms.com/submit" method="POST" class="contact-left">
+                <div class="contact-left-title">
+                    <h2>Entra em contacto connosco caso tenha alguma duvida </h2>
+                </div>
+                <input type="hidden" name="access_key" value="d036c687-2033-4e9f-a452-1cf1e9a9a651">
+                <input type="text" name="name" placeholder="O teu nome" class="contact-inputs" required>
+                <input type="email" name="email" placeholder="O teu email" class="contact-inputs" required>
+                <textarea name="message" placeholder="A tua mensagem " class="contact-inputs" required></textarea>
+                <button type="submit" class="contact-submit-btn">Enviar</button>
+            </form>
+        </div>
+        <div class="conctact-right"></div>
+    </section>
+
+    <button id="back-to-top" class="back-to-top" onclick="scrollToTop()">&#8593;</button>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo"></div>
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#Atividades">Atividades</a>
+                <a href="#About">Sobre</a>
+                <a href="#Contact">Contacto</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ECO-ESCOLA</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="/Js/script/script.js"></script>
+    <script type="module" src="/Js/script/scriptServices.js"></script>
+</body>
+
+</html>

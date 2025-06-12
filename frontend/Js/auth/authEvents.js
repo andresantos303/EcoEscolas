@@ -9,7 +9,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 
   try {
     await loginUser(email, password);
-    window.location.href = 'admin.html'; 
+    window.location.href = './admin/admin.html'; 
   } catch (err) {
     errorMessage.textContent = err.message || 'Erro ao comunicar com o servidor.';
   }

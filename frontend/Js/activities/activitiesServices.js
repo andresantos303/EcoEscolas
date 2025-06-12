@@ -93,3 +93,48 @@ export async function getAllPlans() {
     }
 }
 
+export async function finalizeActivity(activityId, participantsCount) {
+  try {
+    const response = await axios.put(`${API_URL}/activities/${activityId}/finalize`, {
+      participantsCount
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao finalizar a atividade:', error);
+    throw error;
+  }
+}
+
+export async function startActivity(activityId) {
+  try {
+    const response = await axios.put(`${API_URL}/activities/${activityId}/start`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao inicializar a atividade:', error);
+    throw error;
+  }
+}
+
+export async function getActivitiesCount() {
+  try {
+    const response = await axios.get(`${API_URL}/activities/stats/count`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.count;
+  } catch (error) {
+    console.error('Erro ao contar atividade:', error);
+    throw error;
+  }
+}
+

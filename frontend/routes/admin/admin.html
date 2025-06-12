@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Eco Escolas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/Css/admin.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2 onclick="showSection('estatisticas')">Painel Admin</h2>
+        <ul>
+            <li onclick="showSection('atividades')">Atividades</li>
+            <li onclick="showSection('planoatividades')">Plano de Atividades</li>
+            <li onclick="showSection('utilizadores')">Utilizadores</li>
+            <li onclick="showSection('perfil')">Perfil</li>
+            <li><a class="logout-btn">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+
+        <div id="estatisticas" class="section active">
+            <div class="dashboard">
+                <div class="cards">
+                <div class="card">
+                    <div class="info">
+                    <span class="title">Planos ativos</span>
+                    <span class="value" id="activePlanCount">0</span>
+                    </div>
+                    <div class="icon"><img style="height: 35px;" src="/Img/task.png"></div>
+                </div>
+                <div class="card">
+                    <div class="info">
+                    <span class="title">Presentes na última atividade</span>
+                    <span class="value">26</span>
+                    <span class="subtitle">92.9% participações</span>
+                    </div>
+                    <div class="icon"><img style="height: 35px;" src="/Img/check.png"></div>
+                </div>
+                <div class="card">
+                    <div class="info">
+                    <span class="title">Nº de participações</span>
+                    <span class="value">85.4</span>
+                    </div>
+                    <div class="icon"><img style="height: 35px;" src="/Img/participation.png"></div>
+                </div>
+                <div class="card" id="activity-count-card">
+                    <div class="info">
+                    <span class="title">Próximas atividades</span>
+                    <span id="countActivities" class="value"></span>
+                    <span class="subtitle">Esta semana</span>
+                    </div>
+                    <div class="icon"><img style="height: 35px;" src="/Img/schedule.png"></div>
+                </div>
+                </div>
+                <div class="main">
+                <section class="attendance">
+                    <h2>Número de atividades mensais</h2>
+                    <canvas id="graficoAtividades" width="300" height="100"></canvas>
+                </section>
+                <section class="events">
+                    <h2>Próximos eventos</h2>
+                    <ul>
+                    <li>
+                        <span class="dot" style="background: blue"></span>
+                        <div class="content">
+                        <p class="title">Parent-Teacher Conference</p>
+                        <p class="time">June 5, 2025 • 2:00 PM</p>
+                        <p class="desc">Meeting with Emma Smith’s parents</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="dot" style="background: orange"></span>
+                        <div class="content">
+                        <p class="title">Math Quiz</p>
+                        <p class="time">June 7, 2025 • 10:00 AM</p>
+                        <p class="desc">Chapter 6: Quadratic Equations</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="dot" style="background: yellowgreen"></span>
+                        <div class="content">
+                        <p class="title">Field Trip</p>
+                        <p class="time">June 10, 2025 • 9:00 AM</p>
+                        <p class="desc">Science Museum Visit</p>
+                        </div>
+                    </li>
+                    </ul>
+                </section>
+                <section class="attendance">
+                <h2>Score Distribution</h2>
+
+                </section>
+                <section class="events">
+                    <h2>Próximos eventos</h2>
+                    <ul>
+                    <li>
+                        <span class="dot" style="background: blue"></span>
+                        <div class="content">
+                        <p class="title">Parent-Teacher Conference</p>
+                        <p class="time">June 5, 2025 • 2:00 PM</p>
+                        <p class="desc">Meeting with Emma Smith’s parents</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="dot" style="background: orange"></span>
+                        <div class="content">
+                        <p class="title">Math Quiz</p>
+                        <p class="time">June 7, 2025 • 10:00 AM</p>
+                        <p class="desc">Chapter 6: Quadratic Equations</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="dot" style="background: yellowgreen"></span>
+                        <div class="content">
+                        <p class="title">Field Trip</p>
+                        <p class="time">June 10, 2025 • 9:00 AM</p>
+                        <p class="desc">Science Museum Visit</p>
+                        </div>
+                    </li>
+                    </ul>
+                </section>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="utilizadores" class="section">
+            <h1>Gestão de Utilizadores</h1>
+            <div class="section-tools">
+                <button onclick="openAddUserModal()">Adicionar</button>
+                <form id="create-user-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeAddUserModal()">&times;</span>
+                        <h2>Adicionar Utilizador</h2>
+                        <input type="text" id="newUsername" name="name" placeholder="Nome de utilizador" required />
+                        <input type="email" id="newEmail" name="email" placeholder="Email" required />
+                        <select id="newType" name="type" placeholder="Tipo de utilizador" required>
+                            <option value="">Escolha o tipo</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Secretariado">Secretariado</option>
+                            <option value="Coordenador">Coordenador</option>
+                            <option value="Conselho Eco-Escolas">Conselho Eco-Escolas</option>
+                        </select>
+                        <input type="password" name="password" id="newPassword" placeholder="Password" required />
+                        <button type="submit">Criar Utilizador</button>
+                    </div>
+                </form>
+                <form id="edit-user-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeEditUserModal()">&times;</span>
+                        <h2>Editar Utilizador</h2>
+                        <input type="text" id="editUsername" name="name" placeholder="Nome de utilizador" required />
+                        <input type="email" id="editEmail" name="email" placeholder="Email" required />
+                        <select id="editType" name="type" required>
+                            <option value="">Escolha o tipo</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Secretariado">Secretariado</option>
+                            <option value="Coordenador">Coordenador</option>
+                            <option value="Conselho Eco-Escolas">Conselho Eco-Escolas</option>
+                        </select>
+                        <button type="submit">Editar Utilizador</button>
+                    </div>
+                </form>
+
+                <input type="text" id="searchInput" placeholder="Pesquisar...">
+            </div>
+
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Tipo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="userTbody">
+
+                </tbody>
+            </table>
+        </div>
+
+        <div id="atividades" class="section">
+            <h1>Atividades</h1>
+            <div class="section-tools">
+                <button onclick="openAddActivityModal()">Adicionar</button>
+                <form id="create-activity-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeAddActivityModal()">&times;</span>
+                        <h2>Adicionar Atividade</h2>
+                        <input type="text" id="newActivityname" name="name" placeholder="Nome de Atividade" required />
+                        <textarea type="text" id="newActivitydescription" name="description" placeholder="Descrição"
+                            required></textarea>
+                        <input type="text" id="newActivityLocal" name="local" placeholder="Local" required />
+                        <label for="newActivityStatus">
+                            Ativo:
+                            <input type="checkbox" id="newActivityStatus" name="status" />
+                        </label>
+                        <input type="date" id="newActivityDate" name="date" placeholder="Data" required />
+                        <select id="activityPlanSelect" name="selectedPlanId" required>
+                            <option value="">Selecione um Plano</option>
+                        </select>
+                        <button type="submit">Criar Atividade</button>
+                    </div>
+                </form>
+                <form id="edit-activity-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeEditActivityModal()">&times;</span>
+                        <h2>Editar Plano</h2>
+                        <input type="text" id="editActivityname" name="name" placeholder="Nome da Atividade" required />
+                        <input type="text" id="editActivitydescription" name="description" placeholder="Descrição"
+                            required />
+                        <input type="text" id="editLocal" name="local" placeholder="Local" required />
+                        <input type="date" id="editDate" name="date" placeholder="Data" required />
+                        <button type="submit">Editar Plano</button>
+                    </div>
+                </form>
+                <input type="text" id="searchActivityInput" placeholder="Pesquisar...">
+            </div>
+
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Local</th>
+                        <th>Estado</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="activityTbody">
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="planoatividades" class="section">
+            <h1>Plano de Atividades</h1>
+            <div class="section-tools">
+                <button onclick="openAddPlanModal()">Adicionar</button>
+                <form id="create-plan-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeAddPlanModal()">&times;</span>
+                        <h2>Adicionar Plano</h2>
+                        <input type="text" id="newPlanname" name="name" placeholder="Nome de Plano" required />
+                        <textarea type="text" id="newPlandescription" name="description" placeholder="Descrição"
+                            required></textarea>
+                        <input type="date" id="newFirstDate" name="firstDate" placeholder="Data-Inicio" required />
+                        <input type="date" id="newLastDate" name="lastDate" placeholder="Data-Fim" required />
+                        <label for="newPlanStatus">
+                            Ativo:
+                            <input type="checkbox" id="newPlanStatus" name="status" />
+                        </label>
+                        <input type="number" id="newLevel" name="planLevel" placeholder="Nível" required />
+                        <input type="text" id="newPlanresource" name="planResource" placeholder="Recursos" required />
+                        <button type="submit">Criar Plano</button>
+                    </div>
+                </form>
+                <form id="edit-plan-form" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeEditPlanModal()">&times;</span>
+                        <h2>Editar Plano</h2>
+                        <input type="text" id="editPlanname" name="name" placeholder="Nome de Plano" required />
+                        <input type="text" id="editPlandescription" name="description" placeholder="Descrição"
+                            required />
+                        <input type="date" id="editFirstDate" name="firstDate" placeholder="Descrição" required />
+                        <input type="date" id="editLastDate" name="lastDate" placeholder="Descrição" required />
+                        <input type="number" id="editLevel" name="planLevel" placeholder="Descrição" required />
+                        <button type="submit">Editar Plano</button>
+                    </div>
+                </form>
+                <input type="text" id="searchPlanInput" placeholder="Pesquisar...">
+            </div>
+
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Data de Início</th>
+                        <th>Data de Fim</th>
+                        <th>Estado</th>
+                        <th>Nivel</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="planTbody">
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="perfil" class="section">
+            <h1>Perfil</h1>
+            <div class="profile-container">
+                <div class="profile-card">
+                    <h2 class="card-title">Alterar Perfil</h2>
+                    <form id="meuPerfil">
+                        <!-- informações enviadas pela bd -->
+                    </form>
+                </div>
+
+                <!-- Cartão de atividades associadas -->
+                <div class="activities-card">
+                    <h3 class="card-title">Atividades associadas</h3>
+                    <ul class="activities-list" id="listaAtividades">
+                        <!-- informações enviadas pela bd -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div id="notificacoes" class="section">
+            <h1>Notificações</h1>
+            <form id="notificacaoForm" onsubmit="enviarNotificacao(event)" class="notificacao-form">
+                <div class="form-group">
+                    <label for="tituloNotificacao">Título</label>
+                    <input type="text" id="tituloNotificacao" required placeholder="Insira o título da notificação">
+                </div>
+                <div class="form-group">
+                    <label for="mensagemNotificacao">Mensagem</label>
+                    <textarea id="mensagemNotificacao" rows="4" required placeholder="Escreva a mensagem..."></textarea>
+                </div>
+                <button type="submit" class="btn-enviar">Enviar Notificação</button>
+            </form>
+
+            <h2>Notificações Enviadas</h2>
+            <table class="user-table" id="tabelaNotificacoes">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Mensagem</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div> -->
+    </div>
+
+
+
+    <script type="module" src="/Js/users/usersEvents.js"></script>
+    <script type="module" src="/Js/plans/planEvents.js"></script>
+    <script type="module" src="/Js/activities/activitiesEvents.js"></script>
+    <script src="/Js/users/userUI.js"></script>
+    <script src="/Js/plans/planUI.js"></script>
+    <script src="/Js/activities/activitiesUI.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>

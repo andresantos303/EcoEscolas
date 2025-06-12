@@ -44,3 +44,43 @@ body {
   justify-content: center;
   text-decoration: none;
 }
+
+/* Botões de ação */
+#actionButtons {
+  margin-top: 30px;
+  display: flex;
+  gap: 20px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 14px 0;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.finalize-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.finalize-btn:hover {
+  background-color: #c0392b;
+  box-shadow: 0 6px 18px rgba(192, 57, 43, 0.6);
+}
+
+.start-btn {
+  background-color: #27ae60;
+  color: white;
+}
+
+.start-btn:hover {
+  background-color: #1e8449;
+  box-shadow: 0 6px 18px rgba(30, 132, 73, 0.6);
+}
