@@ -199,7 +199,7 @@ async function editOneUser() {
     try {
       await updateUser(sessionStorage.getItem("currentUser"), updatedData);
       Swal.fire({
-        position: "top-end", // ou 'top' para centro
+        position: "top-end",
         icon: "success",
         title: "Perfil guardado com sucesso!",
         showConfirmButton: false,
