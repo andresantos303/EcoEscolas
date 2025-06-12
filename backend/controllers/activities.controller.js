@@ -63,8 +63,7 @@ const createActivity = async (req, res) => {
         cloudinary_id: result.public_id,
       });
     }
-
-
+    
     const activity = new Activity({
       nome,
       descricao,

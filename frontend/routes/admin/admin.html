@@ -7,6 +7,7 @@
     <title>Admin - Eco Escolas</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/png" href="Img/eco-amigavel.png" />
     <link rel="stylesheet" href="/Css/admin.css">
 </head>
 
@@ -24,7 +25,7 @@
 
     <div class="main-content">
 
-           <div id="estatisticas" class="section active">
+        <div id="estatisticas" class="section active">
             <div class="dashboard">
                 <div class="cards">
                 <div class="card">
@@ -136,7 +137,7 @@
             <h1>Atividades</h1>
             <div class="section-tools">
                 <button onclick="openAddActivityModal()">Adicionar</button>
-                <form id="create-activity-form" class="modal" style="display:none;" enctype="multipart/form-data">
+                <form id="create-activity-form" class="modal" style="display:none;">
                     <div class="modal-content">
                         <span class="close" onclick="closeAddActivityModal()">&times;</span>
                         <h2>Adicionar Atividade</h2>
@@ -152,7 +153,6 @@
                         <select id="activityPlanSelect" name="selectedPlanId" required>
                             <option value="">Selecione um Plano</option>
                         </select>
-                        <input type="file" id="fotos" name="fotos" accept="image/*" multiple />
                         <button type="submit">Criar Atividade</button>
                     </div>
                 </form>
@@ -165,8 +165,7 @@
                             required />
                         <input type="text" id="editLocal" name="local" placeholder="Local" required />
                         <input type="date" id="editDate" name="date" placeholder="Data" required />
-                       
-                        <button type="submit">Editar Atividade</button>
+                        <button type="submit">Editar Plano</button>
                     </div>
                 </form>
                 <input type="text" id="searchActivityInput" placeholder="Pesquisar...">
@@ -208,7 +207,7 @@
                             <input type="checkbox" id="newPlanStatus" name="status" />
                         </label>
                         <input type="number" id="newLevel" name="planLevel" placeholder="Nível" required />
-                        <input type="file" id="recursos" name="files" multiple />
+                        <input type="text" id="newPlanresource" name="planResource" placeholder="Recursos" required />
                         <button type="submit">Criar Plano</button>
                     </div>
                 </form>
@@ -266,35 +265,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- <div id="notificacoes" class="section">
-            <h1>Notificações</h1>
-            <form id="notificacaoForm" onsubmit="enviarNotificacao(event)" class="notificacao-form">
-                <div class="form-group">
-                    <label for="tituloNotificacao">Título</label>
-                    <input type="text" id="tituloNotificacao" required placeholder="Insira o título da notificação">
-                </div>
-                <div class="form-group">
-                    <label for="mensagemNotificacao">Mensagem</label>
-                    <textarea id="mensagemNotificacao" rows="4" required placeholder="Escreva a mensagem..."></textarea>
-                </div>
-                <button type="submit" class="btn-enviar">Enviar Notificação</button>
-            </form>
-
-            <h2>Notificações Enviadas</h2>
-            <table class="user-table" id="tabelaNotificacoes">
-                <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Mensagem</th>
-                        <th>Data</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-        </div> -->
     </div>
 
 
