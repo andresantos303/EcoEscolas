@@ -108,14 +108,7 @@ export async function updatePlan(planId, updatedData) {
   }
 }
 
-export async function finalizePlan(planId, recursos) {
-  const formData = new FormData();
-
-  if (recursos && recursos.length > 0) {
-    for (let i = 0; i < recursos.length; i++) {
-      formData.append('recursos', recursos[i]);
-    }
-  }
+export async function finalizePlan(planId, formData) {
     const response = await axios.put(`${API_URL}/plans/${planId}/finalize`,
       formData,
       {

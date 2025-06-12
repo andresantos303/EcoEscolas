@@ -60,8 +60,17 @@ async function handleFinalize(activity) {
   const fotosInput = document.getElementById('fotos-input');
   const fotos = fotosInput?.files || [];
 
+  const formData = new FormData();
+  formData.append('participantsCount', activity.participants.length);
+
+  if (fotos && fotos.length > 0) {
+    for (let i = 0; i < fotos.length; i++) {
+      formData.append('fotos', fotos[i]);
+    }
+  }
+
   try {
-    await finalizeActivity(activity._id, activity.participants.length, fotos);
+    await finalizeActivity(activity._id, formData);
     alert("Atividade finalizada com sucesso!");
     location.reload();
   } catch (err) {

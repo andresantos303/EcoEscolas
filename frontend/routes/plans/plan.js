@@ -79,6 +79,11 @@ async function handleFinalizePlan(plan) {
     // 1. Obter os arquivos do input de recursos
     const recursosInput = document.getElementById('recursos-input'); // <input type="file" id="recursos-input" multiple>
     const recursos = recursosInput?.files || [];
+    const formData = new FormData();
+
+    for (const file of recursos) {
+        formData.append('recursos', file);
+    }
 
     try {
         // 3. Chamar o serviço passando o FormData

@@ -213,12 +213,19 @@ const finalizePlan = async (req, res) => {
       return handleError(res, "PLAN_DELETE_BLOCKED");
     }
 
-    const novasImagens = req.files?.map(file => file.path) || [];
+    const recursosCloud = [];
 
-    await Plan.findByIdAndUpdate(id, {
-      estado: false,
-      recursos: [...plan.recursos, ...novasImagens],
-    });
+    for (const file of req.files) {
+      const result = await cloudinary.uploader.upload(file.path);
+      recursosCloud.push({
+        profile_image: result.secure_url,
+        cloudinary_id: result.public_id,
+      });
+    }
+
+    plan.estado = false;
+    plan.recursos = [...plan.recursos, ...recursosCloud];
+    await plan.save();
 
     return res.status(200).json({ message: "Plano de atividades finalizado com sucesso." });
   } catch (err) {

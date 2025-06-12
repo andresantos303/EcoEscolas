@@ -182,8 +182,6 @@ function setupCreateActivityForm() {
     });
 }
 
-
-
 async function populatePlansSelect() {
     try {
         const plans = await getAllPlans();

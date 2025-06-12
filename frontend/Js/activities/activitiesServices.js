@@ -107,16 +107,7 @@ export async function getAllPlans() {
     }
 }
 
-export async function finalizeActivity(activityId, participantsCount, fotos) {
-  const formData = new FormData();
-  formData.append('participantsCount', participantsCount);
-
-  if (fotos && fotos.length > 0) {
-    for (let i = 0; i < fotos.length; i++) {
-      formData.append('fotos', fotos[i]);
-    }
-  }
-
+export async function finalizeActivity(activityId, formData) {
   const response = await axios.put(`${API_URL}/activities/${activityId}/finalize`,formData,
     {
       headers: {
