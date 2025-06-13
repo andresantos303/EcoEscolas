@@ -16,7 +16,7 @@ const activitySchema = new mongoose.Schema(
       default: [],
     },
     data: { type: String, required: true },
-    planActivitiesId: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
+    planActivitiesId: { type: mongoose.Schema.Types.ObjectId, ref: 'Plan', required: true },
     createdUserId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

@@ -63,7 +63,7 @@ const createActivity = async (req, res) => {
         cloudinary_id: result.public_id,
       });
     }
-    
+
     const activity = new Activity({
       nome,
       descricao,
@@ -257,9 +257,24 @@ const getActivitiesCount = async (req, res) => {
   }
 };
 
+const getActivitiesByPlan = async (req, res) => {
+  try {
+    const idPlano = req.params.idPlano;
+    if (!idPlano) {
+      return res.status(400).json({ message: "ID do plano é obrigatório" });
+    }
+    const atividades = await Activity.find({ planActivitiesId: idPlano });
+    return res.status(200).json(atividades);
+  } catch (error) {
+    console.error("Erro ao buscar atividades por plano:", error);
+    return res.status(500).json({ message: "Erro ao buscar atividades por plano." });
+  }
+};
+
 module.exports = {
   getAllActivities,
   getActivityById,
+ getActivitiesByPlan,
   createActivity,
   addParticipant,
   updateActivity,

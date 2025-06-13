@@ -1,20 +1,32 @@
 const express = require('express');
 const router = express.Router();
 
-// include controller functions
-const checkPermissions = require('../utils/checkPermissions.js');
-const activitiesController= require('../controllers/activities.controller.js');
+const activitiesController = require('../controllers/activities.controller.js');
 const authMiddleware = require('../utils/auth.js');
+const checkPermissions = require('../utils/checkPermissions.js');
 const { upload } = require('../utils/upload.js');
+const Activity = require('../models/activity.model.js');
 
-// POST /activities/:idActividade/participants — adiciona participantes a uma atividade
+// Rota pública: adicionar participante
 router.post('/:idAtividade/participants', activitiesController.addParticipant);
 
+
+router.get('/plan/:id', async (req, res) => {
+    try {
+        const activities = await Activity.find({ planoId: req.params.id });
+        res.json(activities);
+    } catch (err) {
+        res.status(500).json({ message: 'Erro ao buscar atividades' });
+    }
+});
+
+// Middleware de autenticação
 router.use(authMiddleware);
 
+// Outras rotas protegidas
 router.get('/', checkPermissions('activities', 'read'), activitiesController.getAllActivities);
 router.get('/:id', checkPermissions('activities', 'readById'), activitiesController.getActivityById);
-router.post('/:idPlano', checkPermissions('activities', 'create'),  upload.array('fotos', 6), activitiesController.createActivity);
+router.post('/:idPlano', checkPermissions('activities', 'create'), upload.array('fotos', 6), activitiesController.createActivity);
 router.put('/:id/finalize', checkPermissions('activities', 'update'), upload.array('fotos', 6), activitiesController.finalizeActivity);
 router.put('/:id/start', checkPermissions('activities', 'update'), activitiesController.startActivity);
 router.patch('/:id', checkPermissions('activities', 'update'), activitiesController.updateActivity);

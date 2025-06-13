@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Atividades</title>
+</head>
+
+<body>
+    <h2>Plano de atividades</h2>
+    <div id="atividadesContainer"></div>
+
+    <script type="module">
+
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const planoId = urlParams.get('id') ? urlParams.get('id').trim() : null;
+
+        const token = localStorage.getItem('token');
+
+
+        fetch(`http://localhost:3000/api/activities/plan/${planoId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Erro na requisição: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(atividades => {
+                const container = document.getElementById("atividadesContainer");
+                container.innerHTML = ''; // limpa antes
+                if (atividades.length === 0) {
+                    container.textContent = "Nenhuma atividade encontrada para este plano.";
+                    return;
+                }
+                atividades.forEach(atividade => {
+                    const div = document.createElement("div");
+                    div.innerHTML = `
+        <h4>${atividade.nome || atividade.titulo || 'Sem título'}</h4>
+        <p>${atividade.descricao || ''}</p>
+        <p>Data: ${new Date(atividade.data).toLocaleDateString()}</p>
+      `;
+                    container.appendChild(div);
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById("atividadesContainer").textContent = "Erro ao carregar atividades.";
+            });
+    </script>
+</body>
+
+</html>

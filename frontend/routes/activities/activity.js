@@ -1,4 +1,9 @@
-import { getActivityById, finalizeActivity, startActivity } from '../../Js/activities/activitiesServices.js';
+import {
+  getActivityById,
+  finalizeActivity,
+  startActivity,
+  getActivitiesByPlanId
+} from '../../Js/activities/activitiesServices.js';
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -13,6 +18,26 @@ async function init() {
     const activity = await getActivityById(activityId);
     renderActivityDetails(activity);
     setupActionButtons(activity);
+
+    // Debug: mostrar planActivitiesId no console para ver o que está chegando
+    console.log('activity.planActivitiesId:', activity.planActivitiesId);
+
+    // Extrair o planId de forma segura
+    const planId = typeof activity.planActivitiesId === 'string'
+      ? activity.planActivitiesId
+      : activity.planActivitiesId?._id;
+
+    if (!planId) {
+      console.warn('Plano associado não encontrado para esta atividade.');
+      // Opcional: mostrar uma mensagem no UI se quiser
+      const list = document.getElementById('planActivities');
+      list.innerHTML = '<li>Plano associado não encontrado.</li>';
+      return;
+    }
+
+    // Mostrar atividades associadas ao plano, se existir
+    await renderActivitiesFromPlan(planId);
+
   } catch (error) {
     console.error('Erro ao carregar a atividade:', error);
     showError("Erro ao carregar detalhes da atividade.");
@@ -79,7 +104,6 @@ async function handleFinalize(activity) {
   }
 }
 
-
 async function handleStart(activity) {
   try {
     await startActivity(activity._id);
@@ -91,3 +115,31 @@ async function handleStart(activity) {
   }
 }
 
+// Função para renderizar as atividades do mesmo plano
+async function renderActivitiesFromPlan(planId) {
+  console.log('planId recebido em renderActivitiesFromPlan:', planId);
+
+  if (!planId) {
+    console.warn('planId inválido, não é possível buscar atividades.');
+    return;
+  }
+
+  try {
+    const activities = await getActivitiesByPlanId(planId);
+    const list = document.getElementById('planActivities');
+    list.innerHTML = '';
+
+    if (activities.length === 0) {
+      list.innerHTML = '<li>Sem atividades associadas.</li>';
+      return;
+    }
+
+    activities.forEach(act => {
+      const li = document.createElement('li');
+      li.textContent = `${act.nome} - ${new Date(act.data).toLocaleDateString('pt-PT')}`;
+      list.appendChild(li);
+    });
+  } catch (error) {
+    console.error('Erro ao buscar atividades do plano:', error);
+  }
+}

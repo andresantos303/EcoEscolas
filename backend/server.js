@@ -4,6 +4,7 @@ require("dotenv").config();
 const cors = require('cors');
 
 const app = express();
+
 app.use(express.json());
 
 
@@ -15,7 +16,8 @@ app.use(cors({
 //routers
 app.use("/users", require("./routes/users.routes.js"));
 app.use("/plans", require("./routes/plans.routes.js"));
-app.use("/activities", require("./routes/activities.routes.js"));
+app.use('/api/activities', require('./routes/activities.routes.js'));
+
 app.use("/notifications", require("./routes/notifications.routes.js"));
 
 // middleware de erro

@@ -10,7 +10,7 @@ async function renderPlansCards() {
 
     plans.forEach(plan => {
       const card = document.createElement('a');
-      card.href = `atividade.html?id=${plan._id}`;
+      card.href = `planoatividades.html?id=${plan._id}`;
       card.className = 'recipe-card';
 
       const title = document.createElement('h3');
