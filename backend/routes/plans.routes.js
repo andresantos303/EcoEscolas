@@ -3,7 +3,7 @@ const router = express.Router();
 
 // include controller functions
 const checkPermissions = require('../utils/checkPermissions.js');
-const plansController= require('../controllers/plans.controller.js');
+const plansController = require('../controllers/plans.controller.js');
 const authMiddleware = require('../utils/auth.js');
 const { upload } = require('../utils/upload.js');
 

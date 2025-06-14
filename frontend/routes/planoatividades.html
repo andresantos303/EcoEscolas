@@ -2,8 +2,8 @@
 <html lang="pt">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Plano de Atividades</title>
 </head>
 
@@ -12,42 +12,43 @@
     <div id="atividadesContainer"></div>
 
     <script type="module">
-       const urlParams = new URLSearchParams(window.location.search);
-const planoId = urlParams.get('id')?.trim() || null;
+        const urlParams = new URLSearchParams(window.location.search);
+        const planoId = urlParams.get('id')?.trim() || null;
 
-if (!planoId) {
-  document.getElementById("atividadesContainer").textContent = "ID do plano não fornecido.";
-  throw new Error("ID do plano ausente na URL");
-}
+        if (!planoId) {
+            document.getElementById("atividadesContainer").textContent = "ID do plano não fornecido.";
+            throw new Error("ID do plano ausente na URL");
+        }
 
-fetch(`http://localhost:3000/plans/${planoId}/public`, {
-  headers: { 'Content-Type': 'application/json' }
-})
-.then(res => {
-  if (!res.ok) throw new Error(`Erro na requisição: ${res.status}`);
-  return res.json();
-})
-.then(plano => {
-  const cont = document.getElementById("atividadesContainer");
-  cont.innerHTML = '';
-  if (!plano.atividades?.length) {
-    cont.textContent = "Nenhuma atividade encontrada para este plano.";
-    return;
-  }
-  plano.atividades.forEach(a => {
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <h4>${a.nome || a.titulo || 'Sem título'}</h4>
-      <p>${a.descricao || ''}</p>
-      <p>Data: ${a.data ? new Date(a.data).toLocaleDateString() : 'Data não disponível'}</p>
-    `;
-    cont.appendChild(div);
-  });
-})
-.catch(err => {
-  console.error(err);
-  document.getElementById("atividadesContainer").textContent = "Erro ao carregar o plano.";
-});
+        fetch(`http://localhost:3000/plans/${planoId}/public`, {
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(res => {
+                if (!res.ok) throw new Error(`Erro na requisição: ${res.status}`);
+                return res.json();
+            })
+            .then(plano => {
+                const cont = document.getElementById("atividadesContainer");
+                cont.innerHTML = '';
+                // Troquei aqui para associatedActivities
+                if (!plano.associatedActivities?.length) {
+                    cont.textContent = "Nenhuma atividade encontrada para este plano.";
+                    return;
+                }
+                plano.associatedActivities.forEach(a => {
+                    const div = document.createElement("div");
+                    div.innerHTML = `
+                    <h4>${a.nome || a.titulo || 'Sem título'}</h4>
+                    <p>${a.descricao || ''}</p>
+                    <p>Data: ${a.data ? new Date(a.data).toLocaleDateString() : 'Data não disponível'}</p>
+                `;
+                    cont.appendChild(div);
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById("atividadesContainer").textContent = "Erro ao carregar o plano.";
+            });
     </script>
 </body>
 

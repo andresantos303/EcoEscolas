@@ -271,10 +271,28 @@ const countActivePlans = async (req, res) => {
   }
 };
 
+const getPlanByIdPublic = async (req, res) => {
+  try {
+    const plan = await Plan.findById(req.params.id);
+    if (!plan) {
+      return res.status(404).json({ message: "Plano não encontrado." });
+    }
+    const atividades = await Activity.find({ planActivitiesId: req.params.id });
+    return res.status(200).json({
+      ...plan.toObject(),
+      atividades,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erro interno ao buscar plano e atividades." });
+  }
+};
+
 
 
 module.exports = {
   getAllPlans,
+  getPlanByIdPublic,
   getPlanById,
   createPlan,
   updatePlan,
