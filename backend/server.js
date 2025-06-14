@@ -7,7 +7,6 @@ const app = express();
 
 app.use(express.json());
 
-
 app.use(cors({
   origin: '*', // Ou '*' temporariamente para testes
   credentials: true
@@ -27,6 +26,7 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
+module.exports = app;
 
 // envolve a ligação e o listen num IIFE async
 (async () => {
