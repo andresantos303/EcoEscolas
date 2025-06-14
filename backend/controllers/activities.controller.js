@@ -287,6 +287,22 @@ const getActivitiesPublic = async (req, res) => {
   }
 };
 
+const getActivityPublicById = async (req, res) => {
+  try {
+    const activity = await Activity.findById(req.params.id)
+      .select('nome descricao local data fotos estado planActivitiesId')
+      .populate('planActivitiesId', 'nome');
+
+    if (!activity) {
+      return res.status(404).json({ message: "Atividade não encontrada" });
+    }
+
+    return res.status(200).json(activity);
+  } catch (err) {
+    return res.status(500).json({ message: "Erro interno ao buscar atividade." });
+  }
+};
+
 
 module.exports = {
   getAllActivities,
@@ -299,5 +315,6 @@ module.exports = {
   finalizeActivity,
   startActivity,
   getActivitiesCount,
-  getActivitiesPublic
+  getActivitiesPublic,
+  getActivityPublicById
 };

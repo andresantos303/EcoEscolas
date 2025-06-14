@@ -9,9 +9,10 @@ const Activity = require('../models/activity.model.js');
 
 // Rota pública: adicionar participante
 router.post('/:idAtividade/participants', activitiesController.addParticipant);
-router.get('/:id/public', activitiesController.getActivitiesPublic);
+router.get('/:id/public', activitiesController.getActivityPublicById);
 
-// Middleware de autenticação
+
+// Middleware de autenticação   
 router.use(authMiddleware);
 
 // Outras rotas protegidas
