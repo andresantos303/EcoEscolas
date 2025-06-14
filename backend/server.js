@@ -28,20 +28,22 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 module.exports = app;
 
-// envolve a ligação e o listen num IIFE async
-(async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      autoIndex: true,
-      serverSelectionTimeoutMS: 5000,
-    });
-    console.log("✅  MongoDB conectado");
-
-    app.listen(PORT, () =>
-      console.log(`🚀  Servidor a ouvir em http://localhost:${PORT}`)
-    );
-  } catch (err) {
-    console.error("❌ Erro ao conectar ao MongoDB:", err);
-    process.exit(1);
-  }
-})();
+// só executa a conexão e o listen se não estivermos em TEST
+if (process.env.NODE_ENV !== 'test') {
+  (async () => {
+    try {
+      await mongoose.connect(process.env.MONGODB_URI, {
+        autoIndex: true,
+        serverSelectionTimeoutMS: 5000,
+      });
+      console.log('✅  MongoDB conectado');
+      const PORT = process.env.PORT || 3000;
+      app.listen(PORT, () =>
+        console.log(`🚀 Servidor a ouvir em http://localhost:${PORT}`)
+      );
+    } catch (err) {
+      console.error('❌ Erro ao conectar ao MongoDB:', err);
+      process.exit(1);
+    }
+  })();
+}

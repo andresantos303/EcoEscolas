@@ -3,8 +3,8 @@ const Plan = require("../models/plan.model.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { handleError } = require("../utils/errorHandler.js");
-
 require("dotenv").config();
+
 
 const getAllUsers = async (req, res) => {
   try {

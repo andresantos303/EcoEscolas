@@ -1,334 +1,391 @@
-require('dotenv').config(); // carrega MONGODB_URI_TEST, JWT_SECRET, JWT_EXPIRES_IN
-const request = require('supertest');
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+jest.mock('../backend/models/user.model.js', () => {
+  const m = jest.fn();
+  m.find = jest.fn();
+  m.findOne = jest.fn();
+  m.findById = jest.fn();
+  m.findByIdAndDelete = jest.fn();
+  return m;
+});
+jest.mock('../backend/models/plan.model.js', () => {
+  const m = jest.fn();
+  m.findOne = jest.fn();
+  return m;
+});
 
-const app = require('../backend/server');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 const User = require('../backend/models/user.model');
 const Plan = require('../backend/models/plan.model');
+const {getAllUsers,createUser,loginUser,getUserById,updateUser,deleteUser} = require('../backend/controllers/users.controller');
 
-const { MongoMemoryServer } = require('mongodb-memory-server');
-let mongoServer;
+describe('Users Controller (unit, jest mocks)', () => {
+  let req, res;
 
-beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-});
+  beforeEach(() => {
+    // Reset request and response mocks
+    req = { params: {}, query: {}, body: {} };
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+    // Restore original implementations of any spied functions
+    jest.restoreAllMocks();
+    // Clear mock call history
+    jest.clearAllMocks();
+  });
 
-afterEach(async () => {
-  await mongoose.connection.db.dropDatabase();
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-});
-
-describe('Users API', () => {
   //
-  // GET /users
+  // getAllUsers
   //
-  describe('GET /users', () => {
-    beforeEach(async () => {
-      await User.create([
-        { name: 'Alice', email: 'a@t.com', password: 'hash', type: 'Admin' },
-        { name: 'Bob',   email: 'b@t.com', password: 'hash', type: 'Secretariado' },
-      ]);
+  describe('getAllUsers', () => {
+    it('returns 200 and users list without filters', async () => {
+      const fake = [{ name: 'A' }, { name: 'B' }];
+      User.find.mockResolvedValue(fake);
+
+      await getAllUsers(req, res);
+
+      expect(User.find).toHaveBeenCalledWith({});
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(fake);
     });
 
-    it('deve listar todos os utilizadores', async () => {
-      const res = await request(app).get('/users');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(2);
+    it('applies name and type filters', async () => {
+      const fake = [{ name: 'X', type: 'T' }];
+      req.query = { name: 'X', type: 'T' };
+      User.find.mockResolvedValue(fake);
+
+      await getAllUsers(req, res);
+
+      expect(User.find).toHaveBeenCalledWith({ name: 'X', type: 'T' });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(fake);
     });
 
-    it('deve filtrar por nome', async () => {
-      const res = await request(app)
-        .get('/users')
-        .query({ name: 'Alice' });
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(1);
-      expect(res.body[0].name).toBe('Alice');
-    });
+    it('handles errors with 500', async () => {
+      User.find.mockRejectedValue(new Error('oops'));
 
-    it('deve filtrar por type', async () => {
-      const res = await request(app)
-        .get('/users')
-        .query({ type: 'Professor' });
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(1);
-      expect(res.body[0].type).toBe('Professor');
+      await getAllUsers(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Erro ao buscar utilizadores.' });
     });
   });
 
   //
-  // POST /users/register
+  // createUser
   //
-  describe('POST /users/register', () => {
-    it('deve criar um utilizador válido', async () => {
-      const res = await request(app)
-        .post('/users/register')
-        .send({
-          name: 'João Silva',
-          email: 'joao@teste.com',
-          password: 'Teste123!',
-          type: 'Admin'
-        });
+  describe('createUser', () => {
+    const valid = {
+      name: 'João',
+      email: 'joao@t.com',
+      password: 'Abc123!@',
+      type: 'Admin',
+    };
 
-      expect(res.status).toBe(201);
-      expect(res.body).toMatchObject({
-        name: 'João Silva',
-        email: 'joao@teste.com',
-        type: 'Admin'
+    it('400 if missing fields', async () => {
+      req.body = { email: 'a@t.com', password: 'Abc123!@', type: 'A' };
+      await createUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'USER_REGISTRATION_BAD_REQUEST' })
+      );
+    });
+
+    it('400 if invalid email', async () => {
+      req.body = { ...valid, email: 'invalid' };
+      await createUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'USER_REGISTRATION_INVALID_EMAIL' })
+      );
+    });
+
+    it('400 if weak password', async () => {
+      req.body = { ...valid, password: 'weakpass' };
+      await createUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'USER_REGISTRATION_WEAK_PASSWORD' })
+      );
+    });
+
+    it('409 if email exists', async () => {
+      req.body = valid;
+      User.findOne.mockResolvedValue({ email: valid.email });
+      await createUser(req, res);
+      expect(User.findOne).toHaveBeenCalledWith({ email: valid.email });
+      expect(res.status).toHaveBeenCalledWith(409);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'USER_EMAIL_ALREADY_EXISTS' })
+      );
+    });
+
+    it('201 on success', async () => {
+      req.body = valid;
+      User.findOne.mockResolvedValue(null);
+      jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedpwd');
+      const saveMock = jest.fn().mockResolvedValue();
+      User.mockImplementation(() => ({
+        _id: 'ID1',
+        name: valid.name,
+        email: valid.email,
+        type: valid.type,
+        save: saveMock,
+      }));
+
+      await createUser(req, res);
+
+      expect(saveMock).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(201);
+      expect(res.json).toHaveBeenCalledWith({
+        id: 'ID1',
+        name: valid.name,
+        email: valid.email,
+        type: valid.type,
       });
-      expect(res.body).toHaveProperty('id');
     });
 
-    it('deve rejeitar se faltar campo', async () => {
-      const res = await request(app)
-        .post('/users/register')
-        .send({ email: 'x@t.com', password: 'Teste123!', type: 'Admin' }); // falta name
-
-      expect(res.status).toBe(400);
-      expect(res.body.errorCode).toBe('USER_REGISTRATION_BAD_REQUEST');
-    });
-
-    it('deve rejeitar email inválido', async () => {
-      const res = await request(app)
-        .post('/users/register')
-        .send({
-          name: 'X',
-          email: 'invalid-email',
-          password: 'Teste123!',
-          type: 'Admin'
-        });
-
-      expect(res.status).toBe(400);
-      expect(res.body.errorCode).toBe('USER_REGISTRATION_INVALID_EMAIL');
-    });
-
-    it('deve rejeitar password fraca', async () => {
-      const res = await request(app)
-        .post('/users/register')
-        .send({
-          name: 'X',
-          email: 'x@t.com',
-          password: 'weakpwd',
-          type: 'Admin'
-        });
-
-      expect(res.status).toBe(400);
-      expect(res.body.errorCode).toBe('USER_REGISTRATION_WEAK_PASSWORD');
-    });
-
-    it('deve rejeitar email já existente', async () => {
-      await User.create({
-        name: 'Y',
-        email: 'y@t.com',
-        password: await bcrypt.hash('Teste123!', 10),
-        type: 'Aluno'
+    it('500 on internal error', async () => {
+      req.body = valid;
+      User.findOne.mockResolvedValue(null);
+      jest.spyOn(bcrypt, 'hash').mockRejectedValue(new Error('fail'));
+      await createUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Erro interno ao registar utilizador.',
       });
-
-      const res = await request(app)
-        .post('/users/register')
-        .send({
-          name: 'Z',
-          email: 'y@t.com',
-          password: 'Teste123!',
-          type: 'Admin'
-        });
-
-      expect(res.status).toBe(400);
-      expect(res.body.errorCode).toBe('USER_EMAIL_ALREADY_EXISTS');
     });
   });
 
   //
-  // POST /users/login
+  // loginUser
   //
-  describe('POST /users/login', () => {
-    beforeEach(async () => {
-      const hash = await bcrypt.hash('Teste123!', 10);
-      await User.create({
-        name: 'Maria',
-        email: 'maria@t.com',
-        password: hash,
-        type: 'Admin'
-      });
+  describe('loginUser', () => {
+    const creds = { email: 'u@t.com', password: 'Abc123!@' };
+
+    it('400 if missing fields', async () => {
+      req.body = { email: creds.email };
+      await loginUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'LOGIN_BAD_REQUEST' })
+      );
     });
 
-    it('deve autenticar credenciais válidas', async () => {
-      const res = await request(app)
-        .post('/users/login')
-        .send({ email: 'maria@t.com', password: 'Teste123!' });
-
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty('token');
-      expect(res.body).toHaveProperty('id');
+    it('404 if user not found', async () => {
+      req.body = creds;
+      User.findOne.mockResolvedValue(null);
+      await loginUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'LOGIN_USER_NOT_REGISTERED' })
+      );
     });
 
-    it('deve rejeitar se faltar campo', async () => {
-      const res = await request(app)
-        .post('/users/login')
-        .send({ email: 'maria@t.com' }); // falta password
-
-      expect(res.status).toBe(400);
-      expect(res.body.errorCode).toBe('LOGIN_BAD_REQUEST');
+    it('401 if wrong password', async () => {
+      req.body = creds;
+      User.findOne.mockResolvedValue({ password: 'hashed' });
+      bcrypt.compare = jest.fn().mockResolvedValue(false);
+      await loginUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'LOGIN_INVALID_CREDENTIALS' })
+      );
     });
 
-    it('deve rejeitar user não registado', async () => {
-      const res = await request(app)
-        .post('/users/login')
-        .send({ email: 'noone@t.com', password: 'Teste123!' });
+    it('200 and token on success', async () => {
+      req.body = creds;
+      const fakeUser = { _id: 'ID2', type: 'Aluno', password: 'hashed' };
+      User.findOne.mockResolvedValue(fakeUser);
+      bcrypt.compare = jest.fn().mockResolvedValue(true);
+      jwt.sign = jest.fn().mockReturnValue('T0K3N');
 
-      expect(res.status).toBe(401);
-      expect(res.body.errorCode).toBe('LOGIN_USER_NOT_REGISTERED');
+      await loginUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ id: 'ID2', token: 'T0K3N' });
     });
 
-    it('deve rejeitar credenciais incorretas', async () => {
-      const res = await request(app)
-        .post('/users/login')
-        .send({ email: 'maria@t.com', password: 'Wrong123!' });
+    it('500 on internal error', async () => {
+      req.body = creds;
+      User.findOne.mockRejectedValue(new Error('boom'));
+      await loginUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Erro interno no login.' });
+    });
+  });
 
-      expect(res.status).toBe(401);
-      expect(res.body.errorCode).toBe('LOGIN_INVALID_CREDENTIALS');
+
+  //
+  // getUserById
+  //
+  describe('getUserById', () => {
+    it('200 with user data', async () => {
+      const fake = { _id: 'ID3', name: 'X' };
+      User.findById.mockReturnValue({ populate: () => Promise.resolve(fake) });
+      req.params.id = 'ID3';
+
+      await getUserById(req, res);
+
+      expect(User.findById).toHaveBeenCalledWith('ID3');
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(fake);
+    });
+
+    it('404 if not found', async () => {
+      User.findById.mockReturnValue({ populate: () => Promise.resolve(null) });
+      req.params.id = 'ID3';
+
+      await getUserById(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'AUTH_UNAUTHORIZED' })
+      );
+    });
+
+    it('500 on internal error', async () => {
+      User.findById.mockReturnValue({ populate: () => Promise.reject(new Error()) });
+      req.params.id = 'ID3';
+
+      await getUserById(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Erro interno ao obter utilizador.' });
     });
   });
 
   //
-  // GET /users/:id
+  // updateUser
   //
-  describe('GET /users/:id', () => {
-    let user;
-    beforeEach(async () => {
-      user = await User.create({
-        name: 'Teste',
-        email: 't@t.com',
-        password: await bcrypt.hash('Teste123!', 10),
-        type: 'Admin'
-      });
+  describe('updateUser', () => {
+    const existing = {
+      _id: 'ID4',
+      name: 'Old',
+      email: 'old@t.com',
+      type: 'Secretariado',
+      save: jest.fn().mockResolvedValue(),
+    };
+
+    it('400 if no fields', async () => {
+      req.params.id = 'ID4';
+      req.body = {};
+      await updateUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'USER_DATA_INVALID' })
+      );
     });
 
-    it('deve retornar utilizador válido', async () => {
-      const res = await request(app).get(`/users/${user._id}`);
-      expect(res.status).toBe(200);
-      expect(res.body.email).toBe('t@t.com');
+    it('400 if invalid email', async () => {
+      req.params.id = 'ID4';
+      req.body = { email: 'inv' };
+      await updateUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'USER_DATA_INVALID' })
+      );
     });
 
-    it('deve rejeitar ID não existente', async () => {
-      const fakeId = new mongoose.Types.ObjectId();
-      const res = await request(app).get(`/users/${fakeId}`);
-      expect(res.status).toBe(401);
-      expect(res.body.errorCode).toBe('AUTH_UNAUTHORIZED');
-    });
-  });
-
-  //
-  // PUT /users/:id
-  //
-  describe('PUT /users/:id', () => {
-    let user;
-    beforeEach(async () => {
-      user = await User.create({
-        name: 'Old',
-        email: 'old@t.com',
-        password: await bcrypt.hash('Teste123!', 10),
-        type: 'Aluno'
-      });
+    it('404 if not found', async () => {
+      User.findById.mockResolvedValue(null);
+      req.params.id = 'ID4';
+      req.body = { name: 'X' };
+      await updateUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'USER_NOT_FOUND' })
+      );
     });
 
-    it('deve atualizar nome e type', async () => {
-      const res = await request(app)
-        .put(`/users/${user._id}`)
-        .send({ name: 'New', type: 'Admin' });
+    it('409 if email exists', async () => {
+      User.findById.mockResolvedValue(existing);
+      User.findOne.mockResolvedValue({});
+      req.params.id = 'ID4';
+      req.body = { email: 'other@t.com' };
+      await updateUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(409);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'USER_ALREADY_EXISTS' })
+      );
+    });
 
-      expect(res.status).toBe(200);
-      expect(res.body).toMatchObject({
-        id: String(user._id),
+    it('200 on success', async () => {
+      User.findById.mockResolvedValue(existing);
+      User.findOne.mockResolvedValue(null);
+      req.params.id = 'ID4';
+      req.body = { name: 'New', email: 'new@t.com', type: 'Admin' };
+      await updateUser(req, res);
+
+      expect(existing.name).toBe('New');
+      expect(existing.email).toBe('new@t.com');
+      expect(existing.type).toBe('Admin');
+      expect(existing.save).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        id: 'ID4',
         name: 'New',
-        email: 'old@t.com',
-        type: 'Admin'
+        email: 'new@t.com',
+        type: 'Admin',
       });
     });
 
-    it('deve rejeitar se nenhum campo enviado', async () => {
-      const res = await request(app)
-        .put(`/users/${user._id}`)
-        .send({});
-
-      expect(res.status).toBe(400);
-      expect(res.body.errorCode).toBe('USER_DATA_INVALID');
-    });
-
-    it('deve rejeitar email inválido', async () => {
-      const res = await request(app)
-        .put(`/users/${user._id}`)
-        .send({ email: 'inválido' });
-
-      expect(res.status).toBe(400);
-      expect(res.body.errorCode).toBe('USER_DATA_INVALID');
-    });
-
-    it('deve rejeitar email já existente', async () => {
-      await User.create({
-        name: 'X',
-        email: 'x@t.com',
-        password: await bcrypt.hash('Teste123!', 10),
-        type: 'Aluno'
+    it('500 on internal error', async () => {
+      User.findById.mockRejectedValue(new Error());
+      req.params.id = 'ID4';
+      req.body = { name: 'X' };
+      await updateUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Erro interno ao atualizar utilizador.',
       });
-
-      const res = await request(app)
-        .put(`/users/${user._id}`)
-        .send({ email: 'x@t.com' });
-
-      expect(res.status).toBe(400);
-      expect(res.body.errorCode).toBe('USER_ALREADY_EXISTS');
-    });
-
-    it('deve rejeitar PUT para ID inexistente', async () => {
-      const fakeId = new mongoose.Types.ObjectId();
-      const res = await request(app)
-        .put(`/users/${fakeId}`)
-        .send({ name: 'Nada' });
-
-      expect(res.status).toBe(404);
-      expect(res.body.errorCode).toBe('USER_NOT_FOUND');
     });
   });
 
   //
-  // DELETE /users/:id
+  // deleteUser
   //
-  describe('DELETE /users/:id', () => {
-    let user;
-    beforeEach(async () => {
-      user = await User.create({
-        name: 'Del',
-        email: 'del@t.com',
-        password: await bcrypt.hash('Teste123!', 10),
-        type: 'Aluno'
+  describe('deleteUser', () => {
+    it('404 if not found', async () => {
+      User.findById.mockResolvedValue(null);
+      req.params.id = 'ID5';
+      await deleteUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'USER_NOT_FOUND' })
+      );
+    });
+
+    it('403 if active plan', async () => {
+      User.findById.mockResolvedValue({ _id: 'ID5' });
+      Plan.findOne.mockResolvedValue({ owner: 'ID5', isActive: true });
+      req.params.id = 'ID5';
+      await deleteUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ errorCode: 'USER_DELETE_BLOCKED' })
+      );
+    });
+
+    it('200 on success', async () => {
+      User.findById.mockResolvedValue({ _id: 'ID5' });
+      Plan.findOne.mockResolvedValue(null);
+      User.findByIdAndDelete.mockResolvedValue({});
+      req.params.id = 'ID5';
+      await deleteUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Utilizador removido com sucesso.' });
+    });
+
+    it('500 on internal error', async () => {
+      User.findById.mockRejectedValue(new Error());
+      req.params.id = 'ID5';
+      await deleteUser(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Erro interno ao remover utilizador.',
       });
-    });
-
-    it('deve apagar utilizador sem planos ativos', async () => {
-      const res = await request(app).delete(`/users/${user._id}`);
-      expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Utilizador removido com sucesso.');
-    });
-
-    it('deve bloquear se existir plano ativo', async () => {
-      await Plan.create({ owner: user._id, name: 'P', isActive: true });
-      const res = await request(app).delete(`/users/${user._id}`);
-      expect(res.status).toBe(400);
-      expect(res.body.errorCode).toBe('USER_DELETE_BLOCKED');
-    });
-
-    it('deve rejeitar DELETE para ID inexistente', async () => {
-      const fakeId = new mongoose.Types.ObjectId();
-      const res = await request(app).delete(`/users/${fakeId}`);
-      expect(res.status).toBe(404);
-      expect(res.body.errorCode).toBe('USER_NOT_FOUND');
     });
   });
 });

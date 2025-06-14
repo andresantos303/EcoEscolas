@@ -4,7 +4,7 @@
   "description": "",
   "main": "testHomepage.js",
   "scripts": {
-    "test": "jest"
+    "test": "cross-env NODE_ENV=test jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +18,9 @@
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "coverage": "^0.4.1",
     "dotenv": "^16.5.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.2",
     "selenium-webdriver": "^4.33.0"
   }
