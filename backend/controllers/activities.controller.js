@@ -217,10 +217,10 @@ const finalizeActivity = async (req, res) => {
     }
 
     if (!participantsCount) {
-    return res.status(400).json({
-          errorCode: "PARTICIPANTS_COUNT_REQUIRED",
-          message: "O número de participantes é obrigatório para finalizar a atividade.",
-        });
+      return res.status(400).json({
+        errorCode: "PARTICIPANTS_COUNT_REQUIRED",
+        message: "O número de participantes é obrigatório para finalizar a atividade.",
+      });
     }
 
     // Extrair URLs das imagens do Cloudinary
@@ -280,17 +280,18 @@ const getActivitiesByPlan = async (req, res) => {
 
 const getActivitiesPublic = async (req, res) => {
   try {
-    const activities = await Activity.find({ planoId: req.params.id });
+    const activities = await Activity.find({ planActivitiesId: req.params.id });
     res.json(activities);
   } catch (err) {
     res.status(500).json({ message: 'Erro ao buscar atividades' });
   }
 };
 
+
 module.exports = {
   getAllActivities,
   getActivityById,
- getActivitiesByPlan,
+  getActivitiesByPlan,
   createActivity,
   addParticipant,
   updateActivity,
