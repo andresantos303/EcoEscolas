@@ -10,7 +10,7 @@ body {
     overflow-x: hidden;
 }
 
-.logo{
+.logo {
     width: 50px;
     height: auto;
     border-radius: 10px;
@@ -45,12 +45,13 @@ body {
 
 .notification-panel {
     position: absolute;
-    top: 60px; /* ajuste conforme altura do header */
+    top: 60px;
+    /* ajuste conforme altura do header */
     right: 20px;
     background-color: #fff;
     border: 1px solid #ccc;
     width: 300px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 15px;
     display: none;
     z-index: 999;
@@ -472,6 +473,26 @@ body {
     transform: rotate(-45deg) translate(5px, -5px);
 }
 
+@media (max-width: 1024px) {
+    .recipe-card {
+        flex: 0 1 calc(33.33% - 20px);
+    }
+
+    .contact-container {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .contact-right {
+        margin-left: 0;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .nav-links {
+        gap: 30px;
+    }
+}
 
 @media (max-width: 768px) {
     .navbar {
@@ -526,5 +547,35 @@ body {
     .contact-inputs,
     .contact-left textarea {
         font-size: 15px;
+    }
+
+    .recipe-card {
+        flex: 0 1 calc(50% - 20px);
+    }
+
+    .nav-links.mobile.show {
+        transform: translateX(0);
+    }
+
+    .card {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .banner h1 {
+        font-size: 22px;
+    }
+
+    .nav-links.mobile {
+        width: 100%;
+    }
+
+    .recipe-card {
+        flex: 0 1 100%;
+    }
+
+    .card {
+        width: 100%;
     }
 }
