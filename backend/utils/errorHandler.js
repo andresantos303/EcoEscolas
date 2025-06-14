@@ -26,6 +26,8 @@ const errorMap = {
   ACTIVITY_NOT_FOUND:                  { status: 404, message: "A atividade solicitada não foi encontrada." },
   ACTIVITY_REGISTRATION_UNAUTHORIZED:  { status: 403, message: "Apenas membros do Conselho Eco-Escolas ou Secretariado podem registrar atividades." },
   ACTIVITY_REGISTRATION_BAD_REQUEST:   { status: 400, message: "Nome, descrição, local, estado e plano associado são obrigatórios!" },
+  ACTIVITY_PARTICIPANT_BAD_REQUEST:   { status: 400, message: "Nome e email são obrigatórios!" },
+  ACTIVITY_PARTICIPANT_DUPLICATE:     { status: 409, message: "Este email já se encontra a ser utilizado por outro participante" },
   ACTIVITY_REGISTRATION_INVALID_DATE:  { status: 400, message: "A data da atividade deve ser futura." },
   PLAN_ACTIVITY_NOT_FOUND:             { status: 404, message: "Plano de atividade solicitado não foi encontrado." },
   ACTIVITY_REGISTRATION_DUPLICATE:     { status: 409, message: "Já existe uma atividade com esse nome e local para essa data." },

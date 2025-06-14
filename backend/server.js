@@ -16,9 +16,7 @@ app.use(cors({
 //routers
 app.use("/users", require("./routes/users.routes.js"));
 app.use("/plans", require("./routes/plans.routes.js"));
-app.use('/api/activities', require('./routes/activities.routes.js'));
-
-app.use("/notifications", require("./routes/notifications.routes.js"));
+app.use('/activities', require('./routes/activities.routes.js'));
 
 // middleware de erro
 app.use((err, req, res, next) => {

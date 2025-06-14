@@ -9,16 +9,7 @@ const Activity = require('../models/activity.model.js');
 
 // Rota pública: adicionar participante
 router.post('/:idAtividade/participants', activitiesController.addParticipant);
-
-
-router.get('/plan/:id', async (req, res) => {
-    try {
-        const activities = await Activity.find({ planoId: req.params.id });
-        res.json(activities);
-    } catch (err) {
-        res.status(500).json({ message: 'Erro ao buscar atividades' });
-    }
-});
+router.get('/:id/public', activitiesController.getActivitiesPublic);
 
 // Middleware de autenticação
 router.use(authMiddleware);

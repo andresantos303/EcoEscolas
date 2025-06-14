@@ -1,7 +1,7 @@
 const Activity = require("../models/activity.model.js");
 const Plan = require("../models/plan.model.js");
 const User = require("../models/user.model.js");
-const { enviarEmailNotificação } = require("../utils/nodemailer.js");
+const { enviarEmail, enviarEmailNotificação } = require("../utils/nodemailer.js");
 const { handleError } = require("../utils/errorHandler.js");
 const { cloudinary } = require('../utils/upload.js');
 
@@ -110,7 +110,7 @@ const addParticipant = async (req, res) => {
   const { nome, email } = req.body;
 
   if (!nome || !email) {
-    return handleError(res, "ACTIVITY_REGISTRATION_BAD_REQUEST");
+    return handleError(res, "ACTIVITY_PARTICIPANT_BAD_REQUEST");
   }
 
   try {
@@ -120,17 +120,16 @@ const addParticipant = async (req, res) => {
     }
 
     if (activity.participants && activity.participants.find(p => p.email === email)) {
-      return handleError(res, "ACTIVITY_REGISTRATION_DUPLICATE");
+      return handleError(res, "ACTIVITY_PARTICIPANT_DUPLICATE");
     }
 
     activity.participants.push({ nome, email });
     await activity.save();
-
     await enviarEmail(
       `${email}`,
       `Confirmação de Inscrição na Atividade ${activity.nome}`,
       `Olá ${nome}!`,
-      `<p>Olá <strong>${nome}</strong>,</p><p>Sua inscrição na atividade "<strong>${activity.nome}</strong>" foi confirmada.</p><p>Em breve você receberá mais informações sobre data, horário e local.</p><p>Obrigado por participar!</p>`
+      `<p>Olá <strong>${nome}</strong>,</p><p>Sua inscrição na atividade <strong>${activity.nome}</strong> foi confirmada.</p><p>Em breve você receberá mais informações sobre data, horário e local.</p><p>Obrigado por participar!</p>`
     );
 
     return res.status(200).json({
@@ -160,8 +159,9 @@ const updateActivity = async (req, res) => {
     if (estado !== undefined) activity.estado = estado;
     if (data !== undefined) {
       const newDate = new Date(data);
-      if (isNaN(newDate.getTime())) {
-        return handleError(res, "ACTIVITY_REGISTRATION_BAD_REQUEST");
+      const activityDate = new Date(data);
+      if (isNaN(newDate.getTime()) || newDate <= new Date()) {
+        return handleError(res, "ACTIVITY_REGISTRATION_INVALID_DATE");
       }
       activity.data = data;
     }
@@ -214,6 +214,13 @@ const finalizeActivity = async (req, res) => {
     const activity = await Activity.findById(id);
     if (!activity) {
       return handleError(res, "ACTIVITY_NOT_FOUND");
+    }
+
+    if (!participantsCount) {
+    return res.status(400).json({
+          errorCode: "PARTICIPANTS_COUNT_REQUIRED",
+          message: "O número de participantes é obrigatório para finalizar a atividade.",
+        });
     }
 
     // Extrair URLs das imagens do Cloudinary
@@ -271,6 +278,15 @@ const getActivitiesByPlan = async (req, res) => {
   }
 };
 
+const getActivitiesPublic = async (req, res) => {
+  try {
+    const activities = await Activity.find({ planoId: req.params.id });
+    res.json(activities);
+  } catch (err) {
+    res.status(500).json({ message: 'Erro ao buscar atividades' });
+  }
+};
+
 module.exports = {
   getAllActivities,
   getActivityById,
@@ -282,4 +298,5 @@ module.exports = {
   finalizeActivity,
   startActivity,
   getActivitiesCount,
+  getActivitiesPublic
 };
