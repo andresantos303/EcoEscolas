@@ -9,13 +9,15 @@ const { upload } = require('../utils/upload.js');
 
 // Rota sem checkPermissions
 router.get('/public/names', plansController.getPublicPlanNames);
-router.get('/:id/public', plansController.getPlanById);
+router.get('/:id/public', plansController.getPlanById );
+
 
 router.use(authMiddleware);
 
 
 router.get('/', checkPermissions('plans', 'read'), plansController.getAllPlans);
 router.post('/', checkPermissions('plans', 'create'), upload.array('recursos', 6), plansController.createPlan);
+router.get('/:id', checkPermissions('plans', 'read'), plansController.getPlanById);
 router.patch('/:id', checkPermissions('plans', 'update'), plansController.updatePlan);
 router.put('/:id/finalize', checkPermissions('plans', 'update'), upload.array('recursos', 6), plansController.finalizePlan);
 router.put('/:id/start', checkPermissions('plans', 'update'), plansController.startPlan);

@@ -121,8 +121,6 @@ export async function finalizePlan(planId, formData) {
     return response.data;
 }
 
-
-
 export async function startPlan(planId) {
   try {
     const response = await axios.put(`${API_URL}/plans/${planId}/start`, {}, {

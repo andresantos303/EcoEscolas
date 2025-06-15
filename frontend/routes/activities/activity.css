@@ -1,12 +1,21 @@
-body {
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #ffffff;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  overflow-x: hidden;
+  flex-direction: column;
 }
 
 .container {
   display: flex;
   flex-direction: row;
+  border-radius: 12px;
 }
 
 .sidebar {
@@ -20,12 +29,19 @@ body {
 .btn {
   display: flex;
   justify-content: center;
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 115px;
+  align-items: center;
+  background-color: #ecf0f1;
+  padding: 14px;
+  border-radius: 8px;
+  width: 120px;
+  font-weight: 500;
   color: #2d3e50;
   text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #d0d7de;
 }
 
 .btn-dashboard {
@@ -35,38 +51,48 @@ body {
 }
 
 .activityIdSection {
-  background: #fff;
-  padding: 30px 35px;
-  margin-left: 40px;
-  border-radius: 14px;
-  width: 600px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
+  margin-top: 10vh;
+  border-radius: 12px;
+  margin-left: 250px;
+  gap: 24px;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 90px;
+  box-sizing: border-box;
+}
+
+.activityIdSection:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
 }
 
 .activityIdSection h1 {
-  font-size: 2rem;
-  margin-bottom: 25px;
-  color: #2c3e50;
-  user-select: none;
+    margin: 0 0 30px;
+    font-size: 2.25rem;
+    color: #2c3e50;
+    font-weight: 600;
 }
 
 #activityNome {
-  color: #3498db;
-  font-weight: 700;
+  margin-top: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 /* Detalhes texto */
 #activityDetails p {
-  margin-bottom: 16px;
+  margin: 10px;
+  color: #555;
+  font-size: 0.95rem;
   line-height: 1.5;
-  font-size: 1.1rem;
 }
 
 #activityDetails strong {
-  color: #34495e;
-  user-select: none;
+  font-weight: 500;
+  color: #4caf50;;
 }
 
 #activityFotos, #activityParticipants, #activityPlano {
@@ -115,12 +141,12 @@ body {
 
 .start-btn {
   background-color: #27ae60;
-  color: white;
+  color: #ffffff;
 }
 
 .start-btn:hover {
   background-color: #1e8449;
-  box-shadow: 0 6px 18px rgba(30, 132, 73, 0.6);
+  box-shadow: 0 6px 18px rgba(30, 132, 73, 0.4);
 }
 
 

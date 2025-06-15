@@ -105,7 +105,6 @@ async function handleFinalizePlan(plan) {
     }
 }
 
-
 async function handleStartPlan(plan) {
     try {
         await startPlan(plan._id);

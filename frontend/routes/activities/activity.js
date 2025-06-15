@@ -1,9 +1,4 @@
-import {
-  getActivityById,
-  finalizeActivity,
-  startActivity,
-  getActivitiesByPlanId
-} from '../../Js/activities/activitiesServices.js';
+import { getActivityById, finalizeActivity, startActivity, getActivitiesByPlanId } from '../../Js/activities/activitiesServices.js';
 
 document.addEventListener('DOMContentLoaded', init);
 
