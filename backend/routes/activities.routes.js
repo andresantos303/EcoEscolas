@@ -5,12 +5,11 @@ const activitiesController = require('../controllers/activities.controller.js');
 const authMiddleware = require('../utils/auth.js');
 const checkPermissions = require('../utils/checkPermissions.js');
 const { upload } = require('../utils/upload.js');
-const Activity = require('../models/activity.model.js');
 
 // Rota pública: adicionar participante
 router.post('/:idAtividade/participants', activitiesController.addParticipant);
 router.get('/:id/public', activitiesController.getActivityPublicById);
-
+router.get('/stats/count', activitiesController.getActivitiesCount);
 
 // Middleware de autenticação   
 router.use(authMiddleware);
@@ -23,6 +22,6 @@ router.put('/:id/finalize', checkPermissions('activities', 'update'), upload.arr
 router.put('/:id/start', checkPermissions('activities', 'update'), activitiesController.startActivity);
 router.patch('/:id', checkPermissions('activities', 'update'), activitiesController.updateActivity);
 router.delete('/:id', checkPermissions('activities', 'delete'), activitiesController.deleteActivity);
-router.get('/stats/count', checkPermissions('activities', 'read'), activitiesController.getActivitiesCount);
+
 
 module.exports = router;

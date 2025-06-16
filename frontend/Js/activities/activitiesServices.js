@@ -135,3 +135,23 @@ export async function getActivitiesByPlanId(planId) {
     throw error;
   }
 }
+
+export async function addParticipant(activityId, participantData) {
+  try {
+    const response = await axios.post(`${API_URL}/activities/${activityId}/participants`, participantData);
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || 'Erro ao adicionar participante';
+    throw new Error(message);
+  }
+}
+
+export async function getActivitiesCount() {
+  try {
+    const response = await axios.get(`${API_URL}/activities/stats/count`);
+    return response.data.count;
+  } catch (error) {
+    console.error('Erro ao buscar atividades por plano:', error);
+    throw error;
+  }
+}

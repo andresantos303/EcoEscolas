@@ -1,7 +1,8 @@
 import { getAllPlans, getPlansActive, createPlan, deletePlan, updatePlan } from '../plans/planServices.js';
-import { requireAuth } from '../auth/authGuard.js';
+import { requireAuth, roleGuard } from '../auth/authGuard.js';
 
 requireAuth();
+roleGuard();
 
 document.addEventListener('DOMContentLoaded', init);
 

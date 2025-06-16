@@ -6,40 +6,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <title>Detalhes da Atividade</title>
-    <link rel="stylesheet" href="/routes/activities/activity.css">
+    <link rel="stylesheet" href="./activity.css">
 </head>
 
 <body>
-    <div>
-        <div class="container">
-            <div class="sidebar">
-                <h2>Painel Admin</h2>
-                <a class="btn-dashboard" href="/routes/admin/admin.html">
-                    <div class="btn">Dashboard</div>
-                </a>
+    <div class="sidebar">
+        <h2>Painel Admin</h2>
+        <a class="btn-dashboard" href="/routes/admin/admin.html">
+            <div class="btn">Dashboard</div>
+        </a>
+    </div>
+
+    <div class="main-container">
+        <div class="group-container">
+            <div class="second-container">
+                <div class="activityIdSection">
+                    <h2>Detalhes da Atividade: <span id="activityNome"></span></h2>
+                    <div id="activityDetails">
+                        <p><strong>Descrição:</strong> <span id="activityDescricao"></span></p>
+                        <p><strong>Local:</strong> <span id="activityLocal"></span></p>
+                        <p><strong>Data:</strong> <span id="activityData"></span></p>
+                        <p><strong>Plano:</strong> <span id="activityPlano"></span></p>
+                        <p><strong>Total de Participantes:</strong> <span id="activityParticipantsCounter"></span></p>
+                        <ul id="planActivities"></ul>
+                        <input type="file" id="fotos-input" multiple accept="image/*" />
+                        <div id="actionButtons">
+                            <button id="finalizeBtn" class="action-btn finalize-btn" style="display: none;">Finalizar
+                                Atividade</button>
+                            <button id="startBtn" class="action-btn start-btn" style="display: none;">Inicializar
+                                Atividade</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="fotosSection">
+                    <h2><strong>Fotos:</strong></h2>
+                    <div id="activityFotos"></div>
+                </div>
             </div>
-            <div class="activityIdSection">
-                <h1>Detalhes da Atividade: <span id="activityNome"></span></h1>
-                <div id="activityDetails">
-                    <p><strong>Descrição:</strong> <span id="activityDescricao"></span></p>
-                    <p><strong>Local:</strong> <span id="activityLocal"></span></p>
-                    <p><strong>Fotos:</strong> <span id="activityFotos"></span></p>
-                    <p><strong>Data:</strong> <span id="activityData"></span></p>
-                    <p><strong>Plano:</strong> <span id="activityPlano"></span></p>
-                    <p><strong>Total de Participantes:</strong> <span id="activityParticipantsCounter"></span></p>
-                    <p><strong>Participantes:</strong> <span id="activityParticipants"></span></p>
-                    <ul id="planActivities"></ul>
-                    <input type="file" id="fotos-input" multiple accept="image/*" />
-                </div>
-                <div id="actionButtons">
-                    <button id="finalizeBtn" class="action-btn finalize-btn" style="display: none;">Finalizar
-                        Atividade</button>
-                    <button id="startBtn" class="action-btn start-btn" style="display: none;">Inicializar
-                        Atividade</button>
-                </div>
+            <div class="participantsContainer">
+                <p><strong>Participantes:</strong></p>
+                <table class="participantsList" id="activityParticipants">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody id="participantsList">
+                        <!-- Aqui serão inseridos os participantes via JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+
+    </div>
+
+
+
+
+
 
 
 

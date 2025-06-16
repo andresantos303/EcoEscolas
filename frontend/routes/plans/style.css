@@ -1,45 +1,128 @@
-body {
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #ffffff;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
-.planIdSection {
-  margin-left: 250px;
-  padding: 40px;
-  background-color: #ffffff;
-  min-height: 100vh;
+body {
+  display: flex;
+  height: 100vh;
+  overflow-x: hidden;
+  flex-direction: column;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 100vh;
+  background-color: #2c3e50;
+  color: white;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.main-container {
+  padding: 20px;
+  display: flex;
+  gap: 50px;
+  width: 100%;
+}
+
+.group-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: calc(100% - 200px);
+  margin-left: 200px;
   box-sizing: border-box;
 }
 
-.planIdSection h1 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #2c3e50;
-  font-size: 28px;
+.second-container {
+  gap: 20px;
+  display: flex;
+  flex-direction: row;
 }
 
-#planDetails p {
-  font-size: 16px;
-  margin: 10px 0;
+.planIdSection {
+  flex: 0 0 70%;
+  /* fixa 70% da largura */
+  max-width: 70%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  overflow-y: auto;
+  /* se conteúdo for maior que altura */
 }
+
+.planIdSection h1 {
+  font-size: 2.25rem;
+  color: #2c3e50;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Detalhes do plano */
+#planDetails p {
+  margin: 10px;
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 
 #planDetails strong {
-  color: #34495e;
+  font-weight: 500;
+  color: #4caf50;
+  ;
 }
 
+.fotosSection {
+  flex: 0 0 30%;
+  max-width: 30%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.fotosSection h2 {
+  font-weight: 100;
+}
+
+/* Botões laterais e dashboard */
 .btn {
   display: flex;
   justify-content: center;
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 115px;
+  align-items: center;
+  background-color: #ecf0f1;
+  padding: 14px;
+  border-radius: 8px;
+  width: 120px;
+  font-weight: 500;
   color: #2d3e50;
   text-decoration: none;
+  transition: background-color 0.3s ease;
 }
 
-.btn-dashboard{
+.btn:hover {
+  background-color: #d0d7de;
+}
+
+.btn-dashboard {
   display: flex;
   justify-content: center;
   text-decoration: none;
@@ -49,11 +132,12 @@ body {
 #actionButtons {
   margin-top: 30px;
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
 }
 
 .action-btn {
-  flex: 1;
+  flex: 1 1 200px;
   padding: 14px 0;
   border-radius: 10px;
   font-size: 1.1rem;
@@ -62,7 +146,7 @@ body {
   border: none;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   user-select: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .finalize-btn {
@@ -77,10 +161,85 @@ body {
 
 .start-btn {
   background-color: #27ae60;
-  color: white;
+  color: #ffffff;
 }
 
 .start-btn:hover {
   background-color: #1e8449;
-  box-shadow: 0 6px 18px rgba(30, 132, 73, 0.6);
+  box-shadow: 0 6px 18px rgba(30, 132, 73, 0.4);
 }
+
+.plano-card {
+  background-color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+
+.plano-card:hover {
+  transform: translateY(-3px);
+}
+
+.plano-card h3 {
+  margin-top: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.plano-card p {
+  margin: 6px 0;
+  font-size: 15px;
+  color: #34495e;
+}
+
+.plano-img img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 768px) {
+  .planIdSection {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  #actionButtons {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+.planActivitiesContainer {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.activitiesPlan {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.activitiesPlan th,
+.activitiesPlan td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.activitiesPlan tr{
+  text-align: left;
+}
+
