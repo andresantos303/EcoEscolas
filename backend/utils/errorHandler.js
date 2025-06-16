@@ -19,15 +19,15 @@ const errorMap = {
   PLAN_CREATION_INVALID_DATE:          { status: 409, message: "A data de início deve ser anterior à data de término." },
   PLAN_CREATION_DUPLICATE:             { status: 409, message: "Já existe um plano de atividades com esse nome." },
   PLAN_DELETE_BLOCKED:                 { status: 409, message: "Este plano está vinculado a atividades em andamento e não pode ser removido." },
-  PLAN_CANNOT_DELETE:              { status: 400, message: "Este plano não pode ser removido, pois esta em andamento." },
+  PLAN_CANNOT_DELETE:                  { status: 400, message: "Este plano não pode ser removido, pois esta em andamento." },
   PLAN_FINALIZE_BLOCKED:               { status: 409, message: "A data de fim do plano é superior à data atual." },
 
   // Activities
   ACTIVITY_NOT_FOUND:                  { status: 404, message: "A atividade solicitada não foi encontrada." },
   ACTIVITY_REGISTRATION_UNAUTHORIZED:  { status: 403, message: "Apenas membros do Conselho Eco-Escolas ou Secretariado podem registrar atividades." },
   ACTIVITY_REGISTRATION_BAD_REQUEST:   { status: 400, message: "Nome, descrição, local, estado e plano associado são obrigatórios!" },
-  ACTIVITY_PARTICIPANT_BAD_REQUEST:   { status: 400, message: "Nome e email são obrigatórios!" },
-  ACTIVITY_PARTICIPANT_DUPLICATE:     { status: 409, message: "Este email já se encontra a ser utilizado por outro participante" },
+  ACTIVITY_PARTICIPANT_BAD_REQUEST:    { status: 400, message: "Nome e email são obrigatórios!" },
+  ACTIVITY_PARTICIPANT_DUPLICATE:      { status: 409, message: "Este email já se encontra a ser utilizado por outro participante" },
   ACTIVITY_REGISTRATION_INVALID_DATE:  { status: 400, message: "A data da atividade deve ser futura." },
   PLAN_ACTIVITY_NOT_FOUND:             { status: 404, message: "Plano de atividade solicitado não foi encontrado." },
   ACTIVITY_REGISTRATION_DUPLICATE:     { status: 409, message: "Já existe uma atividade com esse nome e local para essa data." },
