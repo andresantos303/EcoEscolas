@@ -11,27 +11,11 @@ async function init() {
 
   try {
     const activity = await getActivityById(activityId);
+
+    renderParticipantsTable(activity.participants);
     renderActivityDetails(activity);
     setupActionButtons(activity);
 
-    // Debug: mostrar planActivitiesId no console para ver o que está chegando
-    console.log('activity.planActivitiesId:', activity.planActivitiesId);
-
-    // Extrair o planId de forma segura
-    const planId = typeof activity.planActivitiesId === 'string'
-      ? activity.planActivitiesId
-      : activity.planActivitiesId?._id;
-
-    if (!planId) {
-      console.warn('Plano associado não encontrado para esta atividade.');
-      // Opcional: mostrar uma mensagem no UI se quiser
-      const list = document.getElementById('planActivities');
-      list.innerHTML = '<li>Plano associado não encontrado.</li>';
-      return;
-    }
-
-    // Mostrar atividades associadas ao plano, se existir
-    await renderActivitiesFromPlan(planId);
 
   } catch (error) {
     console.error('Erro ao carregar a atividade:', error);
@@ -52,14 +36,41 @@ function renderActivityDetails(activity) {
   document.getElementById('activityNome').textContent = activity.nome;
   document.getElementById('activityDescricao').textContent = activity.descricao;
   document.getElementById('activityLocal').textContent = activity.local;
-  document.getElementById('activityFotos').textContent = activity.fotos.join(', ');
+  const fotosContainer = document.getElementById('activityFotos');
+  fotosContainer.innerHTML = ''; 
+  activity.fotos.forEach(foto => {
+    const img = document.createElement('img');
+    img.src = foto.profile_image
+    img.style.maxWidth = '150px';
+    img.style.marginRight = '10px';
+    fotosContainer.appendChild(img);
+  });
+  console.log('activity.fotos:', activity.fotos);
+
   document.getElementById('activityData').textContent = activity.data;
   document.getElementById('activityPlano').textContent = activity.planActivitiesId?.nome || activity.planActivitiesId;
-
-  const participantsList = activity.participants.map(p => `${p.nome} (${p.email})`).join(', ');
-  document.getElementById('activityParticipants').textContent = participantsList;
   document.getElementById('activityParticipantsCounter').textContent = activity.participants.length;
 }
+
+function renderParticipantsTable(participants) {
+  const tableBody = document.getElementById('participantsList');
+  tableBody.innerHTML = '';
+
+  participants.forEach(participant => {
+    const row = document.createElement('tr');
+
+    const nomeCell = document.createElement('td');
+    nomeCell.textContent = participant.nome;
+
+    const emailCell = document.createElement('td');
+    emailCell.textContent = participant.email;
+
+    row.appendChild(nomeCell);
+    row.appendChild(emailCell);
+    tableBody.appendChild(row);
+  });
+}
+
 
 function setupActionButtons(activity) {
   const finalizeBtn = document.getElementById('finalizeBtn');
@@ -107,34 +118,5 @@ async function handleStart(activity) {
   } catch (err) {
     alert("Erro ao inicializar atividade.");
     console.error(err);
-  }
-}
-
-// Função para renderizar as atividades do mesmo plano
-async function renderActivitiesFromPlan(planId) {
-  console.log('planId recebido em renderActivitiesFromPlan:', planId);
-
-  if (!planId) {
-    console.warn('planId inválido, não é possível buscar atividades.');
-    return;
-  }
-
-  try {
-    const activities = await getActivitiesByPlanId(planId);
-    const list = document.getElementById('planActivities');
-    list.innerHTML = '';
-
-    if (activities.length === 0) {
-      list.innerHTML = '<li>Sem atividades associadas.</li>';
-      return;
-    }
-
-    activities.forEach(act => {
-      const li = document.createElement('li');
-      li.textContent = `${act.nome} - ${new Date(act.data).toLocaleDateString('pt-PT')}`;
-      list.appendChild(li);
-    });
-  } catch (error) {
-    console.error('Erro ao buscar atividades do plano:', error);
   }
 }

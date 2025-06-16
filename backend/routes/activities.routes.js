@@ -5,7 +5,6 @@ const activitiesController = require('../controllers/activities.controller.js');
 const authMiddleware = require('../utils/auth.js');
 const checkPermissions = require('../utils/checkPermissions.js');
 const { upload } = require('../utils/upload.js');
-const Activity = require('../models/activity.model.js');
 
 // Rota pública: adicionar participante
 router.post('/:idAtividade/participants', activitiesController.addParticipant);

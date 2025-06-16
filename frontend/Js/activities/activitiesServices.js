@@ -135,3 +135,13 @@ export async function getActivitiesByPlanId(planId) {
     throw error;
   }
 }
+
+export async function addParticipant(activityId, participantData) {
+  try {
+    const response = await axios.post(`${API_URL}/activities/${activityId}/participants`, participantData);
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || 'Erro ao adicionar participante';
+    throw new Error(message);
+  }
+}

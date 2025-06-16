@@ -1,16 +1,19 @@
-import { getAllActivities, deleteActivity, updateActivity, createActivity, getAllPlans, getActivitiesActive  } from '../activities/activitiesServices.js';
+import { getAllActivities, deleteActivity, updateActivity, createActivity, getAllPlans, getActivitiesActive } from '../activities/activitiesServices.js';
 import { requireAuth } from '../auth/authGuard.js';
 
 requireAuth();
 
 document.addEventListener('DOMContentLoaded', init);
+document.getElementById('addActivityBtn').addEventListener('click', async () => {
+  await openAddModal();
+});
+
 
 function init() {
     renderActivities();
     setupActivitySearch();
     setupDeleteActivity();
     setupCreateActivityForm();
-    openAddActivityModal();
     setupEditActivity();
     populatePlansSelect();
 }
@@ -35,7 +38,7 @@ async function renderActivities() {
         const tbody = document.getElementById('activityTbody');
         const nextActivities = document.getElementById('sectionNextActivities');
         tbody.innerHTML = '';
-        nextActivities.innerHTML= '';
+        nextActivities.innerHTML = '';
 
         activities.forEach(activity => {
             tbody.insertAdjacentHTML('beforeend', `
@@ -72,14 +75,14 @@ async function renderActivities() {
         const countsPerMonth = Array(12).fill(0);
 
         activities.forEach(({ data }) => {
-        const activityDate = new Date(data);
-        if (activityDate.getFullYear() === currentYear) {
-            const monthIndex = activityDate.getMonth();
-            countsPerMonth[monthIndex]++;
-        }
+            const activityDate = new Date(data);
+            if (activityDate.getFullYear() === currentYear) {
+                const monthIndex = activityDate.getMonth();
+                countsPerMonth[monthIndex]++;
+            }
         });
         const ctx = document.getElementById('graficoAtividades').getContext('2d');
-        
+
         new Chart(ctx, {
             type: 'bar',
             data: {
@@ -144,10 +147,11 @@ function setupActivitySearch() {
     });
 }
 
-function openAddActivityModal() {
-    document.getElementById('create-activity-form').style.display = 'block';
-    populatePlansSelect();
+async function openAddModal() {
+    await populatePlansSelect();
+    openAddActivityModal();
 }
+
 
 function setupCreateActivityForm() {
     const form = document.getElementById('create-activity-form');

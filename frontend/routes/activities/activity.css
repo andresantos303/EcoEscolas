@@ -6,24 +6,32 @@
 }
 
 body {
-  display: flex;
-  height: 100vh;
-  overflow-x: hidden;
-  flex-direction: column;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
 }
 
-.container {
-  display: flex;
-  flex-direction: row;
-  border-radius: 12px;
-}
 
 .sidebar {
-    width: 200px;
-    background-color: #2c3e50;
-    color: white;
-    padding: 20px;
-    height: 100vh;
+  position: fixed;
+  /* fixa na lateral */
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 100vh;
+  /* altura total da viewport */
+  background-color: #2c3e50;
+  color: white;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  /* caso o conteúdo ultrapasse a altura */
+}
+
+.main-container {
+  padding: 20px;
+  display: flex;
+  gap: 50px;
+  width: 100%;
 }
 
 .btn {
@@ -51,28 +59,23 @@ body {
 }
 
 .activityIdSection {
-  margin-top: 10vh;
-  border-radius: 12px;
-  margin-left: 250px;
-  gap: 24px;
-  padding: 20px;
+  flex: 0 0 70%;
+  /* fixa 70% da largura */
+  max-width: 70%;
   background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  min-height: 90px;
   box-sizing: border-box;
-}
-
-.activityIdSection:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  overflow-y: auto;
+  /* se conteúdo for maior que altura */
 }
 
 .activityIdSection h1 {
-    margin: 0 0 30px;
-    font-size: 2.25rem;
-    color: #2c3e50;
-    font-weight: 600;
+  margin: 0 0 30px;
+  font-size: 2.25rem;
+  color: #2c3e50;
+  font-weight: 600;
 }
 
 #activityNome {
@@ -92,22 +95,16 @@ body {
 
 #activityDetails strong {
   font-weight: 500;
-  color: #4caf50;;
+  color: #4caf50;
+  ;
 }
 
-#activityFotos, #activityParticipants, #activityPlano {
+#activityParticipants,
+#activityPlano {
   color: #555;
   font-weight: 500;
 }
 
-/* Lista de atividades do plano */
-#planActivities {
-  list-style-type: disc;
-  margin-left: 20px;
-  margin-top: 15px;
-  color: #666;
-  font-size: 1rem;
-}
 
 /* Botões de ação */
 #actionButtons {
@@ -126,7 +123,7 @@ body {
   border: none;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   user-select: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .finalize-btn {
@@ -149,4 +146,56 @@ body {
   box-shadow: 0 6px 18px rgba(30, 132, 73, 0.4);
 }
 
+#participantsList,
+#participantsList td {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  padding: 8px;
+}
 
+#participantsList {
+  width: 100%;
+}
+
+
+
+.group-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: calc(100% - 200px);
+  margin-left: 200px;
+  box-sizing: border-box;
+}
+
+.fotosSection {
+  flex: 0 0 30%;
+  max-width: 30%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.fotosSection h2 {
+  font-weight: 100;
+}
+
+.second-container {
+  gap: 20px;
+  display: flex;
+  flex-direction: row;
+}
+
+.participantsContainer {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  overflow-y: auto;
+}
