@@ -80,7 +80,7 @@
         <div id="utilizadores" class="section">
             <h1>Gestão de Utilizadores</h1>
             <div class="section-tools">
-                <button onclick="openAddUserModal()">Adicionar</button>
+                <button class="addOpenModal" onclick="openAddUserModal()">Adicionar</button>
                 <form id="create-user-form" class="modal" style="display:none;">
                     <div class="modal-content">
                         <span class="close" onclick="closeAddUserModal()">&times;</span>
@@ -115,7 +115,7 @@
                     </div>
                 </form>
 
-                <input type="text" id="searchInput" placeholder="Pesquisar...">
+                <input class="searchInput" type="text" id="searchInput" placeholder="Pesquisar...">
             </div>
 
             <table class="user-table">
@@ -136,7 +136,7 @@
         <div id="atividades" class="section">
             <h1>Atividades</h1>
             <div class="section-tools">
-                <button onclick="openAddActivityModal()">Adicionar</button>
+                <button class="addOpenModal" onclick="openAddActivityModal()">Adicionar</button>
                 <form id="create-activity-form" class="modal" style="display:none;">
                     <div class="modal-content">
                         <span class="close" onclick="closeAddActivityModal()">&times;</span>
@@ -168,7 +168,7 @@
                         <button type="submit">Editar Plano</button>
                     </div>
                 </form>
-                <input type="text" id="searchActivityInput" placeholder="Pesquisar...">
+                <input class="searchInput" type="text" id="searchActivityInput" placeholder="Pesquisar...">
             </div>
 
             <table class="user-table">
@@ -192,7 +192,7 @@
         <div id="planoatividades" class="section">
             <h1>Plano de Atividades</h1>
             <div class="section-tools">
-                <button onclick="openAddPlanModal()">Adicionar</button>
+                <button class="addOpenModal" onclick="openAddPlanModal()">Adicionar</button>
                 <form id="create-plan-form" class="modal" style="display:none;">
                     <div class="modal-content">
                         <span class="close" onclick="closeAddPlanModal()">&times;</span>
@@ -224,7 +224,7 @@
                         <button type="submit">Editar Plano</button>
                     </div>
                 </form>
-                <input type="text" id="searchPlanInput" placeholder="Pesquisar...">
+                <input class="searchInput" type="text" id="searchPlanInput" placeholder="Pesquisar...">
             </div>
 
             <table class="user-table">
