@@ -6,24 +6,23 @@
 }
 
 body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
+  display: flex;
+  height: 100vh;
+  overflow-x: hidden;
+  flex-direction: column;
 }
 
 .sidebar {
   position: fixed;
-  /* fixa na lateral */
   top: 0;
   left: 0;
   width: 200px;
   height: 100vh;
-  /* altura total da viewport */
   background-color: #2c3e50;
   color: white;
   padding: 20px;
   box-sizing: border-box;
   overflow-y: auto;
-  /* caso o conteúdo ultrapasse a altura */
 }
 
 .main-container {
@@ -145,16 +144,22 @@ body {
   box-shadow: 0 6px 18px rgba(30, 132, 73, 0.4);
 }
 
-#participantsList,
-#participantsList td {
+.participantsList,
+.participantsList td,
+.participantsList th {
   border: 1px solid #ccc;
-  border-collapse: collapse;
   padding: 8px;
 }
 
-#participantsList {
+.participantsList {
   width: 100%;
+  border-collapse: collapse;
 }
+
+.participantsList tr {
+  text-align: left;
+}
+
 
 
 

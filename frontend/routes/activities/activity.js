@@ -45,7 +45,6 @@ function renderActivityDetails(activity) {
     img.style.marginRight = '10px';
     fotosContainer.appendChild(img);
   });
-  console.log('activity.fotos:', activity.fotos);
 
   document.getElementById('activityData').textContent = activity.data;
   document.getElementById('activityPlano').textContent = activity.planActivitiesId?.nome || activity.planActivitiesId;

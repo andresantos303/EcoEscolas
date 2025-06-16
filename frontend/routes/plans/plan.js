@@ -37,22 +37,36 @@ function renderPlanDetails(plan) {
     document.getElementById('planEstado').textContent = plan.estado ? 'Ativo' : 'Finalizado';
     document.getElementById('planNivel').textContent = plan.nivel;
     document.getElementById('planRecursos').textContent = plan.recursos;
+
+    const fotosContainer = document.getElementById('planRecursos');
+    fotosContainer.innerHTML = '';
+    plan.recursos.forEach(foto => {
+        const img = document.createElement('img');
+        img.src = foto.profile_image
+        img.style.maxWidth = '150px';
+        img.style.marginRight = '10px';
+        fotosContainer.appendChild(img);
+    });
 }
 
 function renderAssociatedActivities(activities) {
-    const activitiesList = document.getElementById('planActivities');
-    activitiesList.innerHTML = '';
-
-    const title = document.createElement('h3');
-    title.textContent = 'Atividades Associadas:';
-    activitiesList.appendChild(title);
+    const tableBody = document.getElementById('planActivities');
+    tableBody.innerHTML = '';
 
     activities.forEach(activity => {
-        const li = document.createElement('li');
-        li.textContent = activity.nome;
-        activitiesList.appendChild(li);
+        const row = document.createElement('tr');
+
+        const nomeCell = document.createElement('td');
+        nomeCell.textContent = activity.nome;
+
+        row.appendChild(nomeCell);
+        tableBody.appendChild(row);
     });
 }
+
+
+
+
 
 function setupActionButtons(plan) {
     const finalizeBtn = document.getElementById('finalizePlanBtn');

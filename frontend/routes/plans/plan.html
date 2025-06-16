@@ -11,38 +11,55 @@
 </head>
 
 <body>
-    <div>
-        <div class="sidebar">
-            <h2>Painel Admin</h2>
-            <a class="btn-dashboard" href="/routes/admin/admin.html">
-                <div class="btn">Dashboard</div>
-            </a>
-        </div>
 
+    <div class="sidebar">
+        <h2>Painel Admin</h2>
+        <a class="btn-dashboard" href="/routes/admin/admin.html">
+            <div class="btn">Dashboard</div>
+        </a>
+    </div>
 
-
-        <div class="planIdSection">
-            <h1>Detalhes do <span id="planNome"></span></h1>
-            <div id="planDetails">
-                <p><strong>Descrição:</strong> <span id="planDescricao"></span></p>
-                <p><strong>Data de Início:</strong> <span id="planDataInicio"></span></p>
-                <p><strong>Fotos:</strong> <span id="planRecursos"></span></p>
-                <p><strong>Data de Fim:</strong> <span id="planDataFim"></span></p>
-                <p><strong>Estado:</strong> <span id="planEstado"></span></p>
-                <p><strong>Nível:</strong> <span id="planNivel"></span></p>
-                <input type="file" id="recursos-input" multiple accept="image/*" />
-
-                <div id="planActivities"></div>
-
+    <div class="main-container">
+        <div class="group-container">
+            <div class="second-container">
+                <div class="planIdSection">
+                    <h1>Detalhes do <span id="planNome"></span></h1>
+                    <div id="planDetails">
+                        <p><strong>Descrição:</strong> <span id="planDescricao"></span></p>
+                        <p><strong>Data de Início:</strong> <span id="planDataInicio"></span></p>
+                        <p><strong>Data de Fim:</strong> <span id="planDataFim"></span></p>
+                        <p><strong>Estado:</strong> <span id="planEstado"></span></p>
+                        <p><strong>Nível:</strong> <span id="planNivel"></span></p>
+                        <input type="file" id="recursos-input" multiple accept="image/*" />
+                        <div id=""></div>
+                    </div>
+                    <div id="actionButtons">
+                        <button id="finalizePlanBtn" class="action-btn finalize-btn" style="display: none;">Finalizar
+                            Plano</button>
+                        <button id="startPlanBtn" class="action-btn start-btn" style="display: none;">Inicializar
+                            Plano</button>
+                    </div>
+                </div>
+                <div class="fotosSection">
+                    <h2><strong>Fotos:</strong></h2>
+                    <div id="planRecursos"></div>
+                </div>
             </div>
-            <div id="actionButtons">
-                <button id="finalizePlanBtn" class="action-btn finalize-btn" style="display: none;">Finalizar
-                    Plano</button>
-                <button id="startPlanBtn" class="action-btn start-btn" style="display: none;">Inicializar
-                    Plano</button>
+            <div class="planActivitiesContainer">
+                <table class="activitiesPlan" id="activityParticipants">
+                    <thead>
+                        <tr>
+                            <th>Atividades Associadas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="planActivities">
+                        <!-- Aqui serão inseridos os participantes via JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+
 
     <script type="module" src="./plan.js"></script>
 </body>
