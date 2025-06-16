@@ -15,9 +15,9 @@
     <div class="sidebar">
         <h2 onclick="showSection('estatisticas')">Painel Admin</h2>
         <ul>
-            <li onclick="showSection('atividades')">Atividades</li>
-            <li onclick="showSection('planoatividades')">Plano de Atividades</li>
-            <li onclick="showSection('utilizadores')">Utilizadores</li>
+            <li data-permission="Admin,Secretariado,Conselho Eco-Escolas" onclick="showSection('atividades')">Atividades</li>
+            <li data-permission="Admin,Coordenador" onclick="showSection('planoatividades')">Plano de Atividades</li>
+            <li data-permission="Admin,Coordenador" onclick="showSection('utilizadores')">Utilizadores</li>
             <li onclick="showSection('perfil')">Perfil</li>
             <li><a class="logout-btn">Logout</a></li>
         </ul>
@@ -28,28 +28,28 @@
         <div id="estatisticas" class="section active">
             <div class="dashboard">
                 <div class="cards">
-                <div class="card">
+                <div class="card" data-permission="Admin,Coordenador">
                     <div class="info">
                     <span class="title">Planos ativos</span>
                     <span class="value" id="planosAtivos"></span>
                     </div>
                     <div class="icon"><img style="height: 35px;" src="../../Img/task.png"></div>
                 </div>
-                <div class="card">
+                <div class="card" data-permission="Admin,Secretariado,Conselho Eco-Escolas">
                     <div class="info">
                     <span class="title">Atividades ativas</span>
                     <span class="value" id="atividadesAtivas"></span>
                     </div>
                     <div class="icon"><img style="height: 35px;" src="../../Img/eco-tag.png"></div>
                 </div>
-                <div class="card">
+                <div class="card" data-permission="Admin,Coordenador,Secretariado,Conselho Eco-Escolas">
                     <div class="info">
-                    <span class="title">Nº de participações</span>
-                    <span class="value">85.4%</span>
+                    <span class="title">Número de atividades</span>
+                    <span class="value" id="nAtividades"></span>
                     </div>
                     <div class="icon"><img style="height: 35px;" src="../../Img/participation.png"></div>
                 </div>
-                <div class="card">
+                <div class="card" data-permission="Admin,Secretariado,Conselho Eco-Escolas">
                     <div class="info">
                     <span class="title">Próximas atividades</span>
                     <span class="value" id="proximasAtividades"></span>
@@ -57,7 +57,7 @@
                     <div class="icon"><img style="height: 35px;" src="../../Img/schedule.png"></div>
                 </div>
                 </div>
-                <div class="main">
+                <div class="main" data-permission="Admin,Secretariado,Conselho Eco-Escolas">
                 <section class="attendance">
                     <h2>Número de atividades mensais</h2>
                     <canvas id="graficoAtividades" width="300" height="100"></canvas>
@@ -69,7 +69,7 @@
                     </ul>
                 </section>
                 </div>
-                <section class="score">
+                <section class="score" data-permission="Admin,Coordenador">
                 <h2>Número de planos por prioridade</h2>
                 <canvas id="graficoPlanos" width="300" height="100"></canvas>
                 </section>
@@ -266,7 +266,6 @@
             </div>
         </div>
     </div>
-
 
 
     <script type="module" src="../../Js/users/usersEvents.js"></script>

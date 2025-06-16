@@ -145,3 +145,13 @@ export async function addParticipant(activityId, participantData) {
     throw new Error(message);
   }
 }
+
+export async function getActivitiesCount() {
+  try {
+    const response = await axios.get(`${API_URL}/activities/stats/count`);
+    return response.data.count;
+  } catch (error) {
+    console.error('Erro ao buscar atividades por plano:', error);
+    throw error;
+  }
+}

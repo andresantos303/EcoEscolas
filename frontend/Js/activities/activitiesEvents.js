@@ -1,7 +1,8 @@
-import { getAllActivities, deleteActivity, updateActivity, createActivity, getAllPlans, getActivitiesActive } from '../activities/activitiesServices.js';
-import { requireAuth } from '../auth/authGuard.js';
+import { getAllActivities, deleteActivity, updateActivity, createActivity, getAllPlans, getActivitiesActive, getActivitiesCount } from '../activities/activitiesServices.js';
+import { requireAuth, roleGuard } from '../auth/authGuard.js';
 
 requireAuth();
+roleGuard();
 
 document.addEventListener('DOMContentLoaded', init);
 document.getElementById('addActivityBtn').addEventListener('click', async () => {
@@ -24,6 +25,8 @@ async function renderActivities() {
         const activitiesActives = await getActivitiesActive();
         const spanActivitiesActive = document.getElementById('atividadesAtivas');
         const spanNextActivities = document.getElementById('proximasAtividades');
+        const spanNActivities = document.getElementById('nAtividades');
+        spanNActivities.innerHTML = await getActivitiesCount(); 
         spanActivitiesActive.innerHTML = activitiesActives.length;
 
         const today = new Date();
