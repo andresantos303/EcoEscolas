@@ -6,9 +6,10 @@ import {
   getUserById,
 } from "../users/userServices.js";
 import { logout } from "../auth/authService.js";
-import { requireAuth } from "../auth/authGuard.js";
+import { requireAuth, roleGuard } from '../auth/authGuard.js';
 
 requireAuth();
+roleGuard();
 
 document.addEventListener("DOMContentLoaded", init);
 

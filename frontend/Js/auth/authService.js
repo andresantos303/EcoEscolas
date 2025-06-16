@@ -36,4 +36,5 @@ export function getToken() {
 
 export function logout() {
   sessionStorage.removeItem(SESSION_KEY);
+  sessionStorage.removeItem('currentUser');
 }
