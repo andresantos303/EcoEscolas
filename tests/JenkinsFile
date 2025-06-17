@@ -1,0 +1,14 @@
+pipeline {
+    agent any
+    stages {
+        stage('Install') {
+            steps { sh 'npm install' }
+        }
+        stage('Test') {
+            steps {
+                sh 'chmod +x node_modules/.bin/jest'
+                sh 'npm test'
+            }
+        }
+    }
+}
