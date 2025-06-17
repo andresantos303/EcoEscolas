@@ -149,8 +149,13 @@ describe('Users Controller (unit, jest mocks)', () => {
     it('500 on internal error', async () => {
       req.body = valid;
       User.findOne.mockResolvedValue(null);
-      jest.spyOn(bcrypt, 'hash').mockRejectedValue(new Error('fail'));
+      jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedpwd');
+      // Simulate save throwing an error
+      const saveMock = jest.fn().mockRejectedValue(new Error('fail'));
+      User.mockImplementation(() => ({ _id: 'ID1', name: valid.name, email: valid.email, type: valid.type, save: saveMock }));
+
       await createUser(req, res);
+      expect(saveMock).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
         message: 'Erro interno ao registar utilizador.',
@@ -196,10 +201,10 @@ describe('Users Controller (unit, jest mocks)', () => {
 
     it('200 and token on success', async () => {
       req.body = creds;
-      const fakeUser = { _id: 'ID2', type: 'Aluno', password: 'hashed' };
+      const fakeUser = { _id: 'ID2', email: 'Aluno', password: 'hashed' };
       User.findOne.mockResolvedValue(fakeUser);
-      bcrypt.compare = jest.fn().mockResolvedValue(true);
-      jwt.sign = jest.fn().mockReturnValue('T0K3N');
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+      jest.spyOn(jwt, 'sign').mockReturnValue('T0K3N');
 
       await loginUser(req, res);
 
