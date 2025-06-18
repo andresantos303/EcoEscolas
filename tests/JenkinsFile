@@ -5,10 +5,7 @@ pipeline {
             steps { sh 'npm install' }
         }
         stage('Test') {
-            steps {
-                sh 'chmod +x node_modules/.bin/jest'
-                sh 'npm test'
-            }
+            steps { sh 'npm test' }
         }
     }
 }
