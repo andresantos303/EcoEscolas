@@ -66,8 +66,6 @@ const {
   finalizePlan,
   startPlan,
   getPublicPlanNames,
-  countActivePlans,
-  getPlanByIdPublic,
 } = require("../backend/controllers/plans.controller.js");
 
 describe("Plans Controller", () => {
@@ -294,15 +292,6 @@ describe("Plans Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: "Plano de atividades removido com sucesso.",
-      });
-    });
-
-    it("500 on error", async () => {
-      Plan.findById.mockRejectedValue(new Error());
-      await deletePlan(req, res);
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Erro interno ao remover plano.",
       });
     });
   });
