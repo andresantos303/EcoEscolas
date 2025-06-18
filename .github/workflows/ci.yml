@@ -20,6 +20,7 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
+        working-directory: ./tests
         run: npm install
 
       - name: Make Jest executable

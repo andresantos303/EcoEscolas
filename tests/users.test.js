@@ -219,7 +219,6 @@ describe('Users Controller (unit, jest mocks)', () => {
     });
   });
 
-
   //
   // getUserById
   //
