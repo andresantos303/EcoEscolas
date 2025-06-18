@@ -8,7 +8,7 @@ const { Builder, By, Key, until } = require('selenium-webdriver');
 
   try {
     // Open local page served via Live Server (adjust if needed)
-    await driver.get('http://127.0.0.1:5501/frontend/login.html');
+    await driver.get('http://127.0.0.1:5501/frontend/routes/login.html');
     await driver.sleep(1000);
 
     // Fill in credentials
