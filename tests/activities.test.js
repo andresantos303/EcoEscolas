@@ -63,6 +63,7 @@ const { cloudinary } = require('../backend/utils/upload.js');
 const {
   getAllActivities,
   getActivityById,
+  getActivitiesByPlan,
   createActivity,
   addParticipant,
   updateActivity,
@@ -190,6 +191,15 @@ describe('Activities Controller', () => {
       expect(res.json).toHaveBeenCalledWith({ message: 'Atividade registrada com sucesso!', atividadeId: 'A1' });
     });
 
+    it('500 on internal error', async () => {
+      req.body = base;
+      req.params.idPlano = 'P5';
+      Plan.findById.mockResolvedValue({});
+      Activity.findOne.mockRejectedValue(new Error());
+      await createActivity(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Erro interno ao registrar atividade.' });
+    });
   });
 
   describe('addParticipant', () => {
@@ -393,6 +403,31 @@ describe('Activities Controller', () => {
       await getActivitiesCount(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ message: 'Erro ao contar atividades.' });
+    });
+  });
+
+  describe('getActivitiesByPlan', () => {
+    it('400 if no idPlano', async () => {
+      await getActivitiesByPlan(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ message: 'ID do plano é obrigatório' });
+    });
+
+    it('200 on success', async () => {
+      req.params.idPlano = 'P5';
+      const fake = [{ _id: 'A1' }];
+      Activity.find.mockResolvedValue(fake);
+      await getActivitiesByPlan(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(fake);
+    });
+
+    it('500 on error', async () => {
+      req.params.idPlano = 'P6';
+      Activity.find.mockRejectedValue(new Error());
+      await getActivitiesByPlan(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Erro ao buscar atividades por plano.' });
     });
   });
 

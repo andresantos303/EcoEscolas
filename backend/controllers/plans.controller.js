@@ -193,7 +193,7 @@ const deletePlan = async (req, res) => {
     await Plan.findByIdAndDelete(id);
     return res.status(200).json({ message: "Plano de atividades removido com sucesso." });
   } catch (err) {
-    console.error('Erro interno ao remover plano:', err);
+    console.log(err);
     return res.status(500).json({ message: "Erro interno ao remover plano." });
   }
 };

@@ -163,7 +163,7 @@ function setupCreateActivityForm() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const fotosInput = form.querySelector('#fotos'); 
+        const fotosInput = form.querySelector('#fotos'); // <input type="file" id="fotos" multiple>
         const fotos = fotosInput?.files || [];
 
         const formData = new FormData();
