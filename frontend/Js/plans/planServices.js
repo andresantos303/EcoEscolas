@@ -63,12 +63,10 @@ export async function getPlanById(planId) {
 
 
 export async function createPlan(formData) {
-
   try {
     const response = await axios.post(`${API_URL}/plans/`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
       },
     });
     return response.data;

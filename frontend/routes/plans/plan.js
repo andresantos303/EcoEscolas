@@ -36,7 +36,6 @@ function renderPlanDetails(plan) {
     document.getElementById('planDataFim').textContent = plan.data_fim;
     document.getElementById('planEstado').textContent = plan.estado ? 'Ativo' : 'Finalizado';
     document.getElementById('planNivel').textContent = plan.nivel;
-    document.getElementById('planRecursos').textContent = plan.recursos;
 
     const fotosContainer = document.getElementById('planRecursos');
     fotosContainer.innerHTML = '';

@@ -1,4 +1,3 @@
-
 window.addEventListener("scroll", function () {
   const navbar = document.querySelector(".navbar");
   if (window.scrollY > 50) {
@@ -68,4 +67,17 @@ const observer = new IntersectionObserver(
   { threshold: 0.3 }
 );
 
-observer.observe(document.querySelector("#estatisticas"));
+//Verifica quando o botao "Enviar" é clicado
+document.addEventListener("DOMContentLoaded", () => {
+  const contactForm = document.getElementById("form");
+  contactForm.addEventListener("submit", (e) => {
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Perfil guardado com sucesso!",
+      showConfirmButton: false,
+      timer: 3500,
+      toast: true,
+    });
+  });
+});
