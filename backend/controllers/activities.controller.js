@@ -54,10 +54,15 @@ const createActivity = async (req, res) => {
     const duplicate = await Activity.findOne({ nome, local, data });
     if (duplicate) return handleError(res, "ACTIVITY_REGISTRATION_DUPLICATE");
 
-    const recursosCloud = (req.files || []).map(file => ({
-      profile_image: file.path,
-      cloudinary_id: file.filename,
-    }));
+    const recursosCloud = [];
+
+    for (const file of req.files) {
+      const result = await cloudinary.uploader.upload(file.path);
+      recursosCloud.push({
+        profile_image: result.secure_url,
+        cloudinary_id: result.public_id,
+      });
+    }
 
     const activity = new Activity({
       nome,

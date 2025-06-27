@@ -15,8 +15,7 @@
     <div class="sidebar">
         <h2 onclick="showSection('estatisticas')">Painel Admin</h2>
         <ul>
-            <li data-permission="Admin,Secretariado,Conselho Eco-Escolas" onclick="showSection('atividades')">Atividades
-            </li>
+            <li data-permission="Admin,Secretariado,Conselho Eco-Escolas" onclick="showSection('atividades')">Atividades</li>
             <li data-permission="Admin,Coordenador" onclick="showSection('planoatividades')">Plano de Atividades</li>
             <li data-permission="Admin,Coordenador" onclick="showSection('utilizadores')">Utilizadores</li>
             <li onclick="showSection('perfil')">Perfil</li>
@@ -29,50 +28,50 @@
         <div id="estatisticas" class="section active">
             <div class="dashboard">
                 <div class="cards">
-                    <div class="card" data-permission="Admin,Coordenador">
-                        <div class="info">
-                            <span class="title">Planos ativos</span>
-                            <span class="value" id="planosAtivos"></span>
-                        </div>
-                        <div class="icon"><img style="height: 35px;" src="../../Img/task.png"></div>
+                <div class="card" data-permission="Admin,Coordenador">
+                    <div class="info">
+                    <span class="title">Planos ativos</span>
+                    <span class="value" id="planosAtivos"></span>
                     </div>
-                    <div class="card" data-permission="Admin,Secretariado,Conselho Eco-Escolas">
-                        <div class="info">
-                            <span class="title">Atividades ativas</span>
-                            <span class="value" id="atividadesAtivas"></span>
-                        </div>
-                        <div class="icon"><img style="height: 35px;" src="../../Img/eco-tag.png"></div>
+                    <div class="icon"><img style="height: 35px;" src="../../Img/task.png"></div>
+                </div>
+                <div class="card" data-permission="Admin,Secretariado,Conselho Eco-Escolas">
+                    <div class="info">
+                    <span class="title">Atividades ativas</span>
+                    <span class="value" id="atividadesAtivas"></span>
                     </div>
-                    <div class="card" data-permission="Admin,Coordenador,Secretariado,Conselho Eco-Escolas">
-                        <div class="info">
-                            <span class="title">Número de atividades</span>
-                            <span class="value" id="nAtividades"></span>
-                        </div>
-                        <div class="icon"><img style="height: 35px;" src="../../Img/participation.png"></div>
+                    <div class="icon"><img style="height: 35px;" src="../../Img/eco-tag.png"></div>
+                </div>
+                <div class="card" data-permission="Admin,Coordenador,Secretariado,Conselho Eco-Escolas">
+                    <div class="info">
+                    <span class="title">Número de atividades</span>
+                    <span class="value" id="nAtividades"></span>
                     </div>
-                    <div class="card" data-permission="Admin,Secretariado,Conselho Eco-Escolas">
-                        <div class="info">
-                            <span class="title">Próximas atividades</span>
-                            <span class="value" id="proximasAtividades"></span>
-                        </div>
-                        <div class="icon"><img style="height: 35px;" src="../../Img/schedule.png"></div>
+                    <div class="icon"><img style="height: 35px;" src="../../Img/participation.png"></div>
+                </div>
+                <div class="card" data-permission="Admin,Secretariado,Conselho Eco-Escolas">
+                    <div class="info">
+                    <span class="title">Próximas atividades</span>
+                    <span class="value" id="proximasAtividades"></span>
                     </div>
+                    <div class="icon"><img style="height: 35px;" src="../../Img/schedule.png"></div>
+                </div>
                 </div>
                 <div class="main" data-permission="Admin,Secretariado,Conselho Eco-Escolas">
-                    <section class="attendance">
-                        <h2>Número de atividades mensais</h2>
-                        <canvas id="graficoAtividades" width="300" height="100"></canvas>
-                    </section>
-                    <section class="events">
-                        <h2>Próximas atividades</h2>
-                        <ul id="sectionNextActivities">
-
-                        </ul>
-                    </section>
+                <section class="attendance">
+                    <h2>Número de atividades mensais</h2>
+                    <canvas id="graficoAtividades" width="300" height="100"></canvas>
+                </section>
+                <section class="events">
+                    <h2>Próximas atividades</h2>
+                    <ul id="sectionNextActivities">
+                    
+                    </ul>
+                </section>
                 </div>
                 <section class="score" data-permission="Admin,Coordenador">
-                    <h2>Número de planos por prioridade</h2>
-                    <canvas id="graficoPlanos" width="300" height="100"></canvas>
+                <h2>Número de planos por prioridade</h2>
+                <canvas id="graficoPlanos" width="300" height="100"></canvas>
                 </section>
             </div>
         </div>
@@ -152,10 +151,7 @@
                         </label>
                         <input type="date" id="newActivityDate" name="date" placeholder="Data" required />
                         <select id="activityPlanSelect" name="selectedPlanId" required>
-                            <label for="fotos">
-                                Imagens:
-                                <input type="file" id="fotos" name="fotos" multiple />
-                            </label>
+                            <option value="">Selecione um Plano</option>
                         </select>
                         <button type="submit">Criar Atividade</button>
                     </div>
@@ -211,7 +207,7 @@
                             <input type="checkbox" id="newPlanStatus" name="status" />
                         </label>
                         <input type="number" id="newLevel" name="planLevel" placeholder="Nível" required />
-                        <input type="file" id="recursos" name="recursos" multiple />
+                        <input type="text" id="newPlanresource" name="planResource" placeholder="Recursos" required />
                         <button type="submit">Criar Plano</button>
                     </div>
                 </form>

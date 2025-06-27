@@ -80,7 +80,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
-    console.log(token);
+
     return res.status(200).json({
       id: user._id,
       token,
@@ -175,5 +175,4 @@ module.exports = {
   getUserById,
   updateUser,
   deleteUser,
-  bcrypt,
 };
