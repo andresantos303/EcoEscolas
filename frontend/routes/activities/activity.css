@@ -30,6 +30,14 @@ body {
     margin-bottom: 30px;
 }
 
+.activities-list {
+  list-style: none;
+  margin-top: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
 .main-container {
   padding: 20px;
   display: flex;

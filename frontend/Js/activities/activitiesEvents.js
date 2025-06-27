@@ -49,7 +49,7 @@ async function renderActivities() {
                      <td class="activity-name">
                         <a href="../activities/activity.html?id=${activity._id}" class="plan-link">${activity.nome}</a>
                     </td>
-                    <td class="activity-description">${activity.descricao}</td>
+                    <td class="activity-description" style="font-size:15px">${activity.descricao}</td>
                     <td class="activity-local">${activity.local}</td>
                     <td class="activity-status">${activity.estado}</td>
                     <td class="activity-data">${activity.data.split('-').reverse().join('-')}</td>

@@ -824,15 +824,6 @@ h1 {
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
-/* ===== Lista de atividades ===== */
-.activities-list {
-  list-style: none;
-  margin-top: 1rem;
-  max-height: 300px;
-  overflow-y: auto;
-  padding-right: 0.5rem;
-}
-
 .activities-list li {
   background-color: #f0f4fa;
   padding: 0.8rem 1rem;
@@ -846,6 +837,13 @@ h1 {
 
 .activities-list li:hover {
   background-color: #e1e8f5;
+}
+
+.plan-description{
+  max-height: 50px;    /* ajusta ao que quiseres */
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: normal;
 }
 
 /* ===== Responsividade ===== */
@@ -905,6 +903,20 @@ h1 {
 .card .info {
   display: flex;
   flex-direction: column;
+}
+
+.plan-description{
+  white-space: nowrap;
+  overflow-x: auto;
+  max-width: 250px;
+  display: inline-block;
+}
+
+.activity-description {
+  white-space: nowrap;
+  overflow-x: auto;
+  max-width: 250px;
+  display: inline-block;
 }
 
 .card .info .title {

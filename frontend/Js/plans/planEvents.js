@@ -30,9 +30,9 @@ async function renderPlans() {
                     <td class="plan-name">
                         <a href="../plans/plan.html?id=${plan._id}" class="plan-link">${plan.nome}</a>
                     </td>
-                    <td class="plan-description">${plan.descricao}</td>
-                    <td class="plan-first-date">${plan.data_inicio.split('-').reverse().join('-')}</td>
-                    <td class="plan-last-date">${plan.data_fim.split('-').reverse().join('-')}</td>
+                    <td class="plan-description" style="font-size:15px">${plan.descricao}</td>
+                    <td class="plan-first-date" style="font-size:15px">${plan.data_inicio.split('-').reverse().join('-')}</td>
+                    <td class="plan-last-date" style="font-size:15px">${plan.data_fim.split('-').reverse().join('-')}</td>
                     <td class="plan-status">${plan.estado}</td>
                     <td class="plan-level">${plan.nivel}</td>
                     <td>

@@ -13,6 +13,14 @@
      padding-top: 150px;
  }
 
+ .activities-list {
+  list-style: none;
+  margin-top: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
  #atividadesContainer {
      display: flex;
      flex-wrap: wrap;
